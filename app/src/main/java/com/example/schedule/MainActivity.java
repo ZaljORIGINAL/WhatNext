@@ -15,6 +15,7 @@ import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -267,7 +268,7 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
 
         if (today.getType() == 1)//Проверка на тип расписание (одинарное - 0, двойное - 1)
         {
-            if ((calendar.get(Calendar.DAY_OF_MONTH) + calendar.get(Calendar.DAY_OF_WEEK)) %2 == today.getParity()) {
+            if ((calendar.get(Calendar.DAY_OF_YEAR) + calendar.get(Calendar.DAY_OF_WEEK)) %2 == today.getParity()) {
                 disciplineDB = new DisciplineDBHelper(this, today.getNameOfDB_1());
             }else {
                 disciplineDB = new DisciplineDBHelper(this, today.getNameOfDB_2());

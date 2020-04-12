@@ -1,7 +1,6 @@
 package com.example.schedule.Adapters;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,24 +33,45 @@ public class DisciplineAdapter extends RecyclerView.Adapter<DisciplineAdapter.My
     @Override
     public MyHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
     {
-        View view = (View) LayoutInflater.from(parent.getContext()).inflate(R.layout.element_of_list_discipline, parent, false);
+        View view;
+        if (disciplines.size() == 0)
+        {
+            view = (View) LayoutInflater.from(parent.getContext()).inflate(R.layout.element_of_list_no_info, parent, false);
+        }else
+        {
+            view = (View) LayoutInflater.from(parent.getContext()).inflate(R.layout.element_of_list_discipline, parent, false);
+
+        }
         return new MyHolder(view, onClick);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyHolder holder, int position)
     {
-        holder.holderBuilder(disciplines.get(position));
+        if (disciplines.size() == 0)
+        {
+            holder.builderNoInfo();
+        }else
+        {
+            holder.builder(disciplines.get(position));
+        }
     }
 
     @Override
     public int getItemCount() {
-        return disciplines.size();
+        if (disciplines.size() == 0)
+        {
+            return 1;
+        }else
+        {
+            return disciplines.size();
+        }
     }
 
     public class MyHolder extends RecyclerView.ViewHolder implements View.OnClickListener
     {
         private TextView
+                tNoInfoText,
                 position,
                 startTime,
                 finishTime,
@@ -65,18 +85,25 @@ public class DisciplineAdapter extends RecyclerView.Adapter<DisciplineAdapter.My
         {
             super(itemView);
 
-            position = (TextView)itemView.findViewById(R.id.position);
-            startTime = (TextView)itemView.findViewById(R.id.startTime);
-            finishTime = (TextView)itemView.findViewById(R.id.finishTime);
-            nameOfDiscipline = (TextView)itemView.findViewById(R.id.nameOfDiscipline);
-            building = (TextView)itemView.findViewById(R.id.building);
-            auditorium = (TextView)itemView.findViewById(R.id.auditorium);
+            if (itemView.findViewById(R.id.tListHasNotInfo) == null)
+            {
+                position = (TextView)itemView.findViewById(R.id.position);
+                startTime = (TextView)itemView.findViewById(R.id.startTime);
+                finishTime = (TextView)itemView.findViewById(R.id.finishTime);
+                nameOfDiscipline = (TextView)itemView.findViewById(R.id.nameOfDiscipline);
+                building = (TextView)itemView.findViewById(R.id.building);
+                auditorium = (TextView)itemView.findViewById(R.id.auditorium);
+
+                itemView.setOnClickListener(this);
+            }else
+            {
+                tNoInfoText = itemView.findViewById(R.id.tListHasNotInfo);
+            }
 
             this.onItemClick = onItemClick;
-            itemView.setOnClickListener(this);
         }
 
-        public void holderBuilder(Discipline discipline)
+        public void builder(Discipline discipline)
         {
             //Очередность пары
             position.setText(String.valueOf(discipline.getPosition() + 1));
@@ -90,6 +117,11 @@ public class DisciplineAdapter extends RecyclerView.Adapter<DisciplineAdapter.My
             building.setText(discipline.getBuilding());
             //Аудитория в которой проходит занятие
             auditorium.setText(discipline.getAuditorium());
+        }
+
+        public void builderNoInfo()
+        {
+            tNoInfoText.setText(context.getString(R.string.activity_MainActivity_text_ListHasNotInfo));
         }
 
         @Override

@@ -7,9 +7,10 @@
 
 
     <TextView
-        android:id="@+id/element_of_list_NoInfo"
+        android:id="@+id/tListHasNotInfo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:text="@string/element_of_list_NoInfo" />
+        android:text="@string/element_of_list_NoInfo"
+        android:textSize="22dp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

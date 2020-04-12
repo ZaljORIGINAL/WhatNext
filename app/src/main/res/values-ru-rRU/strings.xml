@@ -18,12 +18,14 @@
     <string name="element_of_list_NoInfo">Список пуст</string>
 
     <!--MainActivity-->
-        <!--Menu-->
+    <string name="activity_MainActivity_text_ListHasNotInfo">День пуст</string>
+    <!--Menu-->
         <string name="MainActivity_menu_Schedules">Расписания</string>
         <string name="MainActivity_menu_Edit">Изменить</string>
 
     <!--SelectScheduleActivity-->
     <string name="nameOfActivity_SelectSchedule">Расписания</string>
+    <string name="activity_SelectScheduleActivity_text_ListHasNotInfo">У вас еще нет расписаний.</string>
 
     <!--ScheduleCreatingActivity-->
     <string name="nameOfActivity_ScheduleCreating">Редактирование</string>
@@ -68,6 +70,7 @@
     <string name="fragment_name_lowerWeek">Нижняя неделя</string>
     
     <!--Activity Schedule of day-->
+    <string name="activity_ScheduleOfDay_text_ListHasNotInfo">День пуст</string>
     <string name="activity_ScheduleOfDay_dialog_title">Предмет</string>
     <string name="activity_ScheduleOfDay_dialog_position">Позиция</string>
     <string name="activity_ScheduleOfDay_dialog_name">Нименование</string>

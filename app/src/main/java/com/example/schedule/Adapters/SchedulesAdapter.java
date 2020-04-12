@@ -1,12 +1,9 @@
 package com.example.schedule.Adapters;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -46,24 +43,44 @@ public class SchedulesAdapter extends RecyclerView.Adapter<SchedulesAdapter.MyHo
     @Override
     public MyHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
     {
-        View view = (View) LayoutInflater.from(parent.getContext()).inflate(R.layout.element_of_list_schedule, parent, false);
+        View view;
+        if (names.size() == 0)
+        {
+            view = (View) LayoutInflater.from(parent.getContext()).inflate(R.layout.element_of_list_no_info, parent, false);
+        }else
+        {
+            view = (View) LayoutInflater.from(parent.getContext()).inflate(R.layout.element_of_list_schedule, parent, false);
+        }
         return new MyHolder(view, iItemClickListener);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyHolder holder, int position)
     {
-        holder.builder(names.get(position));
+        if(names.size() == 0)
+        {
+            holder.builderNoInfo();
+        }else
+        {
+            holder.builder(names.get(position));
+        }
     }
 
     @Override
     public int getItemCount() {
-        return names.size();
+        if (names.size() == 0)
+        {
+            return 1;
+        }else
+        {
+            return names.size();
+        }
     }
 
     public class MyHolder extends RecyclerView.ViewHolder implements View.OnClickListener
     {
         private TextView
+                tNoInfoText,
                 tNameOfSchedule;
 //                typeOfSchedule,
 //                scheduleCreateDate;
@@ -71,17 +88,23 @@ public class SchedulesAdapter extends RecyclerView.Adapter<SchedulesAdapter.MyHo
                     bDelete,
                     bEdit;*/
 
-        private String fileName;
-
         private iItemClickListener iItemClickListener;
 
         public MyHolder(@NonNull View itemView, iItemClickListener iItemClickListener)
         {
             super(itemView);
 
-            tNameOfSchedule = (TextView)itemView.findViewById(R.id.nameOfSchedule);
-  //          typeOfSchedule = (TextView)itemView.findViewById(R.id.typeOfSchedule);
-  //          scheduleCreateDate = (TextView)itemView.findViewById(R.id.scheduleCreateDate);
+            if (itemView.findViewById(R.id.tListHasNotInfo) == null)
+            {
+                tNameOfSchedule = (TextView)itemView.findViewById(R.id.nameOfSchedule);
+                //          typeOfSchedule = (TextView)itemView.findViewById(R.id.typeOfSchedule);
+                //          scheduleCreateDate = (TextView)itemView.findViewById(R.id.scheduleCreateDate);
+
+                itemView.setOnClickListener(this);
+            }else
+            {
+                tNoInfoText = (TextView)itemView.findViewById(R.id.tListHasNotInfo);
+            }
 
             /*TODO Была идея добавить в представление эелемента кнопки "Удалить", "Изменить".
                Появились некторые проблемы: По логике, если нажать на "Изменить", то должно было
@@ -129,15 +152,12 @@ public class SchedulesAdapter extends RecyclerView.Adapter<SchedulesAdapter.MyHo
                     }
             );*/
 
-
             this.iItemClickListener = iItemClickListener;
-
-            itemView.setOnClickListener(this);
         }
 
         public void builder(String name)
         {
-            fileName = name;
+//            fileName = name;
 
             StringBuffer path = new StringBuffer();
             path.append(context.getFilesDir().getPath())
@@ -152,6 +172,11 @@ public class SchedulesAdapter extends RecyclerView.Adapter<SchedulesAdapter.MyHo
             }catch (Exception e)
             {
             }
+        }
+
+        public void builderNoInfo()
+        {
+            tNoInfoText.setText(context.getString(R.string.activity_SelectScheduleActivity_text_ListHasNotInfo));
         }
 
         @Override
