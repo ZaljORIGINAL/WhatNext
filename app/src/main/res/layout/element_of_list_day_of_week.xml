@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/panel"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/noInfo"
+    android:layout_marginTop="8dp">
+
+    <TextView
+        android:id="@+id/dayOfWeek"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/MyTextStyle"
+        android:padding="15sp"
+        tools:text="Понедельник"/>
+
+    <TextView
+        android:id="@+id/countOfDisciplines"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/title"
+        android:textSize="18sp"
+        android:padding="10sp"
+        tools:text="Дисциплин: 5"
+        android:gravity="right"
+        />
+
+
+</LinearLayout>

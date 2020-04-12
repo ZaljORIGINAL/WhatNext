@@ -1,0 +1,86 @@
+<resources>
+    <string name="app_name">Schedule</string>
+
+    <!--Dialog for creating new schedule-->
+    <string name="message_title_of_dialog">New schedule</string>
+    <string name="name_of_schedule_hint_dialog">Name of schedule</string>
+    <string name="type_of_schedule_switch_dialog">Двойное расписание</string>
+    <string name="info_text_dialog">Выберите понедельник той недели когда будет вернхнее расписание</string>
+    <string name="select_Day_button_dialog">Выбрать день</string>
+
+    <!--Default strings-->
+    <string name="Error">Error</string>
+    <string name="Delete">Delete</string>
+    <string name="QuestionOfDelete">Вы уверены в действии?</string>
+    <string name="dialog_positive_button">OK</string>
+    <string name="dialog_negative_button">CANCEL</string>
+    <string name="element_of_list_NoInfo">Список пуст</string>
+
+    <!--MainActivity-->
+        <!--Menu-->
+        <string name="MainActivity_menu_Schedules">Расписания</string>
+        <string name="MainActivity_menu_Edit">Изменить</string>
+
+    <!--SelectScheduleActivity-->
+    <string name="nameOfActivity_SelectSchedule">Расписания</string>
+
+    <!--ScheduleCreatingActivity-->
+    <string name="nameOfActivity_ScheduleCreating">Редактирование</string>
+    <string-array name="day_of_week_array">
+        <item>Понедельник</item>
+        <item>Вторник</item>
+        <item>Среда</item>
+        <item>Четверг</item>
+        <item>Пятница</item>
+        <item>Суббота</item>
+        <item>Воскресенье</item>
+    </string-array>
+    <string-array name="type_of_discipline">
+        <item>Лекция</item>
+        <item>Практика</item>
+    </string-array>
+
+    <!--CreateScheduleOfTime-->
+    <string name="nameOfActivity_CreateScheduleOfTime">Время</string>
+    <string name="info_CreateScheduleOfTime">Расписание пар. Начало и окончаании пары.</string>
+    <string name="createScheduleOfTime_dialog_title">Установитее время</string>
+    <string name="createScheduleOfTime_dialog_error_notFull">Не все параметры установлены</string>
+
+    <!--Fragment main options of fragment-->
+    <string name="fragment_name_mainSettingsOfFragment">Main settings</string>
+    <string name="fragment_text_nameOfSchedule">Name of schedule</string>
+    <string name="fragment_text_infoAboutOfDouble">Please select parity week(day of week)</string>
+    <string name="fragment_switch_double">Double</string>
+    <string name="fragment_button_setWeek">Select week</string>
+
+    <!--Fragment time of schedule-->
+    <string name="fragment_name_timeOfSchedule">Times</string>
+    <string name="fragment_text_startTime">Start time</string>
+    <string name="fragment_text_finishTime">Finish time</string>
+    <string name="fragment_dialog_newTime">New time</string>
+
+    <!--Fragment top week-->
+    <string name="fragment_name_topWeek">Top week</string>
+    <string name="fragment_text_Discipline">Discipline</string>
+
+    <!--Fragment lower week-->
+    <string name="fragment_name_lowerWeek">Lower week</string>
+
+    <!--Activity Schedule of day-->
+    <string name="activity_ScheduleOfDay_dialog_title">Предмет</string>
+    <string name="activity_ScheduleOfDay_dialog_position">Позиция</string>
+    <string name="activity_ScheduleOfDay_dialog_name">Нименование</string>
+    <string name="activity_ScheduleOfDay_dialog_type">Тип</string>
+    <string-array name="activity_ScheduleOfDay_dialog_types">
+        <item>Лекция</item>
+        <item>Практика</item>
+    </string-array>
+    <string name="activity_ScheduleOfDay_dialog_building">Здание</string>
+    <string name="activity_ScheduleOfDay_dialog_auditory">Аудитория</string>
+    <string name="activity_ScheduleOfDay_dialog_newDiscipline">Добавить предмет</string>
+
+    <!--Errors list-->
+    <!--ScheduleCreatingActivity-->
+    <string name="ScheduleCreatingActivity_Error_fieldOfNameIsClear">Поле имены пустое, пожалуйста задайтк имя</string>
+    <string name="ScheduleCreatingActivity_Error_topWeekIsNotSeted">Не указана верхняя неделя</string>
+</resources>
