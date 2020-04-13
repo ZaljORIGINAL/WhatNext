@@ -22,12 +22,14 @@
     <!--Menu-->
         <string name="MainActivity_menu_Schedules">Расписания</string>
         <string name="MainActivity_menu_Edit">Изменить</string>
+    <string name="toast_message_scheduleIsNotCreated">Расписание еще не создано</string>
+    <string name="toast_message_scheduleIsDeleted">Расписание удалено</string>
 
     <!--SelectScheduleActivity-->
     <string name="nameOfActivity_SelectSchedule">Расписания</string>
     <string name="activity_SelectScheduleActivity_text_ListHasNotInfo">У вас еще нет расписаний.</string>
 
-    <!--ScheduleCreatingActivity-->
+    <!--ScheduleBuilderActivity-->
     <string name="nameOfActivity_ScheduleCreating">Редактирование</string>
     <string-array name="day_of_week_array">
         <item>Понедельник</item>
@@ -45,8 +47,8 @@
 
     <!--CreateScheduleOfTime-->
     <string name="nameOfActivity_CreateScheduleOfTime">Время</string>
-    <string name="info_CreateScheduleOfTime">Расписание пар. Начало и окончаании пары.</string>
-    <string name="createScheduleOfTime_dialog_title">Установитее время</string>
+    <string name="info_CreateScheduleOfTime">Расписание пар. Начало и окончание пары.</string>
+    <string name="createScheduleOfTime_dialog_title">Установите время</string>
     <string name="createScheduleOfTime_dialog_error_notFull">Не все параметры установлены</string>
 
     <!--Fragment main options of fragment-->
@@ -73,7 +75,7 @@
     <string name="activity_ScheduleOfDay_text_ListHasNotInfo">День пуст</string>
     <string name="activity_ScheduleOfDay_dialog_title">Предмет</string>
     <string name="activity_ScheduleOfDay_dialog_position">Позиция</string>
-    <string name="activity_ScheduleOfDay_dialog_name">Нименование</string>
+    <string name="activity_ScheduleOfDay_dialog_name">Наименование</string>
     <string name="activity_ScheduleOfDay_dialog_type">Тип</string>
 <!--TODO Имеется 2 массива сс типо дисциплины, ОДНО ИЗ НИХ ДОЛЖНО ЖИТЬ-->
     <string-array name="activity_ScheduleOfDay_dialog_types">
@@ -87,5 +89,5 @@
     <!--Errors list-->
         <!--ScheduleCreatingActivity-->
         <string name="ScheduleCreatingActivity_Error_fieldOfNameIsClear">Поле имены пустое, пожалуйста задайте имя</string>
-        <string name="ScheduleCreatingActivity_Error_topWeekIsNotSeted">Не указана верхняя неделя</string>
+        <string name="ScheduleCreatingActivity_Error_topWeekIsNotSelected">Не указана верхняя неделя</string>
 </resources>

@@ -6,50 +6,51 @@
     <!--Dialog for creating new schedule-->
     <string name="message_title_of_dialog">New schedule</string>
     <string name="name_of_schedule_hint_dialog">Name of schedule</string>
-    <string name="type_of_schedule_switch_dialog">Двойное расписание</string>
-    <string name="info_text_dialog">Выберите понедельник той недели когда будет вернхнее расписание</string>
-    <string name="select_Day_button_dialog">Выбрать день</string>
+    <string name="type_of_schedule_switch_dialog">Double schedule</string>
+    <string name="info_text_dialog">Select the Monday of the week when the top schedule will be displayed</string>
+    <string name="select_Day_button_dialog">Choose day</string>
 
     <!--Default strings-->
     <string name="Error">Error</string>
     <string name="Delete">Delete</string>
-    <string name="QuestionOfDelete">Вы уверены в действии?</string>
+    <string name="QuestionOfDelete">Are you sure about your decision?</string>
     <string name="dialog_positive_button">OK</string>
     <string name="dialog_negative_button">CANCEL</string>
-    <string name="element_of_list_NoInfo">Список пуст</string>
+    <string name="element_of_list_NoInfo">The list is empty</string>
 
     <!--MainActivity-->
-    <string name="activity_MainActivity_text_ListHasNotInfo">День пуст</string>
+    <string name="activity_MainActivity_text_ListHasNotInfo">The day is empty</string>
     <!--Menu-->
-        <string name="MainActivity_menu_Schedules">Расписания</string>
-        <string name="MainActivity_menu_Edit">Изменить</string>
-
+        <string name="MainActivity_menu_Schedules">Schedules</string>
+        <string name="MainActivity_menu_Edit">Edit</string>
+    <string name="toast_message_scheduleIsNotCreated">Schedule is not created</string>
+    <string name="toast_message_scheduleIsDeleted">Schedule is deleted</string>
 
     <!--SelectScheduleActivity-->
-    <string name="nameOfActivity_SelectSchedule">Расписания</string>
-    <string name="activity_SelectScheduleActivity_text_ListHasNotInfo">У вас еще нет расписаний.</string>
+    <string name="nameOfActivity_SelectSchedule">Schedules</string>
+    <string name="activity_SelectScheduleActivity_text_ListHasNotInfo">You do not have a schedule yet.</string>
 
-    <!--ScheduleCreatingActivity-->
-    <string name="nameOfActivity_ScheduleCreating">Редактирование</string>
+    <!--ScheduleBuilderActivity-->
+    <string name="nameOfActivity_ScheduleCreating">Edit</string>
     <string-array name="day_of_week_array">
-        <item>Понедельник</item>
-        <item>Вторник</item>
-        <item>Среда</item>
-        <item>Четверг</item>
-        <item>Пятница</item>
-        <item>Суббота</item>
-        <item>Воскресенье</item>
+        <item>Monday</item>
+        <item>Tuesday</item>
+        <item>Wednesday</item>
+        <item>Thursday</item>
+        <item>Friday</item>
+        <item>Saturday</item>
+        <item>Sunday</item>
     </string-array>
     <string-array name="type_of_discipline">
-        <item>Лекция</item>
-        <item>Практика</item>
+        <item>Lecture</item>
+        <item>Practice</item>
     </string-array>
 
     <!--CreateScheduleOfTime-->
-    <string name="nameOfActivity_CreateScheduleOfTime">Время</string>
-    <string name="info_CreateScheduleOfTime">Расписание пар. Начало и окончаании пары.</string>
-    <string name="createScheduleOfTime_dialog_title">Установитее время</string>
-    <string name="createScheduleOfTime_dialog_error_notFull">Не все параметры установлены</string>
+    <string name="nameOfActivity_CreateScheduleOfTime">Time</string>
+    <string name="info_CreateScheduleOfTime">Schedule of lectures. The start and end of the lectures.</string>
+    <string name="createScheduleOfTime_dialog_title">Set time</string>
+    <string name="createScheduleOfTime_dialog_error_notFull">Not all parameters are set</string>
 
     <!--Fragment main options of fragment-->
     <string name="fragment_name_mainSettingsOfFragment">Main settings</string>
@@ -63,30 +64,30 @@
     <string name="fragment_text_startTime">Start time</string>
     <string name="fragment_text_finishTime">Finish time</string>
     <string name="fragment_dialog_newTime">New time</string>
+    <string name="fragment_text_Discipline">Discipline</string>
 
     <!--Fragment top week-->
     <string name="fragment_name_topWeek">Top week</string>
-    <string name="fragment_text_Discipline">Discipline</string>
 
     <!--Fragment lower week-->
     <string name="fragment_name_lowerWeek">Lower week</string>
 
     <!--Activity Schedule of day-->
-    <string name="activity_ScheduleOfDay_text_ListHasNotInfo">День пуст</string>
-    <string name="activity_ScheduleOfDay_dialog_title">Предмет</string>
-    <string name="activity_ScheduleOfDay_dialog_position">Позиция</string>
-    <string name="activity_ScheduleOfDay_dialog_name">Нименование</string>
-    <string name="activity_ScheduleOfDay_dialog_type">Тип</string>
+    <string name="activity_ScheduleOfDay_text_ListHasNotInfo">The day is empty</string>
+    <string name="activity_ScheduleOfDay_dialog_title">Discipline</string>
+    <string name="activity_ScheduleOfDay_dialog_position">Position</string>
+    <string name="activity_ScheduleOfDay_dialog_name">Name</string>
+    <string name="activity_ScheduleOfDay_dialog_type">Type</string>
     <string-array name="activity_ScheduleOfDay_dialog_types">
-        <item>Лекция</item>
-        <item>Практика</item>
+        <item>Lecture</item>
+        <item>Practice</item>
     </string-array>
-    <string name="activity_ScheduleOfDay_dialog_building">Здание</string>
-    <string name="activity_ScheduleOfDay_dialog_auditory">Аудитория</string>
-    <string name="activity_ScheduleOfDay_dialog_newDiscipline">Добавить предмет</string>
+    <string name="activity_ScheduleOfDay_dialog_building">Building</string>
+    <string name="activity_ScheduleOfDay_dialog_auditory">Lecture hall</string>
+    <string name="activity_ScheduleOfDay_dialog_newDiscipline">Add Discipline</string>
 
     <!--Errors list-->
     <!--ScheduleCreatingActivity-->
     <string name="ScheduleCreatingActivity_Error_fieldOfNameIsClear">Поле имены пустое, пожалуйста задайтк имя</string>
-    <string name="ScheduleCreatingActivity_Error_topWeekIsNotSeted">Не указана верхняя неделя</string>
+    <string name="ScheduleCreatingActivity_Error_topWeekIsNotSelected">Не указана верхняя неделя</string>
 </resources>

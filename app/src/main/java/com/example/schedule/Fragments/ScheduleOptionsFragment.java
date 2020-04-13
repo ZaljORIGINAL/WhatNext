@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -139,7 +140,7 @@ public class ScheduleOptionsFragment extends Fragment
                                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth)
                                     {
                                         calendar.set(year, month, dayOfMonth);
-                                        schedule.setParity((calendar.get(Calendar.DAY_OF_WEEK) + calendar.get(Calendar.DAY_OF_MONTH)) % 2);
+                                        schedule.setParity((calendar.get(Calendar.DAY_OF_YEAR) + calendar.get(Calendar.DAY_OF_MONTH)) % 2);
                                         selectWeek.setText(String.valueOf(DateUtils.formatDateTime(context, calendar.getTimeInMillis(), DateUtils.FORMAT_SHOW_DATE)));
                                     }
                                 },
@@ -157,6 +158,7 @@ public class ScheduleOptionsFragment extends Fragment
         }catch (Exception e)
         {
         }
+
         if (schedule.getType() == 1)
             isDouble.setChecked(true);
         else

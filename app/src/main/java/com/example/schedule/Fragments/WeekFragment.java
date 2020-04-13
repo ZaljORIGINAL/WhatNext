@@ -25,6 +25,7 @@ import com.example.schedule.ScheduleBuilderActivity;
 import com.example.schedule.ScheduleOfDayActivity;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -51,8 +52,6 @@ public class WeekFragment extends Fragment implements DayOfWeekAdapter.iOnItemCl
         return fragment;
     }
 
-    /*FIXME Происходит какой то пиздец с неделями. Есть идея это вот ArrayList<Week> weeks
-    *  заменить на 2 объекта Week. А то пиздец*/
     public WeekFragment()
     {
     }
@@ -119,11 +118,12 @@ public class WeekFragment extends Fragment implements DayOfWeekAdapter.iOnItemCl
         Intent intent = new Intent(getContext(), ScheduleOfDayActivity.class);
         if (number == 0)
         {
-            intent.putExtra("DAY", ScheduleBuilderActivity.topWeek.getDisciplines((byte) position));
+            intent.putExtra("DAY", ScheduleBuilderActivity.topWeek.getDayOfWeek(position));
         }else
         {
-            intent.putExtra("DAY", ScheduleBuilderActivity.loverWeek.getDisciplines((byte) position));
+            intent.putExtra("DAY", ScheduleBuilderActivity.loverWeek.getDayOfWeek(position));
         }
+        intent.putExtra("position", position);
         startActivityForResult(intent, 1);
     }
 
@@ -137,10 +137,10 @@ public class WeekFragment extends Fragment implements DayOfWeekAdapter.iOnItemCl
 
                 if (number == 0)
                 {
-                    ScheduleBuilderActivity.topWeek.setDisciplinesOfDay(dayOfWeek.getDisciplines(), dayOfWeek.getDayOfWeek());
+                    ScheduleBuilderActivity.topWeek.setDayOfWeek(data.getIntExtra("position", 0), dayOfWeek);
                 }else
                 {
-                    ScheduleBuilderActivity.loverWeek.setDisciplinesOfDay(dayOfWeek.getDisciplines(), dayOfWeek.getDayOfWeek());
+                    ScheduleBuilderActivity.loverWeek.setDayOfWeek(data.getIntExtra("position", 0), dayOfWeek);
                 }
                 adapter.notifyDataSetChanged();
         }

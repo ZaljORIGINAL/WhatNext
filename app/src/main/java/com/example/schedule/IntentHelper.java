@@ -3,7 +3,8 @@ package com.example.schedule;
 public class IntentHelper
 {
     //DEFAULT
-    public static final int RESULT_DELETE = -2;
+    public static final int RESULT_DELETED = -2;
+    public static final int RESULT_ERROR = -222;
     public static final String SCHEDULE = "SCHEDULE";
 
     //SelectScheduleActivity -> MainActivity

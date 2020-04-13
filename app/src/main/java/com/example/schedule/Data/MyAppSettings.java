@@ -62,10 +62,10 @@ public class MyAppSettings
             schedule.setParity(reader.readLine());
         }catch (FileNotFoundException e)
         {
-            Log.d("SAVE","ERROR: File is not founded");
+            Log.i("SAVE","ERROR: File is not founded");
         }catch (Exception e)
         {
-            Log.d("ERROR", "Что то явно пошло не по плану");
+            Log.i("ERROR", "Что то явно пошло не по плану");
         }
 
         return schedule;

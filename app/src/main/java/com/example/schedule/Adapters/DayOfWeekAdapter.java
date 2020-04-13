@@ -88,7 +88,7 @@ public class DayOfWeekAdapter extends RecyclerView.Adapter<DayOfWeekAdapter.MyHo
                 panel.setBackgroundResource(R.color.haveInfo);
             }
 
-            dayOfWeek.setText(dayOfWeekArray[day.getDayOfWeek()]);
+            dayOfWeek.setText(dayOfWeekArray[position]);
             count.setText(String.valueOf(day.getCount()));
         }
     }

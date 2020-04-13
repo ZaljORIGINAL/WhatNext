@@ -110,7 +110,7 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
 
             case IntentHelper.SCHEDULE_OPTIONS:
             {
-                if (resultCode == RESULT_OK || resultCode == IntentHelper.RESULT_DELETE)
+                if (resultCode == RESULT_OK || resultCode == IntentHelper.RESULT_DELETED)
                 {
                     updateList();
                 }

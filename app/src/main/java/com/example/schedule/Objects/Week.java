@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class Week implements Parcelable
 {
@@ -15,16 +16,15 @@ public class Week implements Parcelable
         this.number = number;
         daysOfWeek = new ArrayList<>();
 
-        for (byte index = 0; index < 7; index++)
-        {
-            DayOfWeek day = new DayOfWeek(index, new ArrayList<Discipline>());
-            daysOfWeek.add(day);
-        }
-    }
 
-    public Week(int number, ArrayList<DayOfWeek> daysOfWeek){
-        this.number = (byte) number;
-        this.daysOfWeek = daysOfWeek;
+        daysOfWeek.add(new DayOfWeek((byte) Calendar.MONDAY, new ArrayList<Discipline>()));
+        daysOfWeek.add(new DayOfWeek((byte) Calendar.TUESDAY, new ArrayList<Discipline>()));
+        daysOfWeek.add(new DayOfWeek((byte) Calendar.WEDNESDAY, new ArrayList<Discipline>()));
+        daysOfWeek.add(new DayOfWeek((byte) Calendar.THURSDAY, new ArrayList<Discipline>()));
+        daysOfWeek.add(new DayOfWeek((byte) Calendar.FRIDAY, new ArrayList<Discipline>()));
+        daysOfWeek.add(new DayOfWeek((byte) Calendar.SATURDAY, new ArrayList<Discipline>()));
+        daysOfWeek.add(new DayOfWeek((byte) Calendar.SUNDAY, new ArrayList<Discipline>()));
+
     }
 
     protected Week(Parcel in) {
@@ -53,9 +53,11 @@ public class Week implements Parcelable
     public ArrayList<DayOfWeek> getDaysOfWeek(){
         return daysOfWeek;
     }
-    public ArrayList<Discipline> getDisciplines(byte dayOfWeek)
-    {
+    public ArrayList<Discipline> getDisciplines(int dayOfWeek) {
         return daysOfWeek.get(dayOfWeek).getDisciplines();
+    }
+    public DayOfWeek getDayOfWeek(int dayOfWeek) {
+        return daysOfWeek.get(dayOfWeek);
     }
     /**
      * Set methods
@@ -66,9 +68,9 @@ public class Week implements Parcelable
     public void setDaysOfWeek(ArrayList<DayOfWeek> daysOfWeek){
         this.daysOfWeek = daysOfWeek;
     }
-    public void setDisciplinesOfDay(ArrayList<Discipline> disciplines, int index)
+    public void setDayOfWeek(int index, DayOfWeek dayOfWeek)
     {
-        daysOfWeek.set(index ,new DayOfWeek((byte) index, disciplines));
+        daysOfWeek.set(index, dayOfWeek);
     }
 
     @Override

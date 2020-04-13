@@ -38,6 +38,7 @@ public class ScheduleOfDayActivity extends AppCompatActivity implements Discipli
     private ArrayAdapter<String> adapterPosition;
     private ArrayAdapter<String> adapterNames;
 
+    private Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -49,9 +50,11 @@ public class ScheduleOfDayActivity extends AppCompatActivity implements Discipli
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
+        intent = getIntent();
+
         list = (RecyclerView)findViewById(R.id.elementsList);
         list.setLayoutManager(new LinearLayoutManager(this));
-        day = getIntent().getParcelableExtra("DAY");
+        day = intent.getParcelableExtra("DAY");
         adapter = new DisciplineAdapter(this, day.getDisciplines(), this);
         list.setAdapter(adapter);
 
@@ -69,9 +72,7 @@ public class ScheduleOfDayActivity extends AppCompatActivity implements Discipli
         switch (item.getItemId())
         {
             case android.R.id.home:
-                Intent intent = new Intent();
                 intent.putExtra("DAY", day);
-
                 setResult(RESULT_OK, intent);
                 finish();
                 return true;
@@ -91,7 +92,6 @@ public class ScheduleOfDayActivity extends AppCompatActivity implements Discipli
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent();
         intent.putExtra("DAY", day);
 
         setResult(RESULT_OK, intent);
@@ -100,7 +100,6 @@ public class ScheduleOfDayActivity extends AppCompatActivity implements Discipli
 
     private void addDiscipline()
     {
-        //Показать диалог для удаления
         disciplineBuilder = new Discipline();
 
         setDisciplineOptions(disciplineBuilder, -1);
@@ -117,12 +116,19 @@ public class ScheduleOfDayActivity extends AppCompatActivity implements Discipli
         return strings;
     }
 
-    private void updateAdapter()
+    private void updateNameOfDisciplineAdapter()
     {
         adapterNames = new ArrayAdapter<>(
                 this,
                 android.R.layout.simple_dropdown_item_1line,
                 ScheduleBuilderActivity.namesOfDisciplines);
+    }
+
+    private void updateDisciplineAdapter()
+    {
+        adapter = new DisciplineAdapter(this, day.getDisciplines(), this);
+        list.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
     }
 
     private void setDisciplineOptions(Discipline discipline, final int position)
@@ -234,7 +240,7 @@ public class ScheduleOfDayActivity extends AppCompatActivity implements Discipli
                     if (!ScheduleBuilderActivity.namesOfDisciplines.contains(setNameAC.getText().toString()))
                     {
                         ScheduleBuilderActivity.namesOfDisciplines.add(setNameAC.getText().toString());
-                        updateAdapter();
+                        updateNameOfDisciplineAdapter();
                     }
                     disciplineBuilder.setBuilding(setBuilding.getText().toString());
                     disciplineBuilder.setAuditorium(setAuditory.getText().toString());
@@ -249,7 +255,7 @@ public class ScheduleOfDayActivity extends AppCompatActivity implements Discipli
 
                     day.sortDisciplines();
 
-                    adapter.notifyDataSetChanged();
+                    updateDisciplineAdapter();
                 }
             }
         });
@@ -267,7 +273,7 @@ public class ScheduleOfDayActivity extends AppCompatActivity implements Discipli
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     day.removeDiscipline(position);
-                    adapter.notifyDataSetChanged();
+                    updateDisciplineAdapter();
                 }
             });
         }

@@ -160,8 +160,74 @@ public class DisciplineDBHelper extends SQLiteOpenHelper
         return disciplines;
     }
 
-    public void deleteDate(Context context)
+    public ArrayList<Discipline> getDisciplines(SQLiteDatabase db, ArrayList<TimeSchedule> times)
     {
-        context.deleteDatabase(getDatabaseName());
+        this.db = db;
+        ArrayList<Discipline> disciplines = new ArrayList<>();
+
+        String[] columns = new String[]
+                {
+                        DisciplinesDB._ID,
+                        DisciplinesDB.DAY_OF_WEEK,
+                        DisciplinesDB.POSITION,
+                        DisciplinesDB.TIME,
+                        DisciplinesDB.DISCIPLINE_NAME,
+                        DisciplinesDB.TYPE,
+                        DisciplinesDB.BUILDING,
+                        DisciplinesDB.AUDITORIUM
+                };
+
+
+
+        Cursor cursor = db.query(
+                getDatabaseName(),
+                columns,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+
+
+
+
+        try {
+            int idColumnIndex = cursor.getColumnIndex(DisciplinesDB._ID),
+                    dayOfWeekColumnIndex = cursor.getColumnIndex(DisciplinesDB.DAY_OF_WEEK),
+                    positionColumnIndex = cursor.getColumnIndex(DisciplinesDB.POSITION),
+                    timeColumnIndex = cursor.getColumnIndex(DisciplinesDB.TIME),
+                    disciplineNameColumnIndex = cursor.getColumnIndex(DisciplinesDB.DISCIPLINE_NAME),
+                    typeColumnIndex = cursor.getColumnIndex(DisciplinesDB.TYPE),
+                    buildingColumnIndex = cursor.getColumnIndex(DisciplinesDB.BUILDING),
+                    auditoriumColumnIndex = cursor.getColumnIndex(DisciplinesDB.AUDITORIUM);
+
+            while (cursor.moveToNext())
+            {
+                int currentID = cursor.getInt(idColumnIndex),
+                        currentDayOfWeek = cursor.getInt(dayOfWeekColumnIndex),
+                        currentPosition = cursor.getInt(positionColumnIndex),
+                        currentTime = cursor.getInt(timeColumnIndex),
+                        currentType = cursor.getInt(typeColumnIndex);
+
+                String currentDisciplineName = cursor.getString(disciplineNameColumnIndex),
+                        currentBuilding = cursor.getString(buildingColumnIndex),
+                        currentAuditorium = cursor.getString(auditoriumColumnIndex);
+
+                disciplines.add(new Discipline(
+                        currentID,
+                        currentPosition,
+                        times.get(currentTime),
+                        currentDayOfWeek,
+                        currentDisciplineName,
+                        currentType,
+                        currentBuilding,
+                        currentAuditorium));
+            }
+        }finally {
+            cursor.close();
+        }
+
+        return disciplines;
     }
 }

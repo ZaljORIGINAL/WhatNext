@@ -6,10 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
@@ -21,15 +19,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.Toast;
 
 import com.example.schedule.Adapters.DisciplineAdapter;
 import com.example.schedule.Data.DataContract;
 import com.example.schedule.Data.DisciplineDBHelper;
 import com.example.schedule.Data.MyAppSettings;
 import com.example.schedule.Data.TimeDBHelper;
+import com.example.schedule.Objects.Discipline;
 import com.example.schedule.Objects.Schedule;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity implements DisciplineAdapter.iOnItemClickListener
@@ -112,35 +113,6 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
                 intent.putExtra(IntentHelper.SCHEDULE, today);
                 startActivityForResult(intent, IntentHelper.EDIT_SCHEDULE);
             }break;
-
-            case R.id.delete:
-            {
-                AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-                dialog.setTitle(this.getResources().getString(R.string.Delete));
-                dialog.setMessage(this.getResources().getString(R.string.QuestionOfDelete));
-                dialog.setPositiveButton(R.string.dialog_positive_button,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                DataContract.deleteDate(getApplicationContext(), today);
-
-                                Intent intent = new Intent(getApplicationContext(), SelectScheduleActivity.class);
-                                startActivityForResult(intent, IntentHelper.SELECT_SCHEDULE);
-
-                                SharedPreferences.Editor editor = settings.edit();
-                                editor.putString(MyAppSettings.LAST_SCHEDULE, MyAppSettings.NULL);
-                                editor.apply();
-                            }
-                        });
-                dialog.setNegativeButton(R.string.dialog_negative_button,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                            }
-                        });
-                dialog.show();
-            }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -172,7 +144,6 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
                 editor.apply();
             }break;
 
-            /*FIXME Хрен поми что происходит при той или иной ситуации, нужно проверять*/
             case IntentHelper.EDIT_SCHEDULE:
             {
                 switch (resultCode)
@@ -182,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
                         updateRecycleView();
                     }break;
 
-                    case IntentHelper.RESULT_DELETE:
+                    case IntentHelper.RESULT_DELETED:
                     {
                         Intent intent = new Intent(this, SelectScheduleActivity.class);
                         startActivityForResult(intent, IntentHelper.SELECT_SCHEDULE);
@@ -196,6 +167,11 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
                     {
 
                     };
+
+                    case IntentHelper.RESULT_ERROR:
+                    {
+                        Toast.makeText(this, this.getText(R.string.toast_message_scheduleIsNotCreated), Toast.LENGTH_LONG).show();
+                    }
                 }
             }
         }
@@ -277,7 +253,7 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
             disciplineDB = new DisciplineDBHelper(this, today.getNameOfDB_1());
         }
         db = disciplineDB.getReadableDatabase();
-        today.setDisciplines(disciplineDB.getScheduleToday(db, calendar.get(Calendar.DAY_OF_WEEK) - 2,
+        today.setDisciplines(disciplineDB.getScheduleToday(db, calendar.get(Calendar.DAY_OF_WEEK),
                 today.getTimes()));
     }
 
