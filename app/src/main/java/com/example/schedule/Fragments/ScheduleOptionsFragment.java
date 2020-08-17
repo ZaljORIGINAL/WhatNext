@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,7 +78,7 @@ public class ScheduleOptionsFragment extends Fragment
     {
         View view =  inflater.inflate(R.layout.fragment_main_settings_of_schedule, container, false);
 
-        //Инийиализация элементов
+        //Инициализация элементов
         name = view.findViewById(R.id.setNameOfScheduleFragment);
         name.addTextChangedListener(new TextWatcher() {
             @Override

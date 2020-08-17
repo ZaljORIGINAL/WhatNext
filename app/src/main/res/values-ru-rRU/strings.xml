@@ -77,7 +77,7 @@
     <string name="activity_ScheduleOfDay_dialog_position">Позиция</string>
     <string name="activity_ScheduleOfDay_dialog_name">Наименование</string>
     <string name="activity_ScheduleOfDay_dialog_type">Тип</string>
-<!--TODO Имеется 2 массива сс типо дисциплины, ОДНО ИЗ НИХ ДОЛЖНО ЖИТЬ-->
+<!--TODO Имеется 2 массива с типо дисциплины, ОДНО ИЗ НИХ ДОЛЖНО ЖИТЬ-->
     <string-array name="activity_ScheduleOfDay_dialog_types">
         <item>Лекция</item>
         <item>Практика</item>
