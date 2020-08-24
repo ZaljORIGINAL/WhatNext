@@ -2,6 +2,16 @@
 <resources>
     <string name="app_name">Schedule</string>
 
+    <!--Default strings-->
+    <string name="Standard_Error">Ошибка</string>
+    <string name="Standard_Delete">Удалить</string>
+    <string name="Standard_QuestionOfDelete">Вы уверены в действии?</string>
+    <string name="Standard_dialog_positive_button">Принять</string>
+    <string name="Standard_dialog_negative_button">Отмена</string>
+    <string name="Standard_element_of_list_NoInfo">Список пуст</string>
+    <string name="Standard_Dialog_Report">Процесс завершен:</string>
+    <string name="Standard_isComplete">Завершен</string>
+
     <!--Dialog for creating new schedule-->
     <string name="message_title_of_dialog">Новое расписание</string>
     <string name="name_of_schedule_hint_dialog">Имя расписания</string>
@@ -9,25 +19,24 @@
     <string name="info_text_dialog">Выберите понедельник той недели когда будет вернхнее расписание</string>
     <string name="select_Day_button_dialog">Выбрать день</string>
 
-    <!--Default strings-->
-    <string name="Error">Ошибка</string>
-    <string name="Delete">Удалить</string>
-    <string name="QuestionOfDelete">Вы уверены в действии?</string>
-    <string name="dialog_positive_button">Принять</string>
-    <string name="dialog_negative_button">Отмена</string>
-    <string name="element_of_list_NoInfo">Список пуст</string>
-
-    <!--MainActivity-->
+    <!-- MainActivity.java -->
     <string name="activity_MainActivity_text_ListHasNotInfo">День пуст</string>
-    <!--Menu-->
-        <string name="MainActivity_menu_Schedules">Расписания</string>
-        <string name="MainActivity_menu_Edit">Изменить</string>
     <string name="toast_message_scheduleIsNotCreated">Расписание еще не создано</string>
     <string name="toast_message_scheduleIsDeleted">Расписание удалено</string>
+    <!-- menu_main_activity.xml -->
+        <string name="menu_main_activity_Schedules">Расписания</string>
+        <string name="menu_main_activity_Edit">Изменить</string>
+        <string name="menu_main_activity_Export">Экспортировать</string>
 
     <!--SelectScheduleActivity-->
     <string name="nameOfActivity_SelectSchedule">Расписания</string>
     <string name="activity_SelectScheduleActivity_text_ListHasNotInfo">У вас еще нет расписаний.</string>
+        <!--Toast-->
+        <string name="SelectScheduleActivity_Toast_storageIsNotAvailable">Внешнее хранилище недоступно</string>
+        <string name="SelectScheduleActivity_Toast_errorFileList">Ошибка. Фаил загрузок</string>
+        <!--Dialog-->
+        <string name="SelectScheduleActivity_Dialog_ChooseFile">Select</string>
+        <string name="SelectScheduleActivity_Dialog_NotFound">Файлы не найдены</string>
 
     <!--ScheduleBuilderActivity-->
     <string name="nameOfActivity_ScheduleCreating">Редактирование</string>
@@ -90,4 +99,11 @@
         <!--ScheduleCreatingActivity-->
         <string name="ScheduleCreatingActivity_Error_fieldOfNameIsClear">Поле имены пустое, пожалуйста задайте имя</string>
         <string name="ScheduleCreatingActivity_Error_topWeekIsNotSelected">Не указана верхняя неделя</string>
+        <!--DataContract.FileManager-->
+        <string name="FileManager_Error_mainParamsOfScheduleNotExist">Ошибка! Фаил основных параметров расписания отсутствует.</string>
+        <string name="FileManager_Error_mainParamsOfScheduleNotMoved">Ошибка! Фаил основных параметров расписания не перемещен.</string>
+
+
+    <!-- menu_select_schedule.xml -->
+    <string name="menu_select_schedule_menu_import">Импортировать</string>
 </resources>

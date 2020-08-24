@@ -30,7 +30,7 @@ public class SchedulesAdapter extends RecyclerView.Adapter<SchedulesAdapter.MyHo
     {
         String path = context.getFilesDir().getPath() +
                 File.separator +
-                DataContract.FILE_OF_SCHEDULE_DIRECTORY;
+                DataContract.MyFileManager.FILE_OF_SCHEDULE_DIRECTORY;
         file = new File(path);
         names = Arrays.asList(file.list());
 
@@ -162,7 +162,7 @@ public class SchedulesAdapter extends RecyclerView.Adapter<SchedulesAdapter.MyHo
             StringBuffer path = new StringBuffer();
             path.append(context.getFilesDir().getPath())
                     .append(File.separator)
-                    .append(DataContract.FILE_OF_SCHEDULE_DIRECTORY)
+                    .append(DataContract.MyFileManager.FILE_OF_SCHEDULE_DIRECTORY)
                     .append(File.separator)
                     .append(name);
 

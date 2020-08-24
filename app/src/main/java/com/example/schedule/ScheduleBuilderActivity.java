@@ -1,7 +1,6 @@
 package com.example.schedule;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
@@ -9,32 +8,27 @@ import androidx.viewpager.widget.ViewPager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.schedule.Adapters.FragmentAdapter;
 import com.example.schedule.Data.DataContract;
 import com.example.schedule.Data.DisciplineDBHelper;
-import com.example.schedule.Data.MyAppSettings;
 import com.example.schedule.Data.TimeDBHelper;
 import com.example.schedule.Objects.DayOfWeek;
-import com.example.schedule.Objects.Discipline;
 import com.example.schedule.Objects.Schedule;
 import com.example.schedule.Objects.TimeSchedule;
 import com.example.schedule.Objects.Week;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
 
 public class ScheduleBuilderActivity extends AppCompatActivity
 {
     //Данные
+    //FIXME возможно стоит применить паттерн Singleton.
     public static Schedule schedule;
     public static Week
             topWeek,
@@ -143,7 +137,7 @@ public class ScheduleBuilderActivity extends AppCompatActivity
     private boolean checkScheduleFields()
     {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle(R.string.Error);
+        dialog.setTitle(R.string.Standard_Error);
 
         boolean result = true;
 
@@ -151,7 +145,7 @@ public class ScheduleBuilderActivity extends AppCompatActivity
         {
             result = false;
             dialog.setMessage(getResources().getString(R.string.ScheduleCreatingActivity_Error_fieldOfNameIsClear));
-            dialog.setPositiveButton(R.string.dialog_positive_button, null);
+            dialog.setPositiveButton(R.string.Standard_dialog_positive_button, null);
             dialog.show();
         }else if (schedule.getType() == 1)
         {
@@ -159,7 +153,7 @@ public class ScheduleBuilderActivity extends AppCompatActivity
             {
                 result = false;
                 dialog.setMessage(getResources().getString(R.string.ScheduleCreatingActivity_Error_topWeekIsNotSelected));
-                dialog.setPositiveButton(R.string.dialog_positive_button, null);
+                dialog.setPositiveButton(R.string.Standard_dialog_positive_button, null);
                 dialog.show();
             }
         }
@@ -172,18 +166,18 @@ public class ScheduleBuilderActivity extends AppCompatActivity
     {
         if (parentIntent.getIntExtra(IntentHelper.COMMAND, 0) == IntentHelper.EDIT_SCHEDULE)
         {
-            DataContract.deleteDate(this, schedule);
+            DataContract.MyFileManager.deleteDate(this, schedule.getNameOfFileSchedule());
         }
 
         //Сохранение основных параметров
         StringBuffer path = new StringBuffer();
         path.append(this.getFilesDir().getPath())
                 .append(File.separator)
-                .append(DataContract.FILE_OF_SCHEDULE_DIRECTORY)
+                .append(DataContract.MyFileManager.FILE_OF_SCHEDULE_DIRECTORY)
                 .append(File.separator)
                 .append(schedule.getNameOfFileSchedule())
                 .append(".txt");
-        MyAppSettings.createFileOfOptions(path.toString(), schedule);
+        DataContract.MyFileManager.createFileOfOptions(path.toString(), schedule);
 
         SQLiteDatabase db;
 
@@ -235,19 +229,19 @@ public class ScheduleBuilderActivity extends AppCompatActivity
         }else
         {
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-            dialog.setTitle(this.getResources().getString(R.string.Delete));
-            dialog.setMessage(this.getResources().getString(R.string.QuestionOfDelete));
-            dialog.setPositiveButton(R.string.dialog_positive_button,
+            dialog.setTitle(this.getResources().getString(R.string.Standard_Delete));
+            dialog.setMessage(this.getResources().getString(R.string.Standard_QuestionOfDelete));
+            dialog.setPositiveButton(R.string.Standard_dialog_positive_button,
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            DataContract.deleteDate(getApplicationContext(), schedule);
+                            DataContract.MyFileManager.deleteDate(getApplicationContext(), schedule.getNameOfFileSchedule());
 
                             setResult(IntentHelper.RESULT_DELETED);
                             finish();
                         }
                     });
-            dialog.setNegativeButton(R.string.dialog_negative_button,
+            dialog.setNegativeButton(R.string.Standard_dialog_negative_button,
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {

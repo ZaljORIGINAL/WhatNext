@@ -1,16 +1,26 @@
 package com.example.schedule.Data;
 
 import android.content.Context;
+import android.os.Build;
+import android.os.Environment;
 import android.provider.BaseColumns;
+import android.util.Log;
+
+import androidx.annotation.RequiresApi;
 
 import com.example.schedule.Objects.Schedule;
+import com.example.schedule.R;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 public class DataContract
 {
-    public final static String DATA_DIRECTORY = "database";
-    public final static String FILE_OF_SCHEDULE_DIRECTORY = "scheduleFiles";
     public final static String UPPER_SCHEDULE = "top";
     public final static String LOWER_SCHEDULE = "lower";
     public final static String TIME_DB = "time";
@@ -48,23 +58,373 @@ public class DataContract
                 FINISH_MINUTE = "finishMinute";
     }
 
-    public static void deleteDate(Context context, Schedule schedule)
+    public static class MyFileManager
     {
-        String path = context.getFilesDir().getPath() +
-                File.separator +
-                FILE_OF_SCHEDULE_DIRECTORY +
-                File.separator +
-                schedule.getNameOfFileSchedule() +
-                ".txt";
-        File file = new File(path);
-        file.delete();
+        //Directory
+        public final static String DATA_DIRECTORY = "database";
+        public final static String FILE_OF_SCHEDULE_DIRECTORY = "Schedules";
+        public final static String MIGRATE_OPTIONS_DIRECTORY = "Options";
+        public final static String MIGRATE_DATABASE_DIRECTORY = "Database";
 
-        context.deleteDatabase(schedule.getNameOfTimeDB());
-        context.deleteDatabase(schedule.getNameOfDB_1());
-        try {
-            context.deleteDatabase(schedule.getNameOfDB_2());
-        }catch (Exception e)
+        //Report
+        public final static String REPORT_NO_PROBLEM = "is complete";
+        public final static String REPORT_ERROR = "ERROR";
+
+        public static void createFileOfOptions(String path, Schedule schedule)
         {
+            try
+            {
+                File file = new File(path);
+                FileWriter writer = new FileWriter(file.getPath(), false);
+                writer.append(String.valueOf(schedule.getType())).append("\n")
+                        .append(schedule.getNameOfSchedule()).append("\n")
+                        .append(String.valueOf(schedule.getParity()));
+
+                writer.close();
+            }catch (FileNotFoundException e)
+            {
+                Log.d("SAVE","ERROR: MAIN FILE NOTE CREATED");
+            }catch (Exception e)
+            {
+                Log.d("ERROR", "Что то явно пошло не по плану");
+            }
         }
+
+        public static Schedule readFileOfOptions(String path)
+        {
+            File file  = new File(path);
+            Schedule schedule = new Schedule(file.getName());
+            try {
+                BufferedReader reader = new BufferedReader(new FileReader(file));
+                //Первая строка содержит ИМЯ расписания: Читаем
+                schedule.setType(reader.readLine());
+                //Вторая строка содержит ТИП расписания: Читаем
+                schedule.setNameOfSchedule(reader.readLine());
+                //Третья строкаа сожержит параметры четности
+                schedule.setParity(reader.readLine());
+            }catch (FileNotFoundException e)
+            {
+                Log.i("ERROR","ERROR: File is not founded");
+            }catch (Exception e)
+            {
+                Log.i("ERROR", "Что то явно пошло не по плану");
+            }
+
+            return schedule;
+        }
+
+        public static void deleteDate(Context context, String name)
+        {
+            String path;
+            File file;
+            int typeOfSchedule;
+
+            path = context.getFilesDir().getPath() +
+                    File.separator +
+                    FILE_OF_SCHEDULE_DIRECTORY +
+                    File.separator +
+                    name + ".txt" +
+                    ".txt";
+            file = new File(path);
+            if (file.exists())
+            {
+                file.delete();
+                Log.i("Delete DATA", "Deleted: file options of user schedule");
+            }
+
+            try {
+                context.deleteDatabase("time" + name);
+                Log.i("Delete DATA", "Deleted: TimeDB");
+            }catch (Exception e)
+            {
+                Log.i("Delete DATA", "TimeDB not exist");
+            }
+
+            try {
+                context.deleteDatabase("top" + name);
+                Log.i("Delete DATA", "Deleted: DB_1");
+            }catch (Exception e)
+            {
+                Log.i("Delete DATA", "DB_1 not exist");
+            }
+
+
+            try {
+                context.deleteDatabase("lower" + name);
+                Log.i("Delete DATA", "Deleted: DB_2");
+            }catch (Exception e)
+            {
+                Log.i("Delete DATA", "DB_2 not exist");
+            }
+        }
+
+        public static boolean importFiles(Context context, String name)
+        {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            {
+                boolean[] dbExist = new boolean[]
+                        {
+                                false,//Отвечает за DB1
+                                false,//Отвечает за DB2
+                                false //Отвечает за TimeDB
+                        };
+                int typeOfSchedule;
+
+                //Путь к коренным директориям
+                StringBuilder
+                        pathToExternalStorage = new StringBuilder(),
+                        pathToInternalStorage = new StringBuilder();
+                String[] nameOfFile;
+                File fileOfExternal;
+                //Путь к внутренней директории
+                File fileOfInternal;
+
+                //Путь к паку
+                pathToExternalStorage
+                        .append(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath())
+                        .append(File.separator)
+                        .append(name);
+
+                //Перенос основного фала параметров
+                pathToInternalStorage
+                        .append(context.getFilesDir().getPath());
+                fileOfExternal = new File(pathToExternalStorage.toString(), MIGRATE_OPTIONS_DIRECTORY);
+                nameOfFile = fileOfExternal.list();
+                if (nameOfFile != null)
+                {
+                    fileOfInternal = new File( pathToInternalStorage.toString(), FILE_OF_SCHEDULE_DIRECTORY);
+                    fileOfExternal = new File(fileOfExternal, nameOfFile[0]);
+
+                    //Перед импортом основных параметров получаем информацию о типе распиания
+                    try (BufferedReader reader = new BufferedReader(new FileReader(fileOfExternal)))
+                    {
+                        typeOfSchedule = Integer.parseInt(reader.readLine());
+                        if (!(typeOfSchedule == MyAppSettings.SCHEDULE_TYPE_1 || typeOfSchedule == MyAppSettings.SCHEDULE_TYPE_2))
+                        {
+                            //Ошибка, в файле неправильная запист типа расписания
+                            return false;
+                        }
+                    }catch (Exception e)
+                    {
+                        //Ошибка, чтение файла не удалось
+                        return false;
+                    }
+
+                    try {
+                        Files.move(fileOfExternal.toPath(), fileOfInternal.toPath().resolve(fileOfExternal.getName()), StandardCopyOption.REPLACE_EXISTING);
+                    }catch (Exception e)
+                    {
+                        //Ошибка, неудалось переместить фаил
+                        return false;
+                    }
+    /*                if (fileOfExternal.renameTo(fileOfInternal))
+                    {
+                        Log.i("Import", "File moved: " + nameOfFile[0]);
+                    }else
+                    {
+                        Log.i("Import", "File not moved: " + nameOfFile[0]);
+                        return context.getString(R.string.FileManager_Error_mainParamsOfScheduleNotMoved);
+                    }*/
+                }else
+                {
+                    //Ошибка, фаил параметров не обнаружен
+                    return false;
+                }
+
+                //Обновление корневых путей
+                pathToExternalStorage
+                        .append(MIGRATE_DATABASE_DIRECTORY);
+                pathToInternalStorage = new StringBuilder();
+                pathToInternalStorage
+                        .append(context.getDataDir().getPath());
+
+                fileOfExternal = new File(pathToExternalStorage.toString());
+                fileOfInternal = new File(pathToInternalStorage.toString());
+
+                //Проверка на наличие и отсутсвие DB
+                nameOfFile = fileOfExternal.list();
+                if (nameOfFile != null)
+                {
+                    for (int index = 0; index < nameOfFile.length; index++)
+                    {
+                        fileOfExternal = new File(pathToExternalStorage.toString(), nameOfFile[index]);
+
+                        if (nameOfFile[index].indexOf("lower") == 0)
+                        {
+                            dbExist[0] = true;
+                            if(importDB(fileOfExternal, fileOfInternal))
+                                return false; //Ошибка, неудача переноса
+                        }else if (nameOfFile[index].indexOf("top") == 0)
+                        {
+                            dbExist[1] = true;
+                            if(importDB(fileOfExternal, fileOfInternal))
+                                return false; //Ошибка, неудача переноса
+                        }else if (nameOfFile[index].indexOf("time") == 0)
+                        {
+                            dbExist[2] = true;
+                            if(importDB(fileOfExternal, fileOfInternal))
+                                return false; //Ошибка, неудача переноса
+                        }
+                    }
+
+                    //Окнчательная проверка
+                    if (typeOfSchedule == MyAppSettings.SCHEDULE_TYPE_2)
+                    {
+                        //Ошибка, фаил второго расписания не обноружен
+                        return dbExist[1] && dbExist[0];
+                    }
+                }else
+                {
+                    //Ошибка, файлы DB небыли обнаружены
+                    return false;
+                }
+
+                return true;
+            }else
+            {
+                return false;
+            }
+        }
+
+        @RequiresApi(api = Build.VERSION_CODES.O)
+        private static boolean importDB(File fileOfExternal, File fileOfInternal)
+        {
+            try
+            {
+                Files.move(fileOfExternal.toPath(), fileOfInternal.toPath().resolve(fileOfExternal.getName()));
+
+                return false;
+            }catch (Exception e)
+            {
+                return true;
+            }
+        }
+
+        public static boolean exportFiles(Context context, String nameOfOptionsFile)
+        {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            {
+                //Путь к коренным директориям
+                StringBuilder
+                        pathToExternalStorage = new StringBuilder(),
+                        pathToInternalStorage = new StringBuilder();
+                String[] nameOfFile;
+                File fileOfExternal;
+                File fileOfInternal;
+
+                //Создание пакета
+                pathToExternalStorage
+                        .append(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath())
+                        .append(File.separator)
+                        .append("mSch")
+                        .append(nameOfOptionsFile);
+                fileOfExternal = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "mSch" + nameOfOptionsFile);
+                fileOfExternal.mkdirs();
+
+                //Обновление коренных путей
+                pathToInternalStorage
+                        .append(context.getFilesDir())
+                        .append(File.separator)
+                        .append(FILE_OF_SCHEDULE_DIRECTORY);
+                pathToExternalStorage
+                        .append(File.separator)
+                        .append(MIGRATE_OPTIONS_DIRECTORY);
+
+                //создание папки для фала с параметрами расписания
+                fileOfInternal = new File(pathToExternalStorage.toString());
+                fileOfInternal.mkdirs();
+
+                //Получаем список файлов в директории
+                nameOfFile = fileOfInternal.list();
+
+                try
+                {
+                    if (nameOfFile != null)
+                    {
+                        fileOfExternal = new File(pathToExternalStorage.toString() + File.separator + MIGRATE_OPTIONS_DIRECTORY, nameOfFile[0]);
+                        Files.copy(fileOfInternal.toPath(), fileOfExternal.toPath().resolve(fileOfInternal.getName()), StandardCopyOption.REPLACE_EXISTING);
+                    }else
+                    {
+                        //Ошибка,
+                        return false;
+                    }
+
+                }catch (Exception e)
+                {
+                    /*fileOfInternal = new File(pathToInternalStorage.toString() + File.separator + FILE_OF_SCHEDULE_DIRECTORY);
+                    Log.i("ERROR", "DataContract.FileManager.exportFiles: Неудалось скопировать фаил " + fileOfInternal.getPath());*/
+
+                    //Ошибка,
+                    return false;
+                }
+
+                //Обновление коренных файлов
+                pathToInternalStorage = new StringBuilder();
+                pathToInternalStorage
+                        .append(context.getDataDir().getPath());
+                pathToExternalStorage = new StringBuilder();
+                pathToExternalStorage
+                        .append(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath())
+                        .append(File.separator)
+                        .append("mSch")
+                        .append(nameOfOptionsFile)
+                        .append(File.separator)
+                        .append(MIGRATE_DATABASE_DIRECTORY);
+
+                //создание папки для DB
+                fileOfExternal = new File(pathToExternalStorage.toString());
+                fileOfExternal.mkdirs();
+
+                //Получаем список файлов в директории
+                nameOfFile = fileOfInternal.list();
+
+                try
+                {
+                    if (nameOfFile != null)
+                    {
+                        for (String s : nameOfFile) {
+                            fileOfInternal = new File(pathToInternalStorage.toString(), s);
+                            Files.copy(fileOfInternal.toPath(), fileOfExternal.toPath().resolve(fileOfInternal.getName()), StandardCopyOption.REPLACE_EXISTING);
+                        }
+                    }else
+                    {
+                        //Ошибка,
+                        return false;
+                    }
+
+                }catch (Exception e)
+                {
+                    //Ошибка,
+                    return false;
+                }
+
+                return true;
+            }else
+            {
+                //Ошибка,
+                return false;
+            }
+        }
+    }
+
+    public static class MyAppSettings
+    {
+        //Name file of settings
+        public static final String LAST_VIEWED_SCHEDULE = "LAST_ACCESS";
+
+        //Field
+        public static final String LAST_SCHEDULE = "LAST_SCHEDULE"; //File name it is create time.
+
+        //Schedule params
+        public static final int NULL_INFO = -1;
+        public static final int YES = 1;
+        public static final int NO = 0;
+        public static final int SCHEDULE_TYPE_1 = 7;
+        public static final int SCHEDULE_TYPE_2 = 14;
+        public static final int parity = 0;
+        public static final String NULL = "NULL";
+
+        //Permission
+        public static final int PERMISSION_REQUEST_EXTERNAL_STORAGE = 1;
     }
 }

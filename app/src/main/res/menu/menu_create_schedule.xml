@@ -5,7 +5,7 @@
     <item
         android:id="@+id/deleteSchedule"
         android:icon="@drawable/delete_white"
-        android:title="@string/Delete"
+        android:title="@string/Standard_Delete"
         app:showAsAction="always" />
 
     <item

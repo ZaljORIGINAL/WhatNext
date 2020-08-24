@@ -213,7 +213,7 @@ public class TimeFragment extends Fragment implements SchedulesAdapter.iItemClic
             }
         });
 
-        dialog.setPositiveButton(R.string.dialog_positive_button, new DialogInterface.OnClickListener()
+        dialog.setPositiveButton(R.string.Standard_dialog_positive_button, new DialogInterface.OnClickListener()
         {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -230,7 +230,7 @@ public class TimeFragment extends Fragment implements SchedulesAdapter.iItemClic
             }
         });
 
-        dialog.setNegativeButton(R.string.dialog_negative_button, new DialogInterface.OnClickListener()
+        dialog.setNegativeButton(R.string.Standard_dialog_negative_button, new DialogInterface.OnClickListener()
         {
             @Override
             public void onClick(DialogInterface dialog, int which) {

@@ -6,14 +6,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,13 +26,10 @@ import android.widget.Toast;
 import com.example.schedule.Adapters.DisciplineAdapter;
 import com.example.schedule.Data.DataContract;
 import com.example.schedule.Data.DisciplineDBHelper;
-import com.example.schedule.Data.MyAppSettings;
 import com.example.schedule.Data.TimeDBHelper;
-import com.example.schedule.Objects.Discipline;
 import com.example.schedule.Objects.Schedule;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity implements DisciplineAdapter.iOnItemClickListener
@@ -62,11 +61,11 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
         updateDateButton();
 
         //Имя файла настроек
-        settings = getSharedPreferences(MyAppSettings.LAST_VIEWED_SCHEDULE, Context.MODE_PRIVATE);
+        settings = getSharedPreferences(DataContract.MyAppSettings.LAST_VIEWED_SCHEDULE, Context.MODE_PRIVATE);
 
         /*Проверка на последнее просматриваемое расписание.
          * Если пользователь уже работал с каким то расписание и не вышел из него, то оно и запустится*/
-        if (settings.getString(MyAppSettings.LAST_SCHEDULE, MyAppSettings.NULL).equals(MyAppSettings.NULL))
+        if (settings.getString(DataContract.MyAppSettings.LAST_SCHEDULE, DataContract.MyAppSettings.NULL).equals(DataContract.MyAppSettings.NULL))
         {
             //Открываем активити выбора расписания
             Intent intent = new Intent(this, SelectScheduleActivity.class);
@@ -76,11 +75,11 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
             //Считывается весь документ и сохраняется в объекте
             String path = this.getFilesDir().getPath() +
                     File.separator +
-                    DataContract.FILE_OF_SCHEDULE_DIRECTORY +
+                    DataContract.MyFileManager.FILE_OF_SCHEDULE_DIRECTORY +
                     File.separator +
-                    settings.getString(MyAppSettings.LAST_SCHEDULE, MyAppSettings.NULL) +
+                    settings.getString(DataContract.MyAppSettings.LAST_SCHEDULE, DataContract.MyAppSettings.NULL) +
                     ".txt";
-            today = MyAppSettings.readFileOfOptions(path);
+            today = DataContract.MyFileManager.readFileOfOptions(path);
 
             getScheduleToToday(today);
         }
@@ -89,6 +88,12 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main_activity, menu);
+
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+        {
+            MenuItem exportSchedule = menu.findItem(R.id.exportSchedule);
+            exportSchedule.setVisible(false);
+        }
         return super.onCreateOptionsMenu(menu);
     }
     @Override
@@ -101,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
                 startActivityForResult(intent, IntentHelper.SELECT_SCHEDULE);
 
                 SharedPreferences.Editor editor = settings.edit();
-                editor.putString(MyAppSettings.LAST_SCHEDULE, MyAppSettings.NULL);
+                editor.putString(DataContract.MyAppSettings.LAST_SCHEDULE, DataContract.MyAppSettings.NULL);
                 editor.apply();
             }break;
 
@@ -113,6 +118,30 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
                 intent.putExtra(IntentHelper.SCHEDULE, today);
                 startActivityForResult(intent, IntentHelper.EDIT_SCHEDULE);
             }break;
+
+            case R.id.exportSchedule:
+            {
+                AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+                dialog.setTitle(R.string.Standard_Dialog_Report);
+
+                if(DataContract.MyFileManager.exportFiles(this, today.getNameOfFileSchedule()))
+                {
+                    dialog.setMessage(R.string.Standard_isComplete);
+                }else
+                {
+                    dialog.setMessage(R.string.Standard_Error);
+                }
+
+                dialog.setPositiveButton(R.string.Standard_dialog_positive_button,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+
+                dialog.show();
+            }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -130,17 +159,17 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
                 *  но он этого не делает, а значит в data, ничего не передается*/
                 String path = this.getFilesDir().getPath() +
                         File.separator +
-                        DataContract.FILE_OF_SCHEDULE_DIRECTORY +
+                        DataContract.MyFileManager.FILE_OF_SCHEDULE_DIRECTORY +
                         File.separator +
                         data.getStringExtra(IntentHelper.NAME);
-                today = MyAppSettings.readFileOfOptions(path);
+                today = DataContract.MyFileManager.readFileOfOptions(path);
 
                 //Получение данных из ДБ
                 getScheduleToToday(today);
 
                 //Сохраняем то расписание что открыывали
                 SharedPreferences.Editor editor = settings.edit();
-                editor.putString(MyAppSettings.LAST_SCHEDULE, today.getNameOfFileSchedule());
+                editor.putString(DataContract.MyAppSettings.LAST_SCHEDULE, today.getNameOfFileSchedule());
                 editor.apply();
             }break;
 
@@ -159,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
                         startActivityForResult(intent, IntentHelper.SELECT_SCHEDULE);
 
                         SharedPreferences.Editor editor = settings.edit();
-                        editor.putString(MyAppSettings.LAST_SCHEDULE, MyAppSettings.NULL);
+                        editor.putString(DataContract.MyAppSettings.LAST_SCHEDULE, DataContract.MyAppSettings.NULL);
                         editor.apply();
                     }break;
 

@@ -6,16 +6,30 @@
  * При клике на fab вызывается диологове окно в котором требуется задать наименование нового расписания*/
 package com.example.schedule;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
+import com.example.schedule.Adapters.ChooseListAdapter;
 import com.example.schedule.Adapters.SchedulesAdapter;
 import com.example.schedule.Data.DataContract;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -24,6 +38,8 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+
+import static com.example.schedule.Data.DataContract.MyAppSettings.PERMISSION_REQUEST_EXTERNAL_STORAGE;
 
 public class SelectScheduleActivity extends AppCompatActivity implements SchedulesAdapter.iItemClickListener
 {
@@ -39,7 +55,7 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_select_schedulee);
+        setContentView(R.layout.activity_select_schedule);
 
         FloatingActionButton fab = findViewById(R.id.addNewSchedule);
         fab.setOnClickListener(new View.OnClickListener()
@@ -54,7 +70,7 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
         try {
             String path = this.getFilesDir().getPath() +
                     File.separator +
-                    DataContract.FILE_OF_SCHEDULE_DIRECTORY;
+                    DataContract.MyFileManager.FILE_OF_SCHEDULE_DIRECTORY;
             file = new File(path);
             String[] filesArr;
             if (!file.exists())
@@ -74,6 +90,58 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
         scheduleList.setLayoutManager(new LinearLayoutManager(this));
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        getMenuInflater().inflate(R.menu.menu_select_schedule, menu);
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+        {
+            MenuItem importSchedule = menu.findItem(R.id.importSchedule);
+            importSchedule.setVisible(false);
+        }
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId())
+        {
+            case R.id.importSchedule:
+            {
+                //TODO Получить доступ к файлу Download на внутренней и внешней памяти и вывести в виде диологово окна список всех файлов начинающихся с "mSch". Напртив каждого варианта должен быть CheckButton, после чего выбранный варианты будут загружены в храниие приложения
+                //Провверка на доступ к внешней памяти
+                if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
+                {
+                    Log.i("Copy/Import/Export", "Внешняя память доступна");
+
+                    //Проверка разрешения на доступ к хранилищу
+                    if (ContextCompat.checkSelfPermission(this,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+                            PackageManager.PERMISSION_GRANTED)
+                    {
+                        Log.i("Copy/Import/Export", "Разрешение на внешнее хранилище получено");
+
+                        //Получаем путь к папке Download во внешнейй памяти
+                        findScheduleFile(this);
+                    } else
+                    {
+                        Log.i("Copy/Import/Export", "Разрешение на внешнее хранилище не получено, запрошиваю доступ");
+
+                        //Запрашиваем разрешение у пользователя. Статья: https://habr.com/ru/post/278945/
+                        ActivityCompat.requestPermissions(this,
+                                new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                PERMISSION_REQUEST_EXTERNAL_STORAGE);
+                    }
+                }else
+                {
+                    Log.i("Copy/Import/Export", "Внешняя память не доступна. " + Environment.getExternalStorageState());
+                    Toast.makeText(this, R.string.SelectScheduleActivity_Toast_storageIsNotAvailable, Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public void onItemClick(int position)
@@ -118,6 +186,24 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
+    {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode)
+        {
+            case PERMISSION_REQUEST_EXTERNAL_STORAGE:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                {
+                    Log.i("Copy/Import/Export", "Разрешение на внешнее хранилище получено");
+
+                    //Получаем путь к папке Download во внешнейй памяти
+                    findScheduleFile(this);
+                }
+        }
+    }
+
     private void updateList()
     {
         //Обнаволи массив имен
@@ -126,4 +212,132 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
         adapter = new SchedulesAdapter(this, this);
         scheduleList.setAdapter(adapter);
     }
+
+    private void findScheduleFile(final Context context)
+    {
+        Log.i("Copy/Import/Export", "Начало поиска файлов");
+        //Получаем путь к папке Download во внешнейй памяти
+        file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath());
+
+        String[] files = file.list();
+
+        //Фильтр
+        int isTrue = 0;
+        for (int index = 0; index < files.length; index++)
+        {
+            if (files[index].indexOf("mSch") == 0)
+            {
+                files[isTrue] = files[index];
+                isTrue++;
+            }else
+            {
+                files[index] = "else";
+            }
+        }
+
+        //FIXME Возможно будет ошибка. Было сказано, что возвращается массив размером больше, но в с теми же данными. Здесьь же планируется получить меньший массив.
+        final String[] trueFiles = Arrays.copyOf(files, isTrue);
+
+        //Диалоговое окно для выбора требуемых файлов.
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle(R.string.SelectScheduleActivity_Dialog_ChooseFile);
+
+        if (trueFiles.length == 0)
+        {
+            dialog.setMessage(R.string.SelectScheduleActivity_Dialog_NotFound);
+            dialog.setPositiveButton(R.string.Standard_dialog_positive_button,
+                    new DialogInterface.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which)
+                        {
+
+                        }
+                    });
+        }else
+        {
+            View dialogView = View.inflate(this, R.layout.dialog_choose_files, null);
+            dialog.setView(dialogView);
+            final RecyclerView fileList;
+            fileList = dialogView.findViewById(R.id.filesLlist);
+            fileList.setLayoutManager(new LinearLayoutManager(this));
+            final ChooseListAdapter adapter = new ChooseListAdapter(trueFiles);
+            fileList.setAdapter(adapter);
+
+            dialog.setPositiveButton(R.string.Standard_dialog_positive_button,
+                    new DialogInterface.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which)
+                        {
+                            boolean[] chose = adapter.getCheckBoxStatus();
+                            boolean[] complete = new boolean[trueFiles.length];
+
+                            for (int index = 0; index < trueFiles.length; index++)
+                            {
+                                if (chose[index])
+                                {
+                                    String name = trueFiles[index].substring(trueFiles[index].indexOf("h") + 1);
+                                    //Получаем ошибки и результаты импортирования
+                                    if (!DataContract.MyFileManager.importFiles(getApplicationContext() ,name))
+                                    {
+                                        //Сообщить об успешном импортировании
+                                        complete[index] = true;
+                                    }else
+                                    {
+                                        complete[index] = false;
+                                        DataContract.MyFileManager.deleteDate(getApplicationContext(), name);
+                                    }
+                                }
+                            }
+
+                            //Демонстрируем отчет об ипорте
+                            AlertDialog.Builder messageDialog = new AlertDialog.Builder(context);
+                            messageDialog.setTitle(R.string.Standard_Dialog_Report);
+                            StringBuilder report = new StringBuilder();
+                            for (int index = 0; index < trueFiles.length; index++)
+                            {
+                                report
+                                        .append(trueFiles[index])
+                                        .append(": ");
+
+                                if (complete[index])
+                                {
+                                    report.append(DataContract.MyFileManager.REPORT_NO_PROBLEM);
+                                }else
+                                {
+                                    report.append(DataContract.MyFileManager.REPORT_ERROR);
+                                }
+
+                                report.append("\n");
+                            }
+                            messageDialog.setMessage(report.toString());
+
+                            messageDialog.setPositiveButton(R.string.Standard_dialog_positive_button,
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                        }
+                                    });
+
+                            messageDialog.show();
+                        }
+                    });
+
+            dialog.setNegativeButton(R.string.Standard_dialog_negative_button, new DialogInterface.OnClickListener()
+            {
+                @Override
+                public void onClick(DialogInterface dialog, int which)
+                {
+
+                }
+            });
+
+            dialog.show();
+        }
+
+    }
+
+
 }

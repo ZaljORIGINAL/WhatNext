@@ -222,7 +222,7 @@ public class ScheduleOfDayActivity extends AppCompatActivity implements Discipli
         }catch (Exception e){
         }
 
-        dialog.setPositiveButton(R.string.dialog_positive_button, new DialogInterface.OnClickListener() {
+        dialog.setPositiveButton(R.string.Standard_dialog_positive_button, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //Сохранение предмета
@@ -230,9 +230,9 @@ public class ScheduleOfDayActivity extends AppCompatActivity implements Discipli
                 {
                     //Сообщение об ошибка
                     AlertDialog.Builder errorDialog = new AlertDialog.Builder(getApplicationContext());
-                    errorDialog.setTitle(R.string.Error);
+                    errorDialog.setTitle(R.string.Standard_Error);
                     errorDialog.setMessage(getResources().getString(R.string.ScheduleCreatingActivity_Error_fieldOfNameIsClear));
-                    errorDialog.setPositiveButton(R.string.dialog_positive_button, null);
+                    errorDialog.setPositiveButton(R.string.Standard_dialog_positive_button, null);
                     errorDialog.show();
                 }else
                 {
@@ -260,7 +260,7 @@ public class ScheduleOfDayActivity extends AppCompatActivity implements Discipli
             }
         });
 
-        dialog.setNegativeButton(R.string.dialog_negative_button, new DialogInterface.OnClickListener() {
+        dialog.setNegativeButton(R.string.Standard_dialog_negative_button, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
@@ -269,7 +269,7 @@ public class ScheduleOfDayActivity extends AppCompatActivity implements Discipli
 
         if (position != -1)
         {
-            dialog.setNeutralButton(R.string.Delete, new DialogInterface.OnClickListener() {
+            dialog.setNeutralButton(R.string.Standard_Delete, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     day.removeDiscipline(position);

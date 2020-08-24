@@ -4,10 +4,15 @@
 
     <item
         android:id="@+id/selectNewSchedules"
-        android:title="@string/MainActivity_menu_Schedules"></item>
+        android:title="@string/menu_main_activity_Schedules" />
     <item
         android:id="@+id/edit"
         android:icon="@drawable/edit"
-        android:title="@string/MainActivity_menu_Edit"
+        android:title="@string/menu_main_activity_Edit"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/exportSchedule"
+        android:title="@string/menu_main_activity_Export"
+        android:icon="@drawable/export_black"
+        />
 </menu>

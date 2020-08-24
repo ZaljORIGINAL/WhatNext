@@ -2,6 +2,17 @@
     <string name="app_name">Schedule</string>
 
 <!--FIXME СТРОКИ ОТНОСЯЩИЕСЯ К АДАПТЕРАМ выделить как строки отдельного класса-->
+    <!--TODO Требуется переименовать имена ресурсво по новому стандарту. В заголовье пиется фаил в котором применены данные строки. Имя значение строится по следующе конструкции: имя файла_имя элемента(id)-->
+
+    <!--Standard strings-->
+    <string name="Standard_Error">Error</string>
+    <string name="Standard_Delete">Delete</string>
+    <string name="Standard_QuestionOfDelete">Are you sure about your decision?</string>
+    <string name="Standard_dialog_positive_button">OK</string>
+    <string name="Standard_dialog_negative_button">CANCEL</string>
+    <string name="Standard_element_of_list_NoInfo">The list is empty</string>
+    <string name="Standard_Dialog_Report">The process is complete:</string>
+    <string name="Standard_isComplete">Is complete</string>
 
     <!--Dialog for creating new schedule-->
     <string name="message_title_of_dialog">New schedule</string>
@@ -10,25 +21,24 @@
     <string name="info_text_dialog">Select the Monday of the week when the top schedule will be displayed</string>
     <string name="select_Day_button_dialog">Choose day</string>
 
-    <!--Default strings-->
-    <string name="Error">Error</string>
-    <string name="Delete">Delete</string>
-    <string name="QuestionOfDelete">Are you sure about your decision?</string>
-    <string name="dialog_positive_button">OK</string>
-    <string name="dialog_negative_button">CANCEL</string>
-    <string name="element_of_list_NoInfo">The list is empty</string>
-
-    <!--MainActivity-->
+    <!-- MainActivity.java -->
     <string name="activity_MainActivity_text_ListHasNotInfo">The day is empty</string>
-    <!--Menu-->
-        <string name="MainActivity_menu_Schedules">Schedules</string>
-        <string name="MainActivity_menu_Edit">Edit</string>
     <string name="toast_message_scheduleIsNotCreated">Schedule is not created</string>
     <string name="toast_message_scheduleIsDeleted">Schedule is deleted</string>
+    <!-- menu_main_activity.xml -->
+        <string name="menu_main_activity_Schedules">Schedules</string>
+        <string name="menu_main_activity_Edit">Edit</string>
+        <string name="menu_main_activity_Export">Export</string>
 
-    <!--SelectScheduleActivity-->
+    <!--SelectScheduleActivity.java-->
     <string name="nameOfActivity_SelectSchedule">Schedules</string>
     <string name="activity_SelectScheduleActivity_text_ListHasNotInfo">You do not have a schedule yet.</string>
+        <!--Toast-->
+        <string name="SelectScheduleActivity_Toast_storageIsNotAvailable">External storage is not available</string>
+        <string name="SelectScheduleActivity_Toast_errorFileList">Error. Directory of Download</string>
+        <!--Dialog-->
+        <string name="SelectScheduleActivity_Dialog_ChooseFile">Choose File</string>
+        <string name="SelectScheduleActivity_Dialog_NotFound">No files found</string>
 
     <!--ScheduleBuilderActivity-->
     <string name="nameOfActivity_ScheduleCreating">Edit</string>
@@ -87,7 +97,15 @@
     <string name="activity_ScheduleOfDay_dialog_newDiscipline">Add Discipline</string>
 
     <!--Errors list-->
-    <!--ScheduleCreatingActivity-->
-    <string name="ScheduleCreatingActivity_Error_fieldOfNameIsClear">Поле имены пустое, пожалуйста задайтк имя</string>
-    <string name="ScheduleCreatingActivity_Error_topWeekIsNotSelected">Не указана верхняя неделя</string>
+        <!--ScheduleCreatingActivity-->
+        <string name="ScheduleCreatingActivity_Error_fieldOfNameIsClear">Поле имены пустое, пожалуйста задайтк имя</string>
+        <string name="ScheduleCreatingActivity_Error_topWeekIsNotSelected">Не указана верхняя неделя</string>
+        <!--DataContract.FileManager-->
+        <string name="FileManager_Error_mainParamsOfScheduleNotExist">Error! File of schedule params not exist.</string>
+        <string name="FileManager_Error_mainParamsOfScheduleNotMoved">Error! File of schedule params not moved.</string>
+
+
+    <!-- menu_select_schedule.xml -->
+    <string name="menu_select_schedule_menu_import">Import</string>
+
 </resources>
