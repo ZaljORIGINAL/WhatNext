@@ -225,7 +225,7 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
         int isTrue = 0;
         for (int index = 0; index < files.length; index++)
         {
-            if (files[index].indexOf("mSch") == 0)
+            if (files[index].indexOf("mSch") == 0 && !files[index].contains("."))
             {
                 files[isTrue] = files[index];
                 isTrue++;
