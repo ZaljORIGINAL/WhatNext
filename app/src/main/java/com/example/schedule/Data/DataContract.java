@@ -13,9 +13,12 @@ import com.example.schedule.R;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
@@ -160,8 +163,9 @@ public class DataContract
 
         public static boolean importFiles(Context context, String name)
         {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
             {
+
                 boolean[] dbExist = new boolean[]
                         {
                                 false,//Отвечает за DB1
@@ -185,17 +189,13 @@ public class DataContract
                         .append(File.separator)
                         .append(name);
 
-                //Перенос основного фала параметров
-                pathToInternalStorage
-                        .append(context.getFilesDir().getPath());
+                //Перед импортом основных параметров получаем информацию о типе распиания
                 fileOfExternal = new File(pathToExternalStorage.toString(), MIGRATE_OPTIONS_DIRECTORY);
                 nameOfFile = fileOfExternal.list();
                 if (nameOfFile != null)
                 {
-                    fileOfInternal = new File( pathToInternalStorage.toString(), FILE_OF_SCHEDULE_DIRECTORY);
                     fileOfExternal = new File(fileOfExternal, nameOfFile[0]);
 
-                    //Перед импортом основных параметров получаем информацию о типе распиания
                     try (BufferedReader reader = new BufferedReader(new FileReader(fileOfExternal)))
                     {
                         typeOfSchedule = Integer.parseInt(reader.readLine());
@@ -210,21 +210,32 @@ public class DataContract
                         return false;
                     }
 
-                    try {
-                        Files.move(fileOfExternal.toPath(), fileOfInternal.toPath().resolve(fileOfExternal.getName()), StandardCopyOption.REPLACE_EXISTING);
-                    }catch (Exception e)
+                    //Перенос основного фала параметров
+                    pathToInternalStorage
+                            .append(context.getFilesDir().getPath());
+                    fileOfInternal = new File(pathToInternalStorage.toString(), FILE_OF_SCHEDULE_DIRECTORY);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
                     {
-                        //Ошибка, неудалось переместить фаил
-                        return false;
-                    }
-    /*                if (fileOfExternal.renameTo(fileOfInternal))
-                    {
-                        Log.i("Import", "File moved: " + nameOfFile[0]);
+                        try
+                        {
+                            Files.move(fileOfExternal.toPath(), fileOfInternal.toPath().resolve(fileOfExternal.getName()), StandardCopyOption.REPLACE_EXISTING);
+                        } catch (Exception e) {
+                            //Ошибка, неудалось переместить фаил
+                            return false;
+                        }
+        /*                if (fileOfExternal.renameTo(fileOfInternal))
+                        {
+                            Log.i("Import", "File moved: " + nameOfFile[0]);
+                        }else
+                        {
+                            Log.i("Import", "File not moved: " + nameOfFile[0]);
+                            return context.getString(R.string.FileManager_Error_mainParamsOfScheduleNotMoved);
+                        }*/
                     }else
                     {
-                        Log.i("Import", "File not moved: " + nameOfFile[0]);
-                        return context.getString(R.string.FileManager_Error_mainParamsOfScheduleNotMoved);
-                    }*/
+                        if (!copyFile(fileOfExternal, fileOfInternal))
+                            return false;
+                    }
                 }else
                 {
                     //Ошибка, фаил параметров не обнаружен
@@ -245,25 +256,64 @@ public class DataContract
                 nameOfFile = fileOfExternal.list();
                 if (nameOfFile != null)
                 {
-                    for (int index = 0; index < nameOfFile.length; index++)
+                    //Перенос DB
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
                     {
-                        fileOfExternal = new File(pathToExternalStorage.toString(), nameOfFile[index]);
+                        for (int index = 0; index < nameOfFile.length; index++)
+                        {
+                            fileOfExternal = new File(pathToExternalStorage.toString(), nameOfFile[index]);
 
-                        if (nameOfFile[index].indexOf("lower") == 0)
+                            if (nameOfFile[index].indexOf("lower") == 0) {
+                                dbExist[0] = true;
+                                try
+                                {
+                                    Files.move(fileOfExternal.toPath(), fileOfInternal.toPath().resolve(fileOfExternal.getName()));
+                                }catch (Exception e)
+                                {
+                                    return false;
+                                }
+                            } else if (nameOfFile[index].indexOf("top") == 0) {
+                                dbExist[1] = true;
+                                try
+                                {
+                                    Files.move(fileOfExternal.toPath(), fileOfInternal.toPath().resolve(fileOfExternal.getName()));
+                                }catch (Exception e)
+                                {
+                                    return false;
+                                }
+                            } else if (nameOfFile[index].indexOf("time") == 0) {
+                                dbExist[2] = true;
+                                try
+                                {
+                                    Files.move(fileOfExternal.toPath(), fileOfInternal.toPath().resolve(fileOfExternal.getName()));
+                                }catch (Exception e)
+                                {
+                                    return false;
+                                }
+                            }
+                        }
+                    }else
+                    {
+                        for (int index = 0; index < nameOfFile.length; index++)
                         {
-                            dbExist[0] = true;
-                            if(importDB(fileOfExternal, fileOfInternal))
-                                return false; //Ошибка, неудача переноса
-                        }else if (nameOfFile[index].indexOf("top") == 0)
-                        {
-                            dbExist[1] = true;
-                            if(importDB(fileOfExternal, fileOfInternal))
-                                return false; //Ошибка, неудача переноса
-                        }else if (nameOfFile[index].indexOf("time") == 0)
-                        {
-                            dbExist[2] = true;
-                            if(importDB(fileOfExternal, fileOfInternal))
-                                return false; //Ошибка, неудача переноса
+                            fileOfExternal = new File(pathToExternalStorage.toString(), nameOfFile[index]);
+
+                            if (nameOfFile[index].indexOf("lower") == 0)
+                            {
+                                dbExist[0] = true;
+                                if (!copyFile(fileOfExternal, fileOfInternal))
+                                    return false;
+                            } else if (nameOfFile[index].indexOf("top") == 0)
+                            {
+                                dbExist[1] = true;
+                                if (!copyFile(fileOfExternal, fileOfInternal))
+                                    return false;
+                            } else if (nameOfFile[index].indexOf("time") == 0)
+                            {
+                                dbExist[2] = true;
+                                if (!copyFile(fileOfExternal, fileOfInternal))
+                                    return false;
+                            }
                         }
                     }
 
@@ -282,27 +332,14 @@ public class DataContract
                 return true;
             }else
             {
+                //Ошибка версия Android устарела.
                 return false;
-            }
-        }
-
-        @RequiresApi(api = Build.VERSION_CODES.O)
-        private static boolean importDB(File fileOfExternal, File fileOfInternal)
-        {
-            try
-            {
-                Files.move(fileOfExternal.toPath(), fileOfInternal.toPath().resolve(fileOfExternal.getName()));
-
-                return false;
-            }catch (Exception e)
-            {
-                return true;
             }
         }
 
         public static boolean exportFiles(Context context, String nameOfOptionsFile)
         {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
             {
                 //Путь к коренным директориям
                 StringBuilder
@@ -337,25 +374,32 @@ public class DataContract
                 //Получаем список файлов в директории
                 nameOfFile = fileOfInternal.list();
 
-                try
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
                 {
-                    if (nameOfFile != null)
+                    try
                     {
-                        fileOfExternal = new File(pathToExternalStorage.toString() + File.separator + MIGRATE_OPTIONS_DIRECTORY, nameOfFile[0]);
-                        Files.copy(fileOfInternal.toPath(), fileOfExternal.toPath().resolve(fileOfInternal.getName()), StandardCopyOption.REPLACE_EXISTING);
-                    }else
-                    {
-                        //Ошибка,
-                        return false;
-                    }
+                        if (nameOfFile != null)
+                        {
+                            fileOfExternal = new File(pathToExternalStorage.toString() + File.separator + MIGRATE_OPTIONS_DIRECTORY, nameOfFile[0]);
+                            Files.copy(fileOfInternal.toPath(), fileOfExternal.toPath().resolve(fileOfInternal.getName()), StandardCopyOption.REPLACE_EXISTING);
+                        }else
+                        {
+                            //Ошибка,
+                            return false;
+                        }
 
-                }catch (Exception e)
-                {
+                    }catch (Exception e)
+                    {
                     /*fileOfInternal = new File(pathToInternalStorage.toString() + File.separator + FILE_OF_SCHEDULE_DIRECTORY);
                     Log.i("ERROR", "DataContract.FileManager.exportFiles: Неудалось скопировать фаил " + fileOfInternal.getPath());*/
 
-                    //Ошибка,
-                    return false;
+                        //Ошибка,
+                        return false;
+                    }
+                }else
+                {
+                    if (!copyFile(fileOfInternal, fileOfExternal))
+                        return false;
                 }
 
                 //Обновление коренных файлов
@@ -382,9 +426,20 @@ public class DataContract
                 {
                     if (nameOfFile != null)
                     {
-                        for (String s : nameOfFile) {
-                            fileOfInternal = new File(pathToInternalStorage.toString(), s);
-                            Files.copy(fileOfInternal.toPath(), fileOfExternal.toPath().resolve(fileOfInternal.getName()), StandardCopyOption.REPLACE_EXISTING);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                        {
+                            for (String s : nameOfFile)
+                            {
+                                fileOfInternal = new File(pathToInternalStorage.toString(), s);
+                                Files.copy(fileOfInternal.toPath(), fileOfExternal.toPath().resolve(fileOfInternal.getName()), StandardCopyOption.REPLACE_EXISTING);
+                            }
+                        }else
+                        {
+                            for (String s : nameOfFile)
+                            {
+                                fileOfInternal = new File(pathToInternalStorage.toString(), s);
+                                copyFile(fileOfInternal, fileOfExternal);
+                            }
                         }
                     }else
                     {
@@ -402,6 +457,37 @@ public class DataContract
             }else
             {
                 //Ошибка,
+                return false;
+            }
+        }
+
+        private static boolean copyFile(File original, File directory)
+        {
+            try
+            {
+                if (!original.exists()) {
+                    return false;
+                }
+                if (!directory.exists()) {
+                    directory.createNewFile();
+                }
+                FileChannel source;
+                FileChannel destination;
+                source = new FileInputStream(original).getChannel();
+                destination = new FileOutputStream(directory).getChannel();
+                if (destination != null && source != null) {
+                    destination.transferFrom(source, 0, source.size());
+                }
+                if (source != null) {
+                    source.close();
+                }
+                if (destination != null) {
+                    destination.close();
+                }
+
+                return true;
+            }catch (Exception e)
+            {
                 return false;
             }
         }

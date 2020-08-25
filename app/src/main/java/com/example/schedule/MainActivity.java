@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main_activity, menu);
 
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.N)
         {
             MenuItem exportSchedule = menu.findItem(R.id.exportSchedule);
             exportSchedule.setVisible(false);

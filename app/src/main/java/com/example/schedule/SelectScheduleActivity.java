@@ -95,7 +95,7 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
     {
         getMenuInflater().inflate(R.menu.menu_select_schedule, menu);
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N)
         {
             MenuItem importSchedule = menu.findItem(R.id.importSchedule);
             importSchedule.setVisible(false);
