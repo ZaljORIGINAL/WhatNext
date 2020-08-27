@@ -85,7 +85,7 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
         }
 
         scheduleList = findViewById(R.id.scheduleList);
-        adapter = new SchedulesAdapter(this, this);
+        adapter = new SchedulesAdapter(this, files, this);
         scheduleList.setAdapter(adapter);
         scheduleList.setLayoutManager(new LinearLayoutManager(this));
     }
@@ -209,7 +209,7 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
         //Обнаволи массив имен
         files = Arrays.asList(file.list());
         //Сообщаем адаптеру что мы обновили данные
-        adapter = new SchedulesAdapter(this, this);
+        adapter = new SchedulesAdapter(this, files, this);
         scheduleList.setAdapter(adapter);
     }
 

@@ -15,6 +15,7 @@
         android:layout_height="wrap_content"
         android:padding="8sp"
         android:textSize="24sp"
+        android:textColor="@color/textColor"
         tools:text="KFU" />
 
     <LinearLayout

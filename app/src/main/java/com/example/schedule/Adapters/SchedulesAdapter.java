@@ -1,6 +1,7 @@
 package com.example.schedule.Adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,15 +27,10 @@ public class SchedulesAdapter extends RecyclerView.Adapter<SchedulesAdapter.MyHo
     private iItemClickListener iItemClickListener;
 
 
-    public SchedulesAdapter(Context context,  iItemClickListener iItemClickListener)
+    public SchedulesAdapter(Context context, List<String> names, iItemClickListener iItemClickListener)
     {
-        String path = context.getFilesDir().getPath() +
-                File.separator +
-                DataContract.MyFileManager.FILE_OF_SCHEDULE_DIRECTORY;
-        file = new File(path);
-        names = Arrays.asList(file.list());
-
         this.context = context;
+        this.names = names;
         this.iItemClickListener = iItemClickListener;
     }
 
@@ -166,11 +162,16 @@ public class SchedulesAdapter extends RecyclerView.Adapter<SchedulesAdapter.MyHo
                     .append(File.separator)
                     .append(name);
 
-            try {
+            try
+            {
                 BufferedReader reader = new BufferedReader(new FileReader(path.toString()));
+                reader.readLine();
                 tNameOfSchedule.setText(reader.readLine());
+                String text = tNameOfSchedule.getText().toString();
+                Log.i("Schedule NAME", tNameOfSchedule.getText().toString());
             }catch (Exception e)
             {
+                Log.i("Schedule NAME", "ERROR");
             }
         }
 
