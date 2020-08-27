@@ -3,19 +3,25 @@ package com.example.schedule;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,6 +37,8 @@ import com.example.schedule.Objects.Schedule;
 
 import java.io.File;
 import java.util.Calendar;
+
+import static com.example.schedule.Data.DataContract.MyAppSettings.PERMISSION_REQUEST_EXTERNAL_STORAGE;
 
 public class MainActivity extends AppCompatActivity implements DisciplineAdapter.iOnItemClickListener
 {
@@ -121,26 +129,48 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
 
             case R.id.exportSchedule:
             {
-                AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-                dialog.setTitle(R.string.Standard_Dialog_Report);
-
-                if(DataContract.MyFileManager.exportFiles(this, today.getNameOfFileSchedule()))
+                if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
                 {
-                    dialog.setMessage(R.string.Standard_isComplete);
+                    Log.i("Copy/Import/Export", "Внешняя память доступна");
+
+                    //Проверка разрешения на доступ к хранилищу
+                    if (ContextCompat.checkSelfPermission(this,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+                    {
+                        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+                        dialog.setTitle(R.string.Standard_Dialog_Report);
+
+                        if(DataContract.MyFileManager.exportFiles(this, today.getNameOfFileSchedule()))
+                        {
+                            dialog.setMessage(R.string.Standard_isComplete);
+                        }else
+                        {
+                            dialog.setMessage(R.string.Standard_Error);
+                        }
+
+                        dialog.setPositiveButton(R.string.Standard_dialog_positive_button,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                    }
+                                });
+
+                        dialog.show();
+                    } else
+                    {
+                        Log.i("Copy/Import/Export", "Разрешение на внешнее хранилище не получено, запрошиваю доступ");
+
+                        //Запрашиваем разрешение у пользователя. Статья: https://habr.com/ru/post/278945/
+                        ActivityCompat.requestPermissions(this,
+                                new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                PERMISSION_REQUEST_EXTERNAL_STORAGE);
+                    }
                 }else
                 {
-                    dialog.setMessage(R.string.Standard_Error);
+                    Log.i("Copy/Import/Export", "Внешняя память не доступна. " + Environment.getExternalStorageState());
+                    Toast.makeText(this, R.string.SelectScheduleActivity_Toast_storageIsNotAvailable, Toast.LENGTH_LONG).show();
                 }
-
-                dialog.setPositiveButton(R.string.Standard_dialog_positive_button,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                            }
-                        });
-
-                dialog.show();
             }
         }
         return super.onOptionsItemSelected(item);

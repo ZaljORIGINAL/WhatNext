@@ -368,44 +368,48 @@ public class DataContract
                         .append(MIGRATE_OPTIONS_DIRECTORY);
 
                 //создание папки для фала с параметрами расписания
-                fileOfInternal = new File(pathToExternalStorage.toString());
-                fileOfInternal.mkdirs();
+                fileOfExternal = new File(pathToExternalStorage.toString());
+                fileOfExternal.mkdirs();
 
                 //Получаем список файлов в директории
+                fileOfInternal = new File(pathToInternalStorage.toString());
                 nameOfFile = fileOfInternal.list();
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                if (nameOfFile != null)
                 {
-                    try
+                    //Фаил с параметрами расписания
+                    fileOfInternal = new File(pathToInternalStorage.toString(), nameOfFile[0]);
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
                     {
-                        if (nameOfFile != null)
+                        try
                         {
-                            fileOfExternal = new File(pathToExternalStorage.toString() + File.separator + MIGRATE_OPTIONS_DIRECTORY, nameOfFile[0]);
                             Files.copy(fileOfInternal.toPath(), fileOfExternal.toPath().resolve(fileOfInternal.getName()), StandardCopyOption.REPLACE_EXISTING);
-                        }else
+                        }catch (Exception e)
                         {
+                        /*fileOfInternal = new File(pathToInternalStorage.toString() + File.separator + FILE_OF_SCHEDULE_DIRECTORY);
+                        Log.i("ERROR", "DataContract.FileManager.exportFiles: Неудалось скопировать фаил " + fileOfInternal.getPath());*/
+
                             //Ошибка,
                             return false;
                         }
-
-                    }catch (Exception e)
+                    }else
                     {
-                    /*fileOfInternal = new File(pathToInternalStorage.toString() + File.separator + FILE_OF_SCHEDULE_DIRECTORY);
-                    Log.i("ERROR", "DataContract.FileManager.exportFiles: Неудалось скопировать фаил " + fileOfInternal.getPath());*/
-
-                        //Ошибка,
-                        return false;
+                        if (!copyFile(fileOfInternal, fileOfExternal))
+                            return false;
                     }
                 }else
                 {
-                    if (!copyFile(fileOfInternal, fileOfExternal))
-                        return false;
+                    //Ошибка,
+                    return false;
                 }
 
                 //Обновление коренных файлов
                 pathToInternalStorage = new StringBuilder();
                 pathToInternalStorage
-                        .append(context.getDataDir().getPath());
+                        .append(context.getDataDir().getPath())
+                        .append(File.separator)
+                        .append("databases");
                 pathToExternalStorage = new StringBuilder();
                 pathToExternalStorage
                         .append(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath())
@@ -419,21 +423,18 @@ public class DataContract
                 fileOfExternal = new File(pathToExternalStorage.toString());
                 fileOfExternal.mkdirs();
 
-                //Получаем список файлов в директории
+                fileOfInternal = new File(pathToInternalStorage.toString());
                 nameOfFile = fileOfInternal.list();
 
-                try
-                {
-                    if (nameOfFile != null)
-                    {
+                if (nameOfFile != null) {
+                    try {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
                         {
-                            for (String s : nameOfFile)
-                            {
+                            for (String s : nameOfFile) {
                                 fileOfInternal = new File(pathToInternalStorage.toString(), s);
                                 Files.copy(fileOfInternal.toPath(), fileOfExternal.toPath().resolve(fileOfInternal.getName()), StandardCopyOption.REPLACE_EXISTING);
                             }
-                        }else
+                        } else
                         {
                             for (String s : nameOfFile)
                             {
@@ -441,13 +442,12 @@ public class DataContract
                                 copyFile(fileOfInternal, fileOfExternal);
                             }
                         }
-                    }else
+                    } catch (Exception e)
                     {
                         //Ошибка,
                         return false;
                     }
-
-                }catch (Exception e)
+                }else
                 {
                     //Ошибка,
                     return false;
@@ -468,9 +468,12 @@ public class DataContract
                 if (!original.exists()) {
                     return false;
                 }
+
+                directory = new File(directory.getPath(), original.getName());
                 if (!directory.exists()) {
                     directory.createNewFile();
                 }
+
                 FileChannel source;
                 FileChannel destination;
                 source = new FileInputStream(original).getChannel();
