@@ -26,6 +26,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.schedule.Data.DataContract;
 import com.example.schedule.R;
 import java.util.Calendar;
 
@@ -111,13 +112,13 @@ public class ScheduleOptionsFragment extends Fragment
                         {
                             info.setVisibility(View.VISIBLE);
                             selectWeek.setVisibility(View.VISIBLE);
-                            schedule.setType(1);
+                            schedule.setType(DataContract.MyAppSettings.SCHEDULE_TYPE_2);
                             selectWeek.setText(R.string.fragment_button_setWeek);
                         }else
                         {
                             info.setVisibility(View.GONE);
                             selectWeek.setVisibility(View.GONE);
-                            schedule.setType(0);
+                            schedule.setType(DataContract.MyAppSettings.SCHEDULE_TYPE_1);
                         }
                     }
                 }
@@ -158,7 +159,7 @@ public class ScheduleOptionsFragment extends Fragment
         {
         }
 
-        if (schedule.getType() == 1)
+        if (schedule.getType() == DataContract.MyAppSettings.SCHEDULE_TYPE_2)
             isDouble.setChecked(true);
         else
             isDouble.setChecked(false);

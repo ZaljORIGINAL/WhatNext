@@ -120,14 +120,12 @@ public class DataContract
         {
             String path;
             File file;
-            int typeOfSchedule;
 
             path = context.getFilesDir().getPath() +
                     File.separator +
                     FILE_OF_SCHEDULE_DIRECTORY +
                     File.separator +
-                    name + ".txt" +
-                    ".txt";
+                    name + ".txt";
             file = new File(path);
             if (file.exists())
             {
@@ -174,13 +172,11 @@ public class DataContract
                         };
                 int typeOfSchedule;
 
-                //Путь к коренным директориям
                 StringBuilder
                         pathToExternalStorage = new StringBuilder(),
                         pathToInternalStorage = new StringBuilder();
                 String[] nameOfFile;
                 File fileOfExternal;
-                //Путь к внутренней директории
                 File fileOfInternal;
 
                 //Путь к паку
@@ -188,6 +184,18 @@ public class DataContract
                         .append(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath())
                         .append(File.separator)
                         .append(name);
+
+                //Проверка наличия файлов
+                fileOfExternal = new File(pathToExternalStorage.toString(), name);
+                if (fileOfExternal.exists())
+                {
+                    pathToExternalStorage
+                            .append(File.separator)
+                            .append(name);
+                }else
+                {
+                    fileOfExternal = null;
+                }
 
                 //Перед импортом основных параметров получаем информацию о типе распиания
                 fileOfExternal = new File(pathToExternalStorage.toString(), MIGRATE_OPTIONS_DIRECTORY);
@@ -244,6 +252,7 @@ public class DataContract
 
                 //Обновление корневых путей
                 pathToExternalStorage
+                        .append(File.separator)
                         .append(MIGRATE_DATABASE_DIRECTORY);
                 pathToInternalStorage = new StringBuilder();
                 pathToInternalStorage

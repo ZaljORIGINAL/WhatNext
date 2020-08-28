@@ -147,7 +147,7 @@ public class ScheduleBuilderActivity extends AppCompatActivity
             dialog.setMessage(getResources().getString(R.string.ScheduleCreatingActivity_Error_fieldOfNameIsClear));
             dialog.setPositiveButton(R.string.Standard_dialog_positive_button, null);
             dialog.show();
-        }else if (schedule.getType() == 1)
+        }else if (schedule.getType() == DataContract.MyAppSettings.SCHEDULE_TYPE_2)
         {
             if (schedule.getParity() == -1)
             {
@@ -197,7 +197,7 @@ public class ScheduleBuilderActivity extends AppCompatActivity
         insertDisciplines(topWeek, disciplineDB);
 
         //Сохранение LoverWeek
-        if (schedule.getType() == 1)
+        if (schedule.getType() == DataContract.MyAppSettings.SCHEDULE_TYPE_2)
         {
             disciplineDB = new DisciplineDBHelper(this, schedule.getNameOfDB_2());
             db = disciplineDB.getReadableDatabase();

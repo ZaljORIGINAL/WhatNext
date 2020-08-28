@@ -301,7 +301,7 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
         SQLiteDatabase db;
         DisciplineDBHelper disciplineDB;
 
-        if (today.getType() == 1)//Проверка на тип расписание (одинарное - 0, двойное - 1)
+        if (today.getType() == DataContract.MyAppSettings.SCHEDULE_TYPE_2)//Проверка на тип расписание (одинарное - 0, двойное - 1)
         {
             if ((calendar.get(Calendar.DAY_OF_YEAR) + calendar.get(Calendar.DAY_OF_WEEK)) %2 == today.getParity()) {
                 disciplineDB = new DisciplineDBHelper(this, today.getNameOfDB_1());

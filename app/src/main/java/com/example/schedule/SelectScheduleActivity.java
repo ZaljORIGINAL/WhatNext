@@ -117,8 +117,7 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
 
                     //Проверка разрешения на доступ к хранилищу
                     if (ContextCompat.checkSelfPermission(this,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
-                            PackageManager.PERMISSION_GRANTED)
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
                     {
                         Log.i("Copy/Import/Export", "Разрешение на внешнее хранилище получено");
 
@@ -229,13 +228,9 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
             {
                 files[isTrue] = files[index];
                 isTrue++;
-            }else
-            {
-                files[index] = "else";
             }
         }
 
-        //FIXME Возможно будет ошибка. Было сказано, что возвращается массив размером больше, но в с теми же данными. Здесьь же планируется получить меньший массив.
         final String[] trueFiles = Arrays.copyOf(files, isTrue);
 
         //Диалоговое окно для выбора требуемых файлов.
@@ -254,6 +249,8 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
 
                         }
                     });
+
+            dialog.show();
         }else
         {
             View dialogView = View.inflate(this, R.layout.dialog_choose_files, null);
@@ -277,16 +274,15 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
                             {
                                 if (chose[index])
                                 {
-                                    String name = trueFiles[index].substring(trueFiles[index].indexOf("h") + 1);
                                     //Получаем ошибки и результаты импортирования
-                                    if (!DataContract.MyFileManager.importFiles(getApplicationContext() ,name))
+                                    if (DataContract.MyFileManager.importFiles(getApplicationContext() ,trueFiles[index]))
                                     {
                                         //Сообщить об успешном импортировании
                                         complete[index] = true;
                                     }else
                                     {
                                         complete[index] = false;
-                                        DataContract.MyFileManager.deleteDate(getApplicationContext(), name);
+                                        DataContract.MyFileManager.deleteDate(getApplicationContext(), trueFiles[index]);
                                     }
                                 }
                             }
@@ -322,6 +318,8 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
                                     });
 
                             messageDialog.show();
+
+                            updateList();
                         }
                     });
 
