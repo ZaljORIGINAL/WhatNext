@@ -261,6 +261,7 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
             final ChooseListAdapter adapter = new ChooseListAdapter(trueFiles);
             fileList.setAdapter(adapter);
 
+            //FIXME Если мы выберем 1 фаил, то нам так же в окне отчете выведится отчет по файлу, который мы не пожелали импортировать(выводит ответ ERROR по невыбранному файлу)
             dialog.setPositiveButton(R.string.Standard_dialog_positive_button,
                     new DialogInterface.OnClickListener()
                     {
@@ -318,8 +319,6 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
                                     });
 
                             messageDialog.show();
-
-                            updateList();
                         }
                     });
 
@@ -335,6 +334,7 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
             dialog.show();
         }
 
+        updateList();
     }
 
 

@@ -40,7 +40,7 @@ public class Schedule implements Parcelable
             this.nameOfFileSchedule = nameOfFileSchedule;
         }
 
-        type = 0;
+        type = DataContract.MyAppSettings.SCHEDULE_TYPE_1;
         parity = -1;
 
         times = new ArrayList<>();
