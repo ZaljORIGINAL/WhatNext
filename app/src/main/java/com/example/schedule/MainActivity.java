@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
     private SharedPreferences settings;
 
     //Object
-    private Schedule today;
+    private Schedule schedule;
 
     //Расписане
     private Calendar calendar;
@@ -87,9 +87,12 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
                     File.separator +
                     settings.getString(DataContract.MyAppSettings.LAST_SCHEDULE, DataContract.MyAppSettings.NULL) +
                     ".txt";
-            today = DataContract.MyFileManager.readFileOfOptions(path);
+            //FIXME Возможно стоило сделать методы updateDisciplines и updateTimes методами класса Schedule
+            schedule = DataContract.MyFileManager.readFileOfOptions(path);
+            updateDisciplines();
+            updateTimes();
 
-            getScheduleToToday(today);
+            updateRecycleView();
         }
     }
 
@@ -123,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
                 Intent intent = new Intent(this, ScheduleBuilderActivity.class);
 
                 intent.putExtra(IntentHelper.COMMAND, IntentHelper.EDIT_SCHEDULE);
-                intent.putExtra(IntentHelper.SCHEDULE, today);
+                intent.putExtra(IntentHelper.SCHEDULE, schedule);
                 startActivityForResult(intent, IntentHelper.EDIT_SCHEDULE);
             }break;
 
@@ -140,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
                         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
                         dialog.setTitle(R.string.Standard_Dialog_Report);
 
-                        if(DataContract.MyFileManager.exportFiles(this, today.getNameOfFileSchedule()))
+                        if(DataContract.MyFileManager.exportFiles(this, schedule.getNameOfFileSchedule()))
                         {
                             dialog.setMessage(R.string.Standard_isComplete);
                         }else
@@ -192,14 +195,14 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
                         DataContract.MyFileManager.FILE_OF_SCHEDULE_DIRECTORY +
                         File.separator +
                         data.getStringExtra(IntentHelper.NAME);
-                today = DataContract.MyFileManager.readFileOfOptions(path);
+                schedule = DataContract.MyFileManager.readFileOfOptions(path);
+                updateDisciplines();
+                updateTimes();
+                updateRecycleView();
 
-                //Получение данных из ДБ
-                getScheduleToToday(today);
-
-                //Сохраняем то расписание что открыывали
+                //Сохраняем открывшуюся расписание
                 SharedPreferences.Editor editor = settings.edit();
-                editor.putString(DataContract.MyAppSettings.LAST_SCHEDULE, today.getNameOfFileSchedule());
+                editor.putString(DataContract.MyAppSettings.LAST_SCHEDULE, schedule.getNameOfFileSchedule());
                 editor.apply();
             }break;
 
@@ -234,12 +237,63 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
                 }
             }
         }
+    }
+
+    //TODO Далее сделать возможным запись заметок по данному предмету
+    @Override
+    public void onItemClick(int position) {
 
     }
 
     /**
-     * Слушатели кнопок
+     * schedule update methods
      * */
+    /*
+    * TODO доделать обновления для параметров schedule:
+    *   *Имя расписания
+    *   *Тип расписания*/
+    private void updateSchedule(){
+        updateDisciplines();
+        updateTimes();
+    }
+
+    private void updateDisciplines() {
+        SQLiteDatabase db;
+        DisciplineDBHelper disciplineDB;
+
+        if (schedule.getType() == DataContract.MyAppSettings.SCHEDULE_TYPE_2)
+        {
+            if ((calendar.get(Calendar.DAY_OF_YEAR) + calendar.get(Calendar.DAY_OF_WEEK)) %2 == schedule.getParity()) {
+                disciplineDB = new DisciplineDBHelper(this, schedule.getNameOfDB_1());
+            }else {
+                disciplineDB = new DisciplineDBHelper(this, schedule.getNameOfDB_2());
+            }
+        }else {
+            disciplineDB = new DisciplineDBHelper(this, schedule.getNameOfDB_1());
+        }
+        db = disciplineDB.getReadableDatabase();
+        schedule.setDisciplines(disciplineDB.getScheduleToday(db, calendar.get(Calendar.DAY_OF_WEEK)));
+
+        db.close();
+    }
+
+    private void updateTimes(){
+        SQLiteDatabase db;
+        //Получаем время
+        TimeDBHelper timeDB = new TimeDBHelper(this, schedule.getNameOfTimeDB());
+        db = timeDB.getReadableDatabase();
+        schedule.setTimes(timeDB.getTime(db));
+
+        db.close();
+    }
+
+    private void updateRecycleView()
+    {
+        DisciplineAdapter adapter = new DisciplineAdapter(this, schedule.getDisciplines(), this);
+        disciplineList.setAdapter(adapter);
+    }
+
+    /**Navigation buttons methods*/
     public void onNavigationButtonClicked(View view)
     {
         //Перейти на сследующий или предидущий день
@@ -255,9 +309,10 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
         }
 
         updateDateButton();
-        //Надо отсоритировать. Расписание может быть в разнобой
+        //FIXME Надо отсоритировать. Расписание может быть в разнобой
         updateRecycleView();
     }
+
     public void onDateChangeButtonClicked(View view)
     {
         //Вывести диалоговое окно для выбора нужного дня и после представить
@@ -278,51 +333,6 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
         ).show();
     }
 
-    //TODO Далее сделать возможным запись заметок по данному предмету
-    @Override
-    public void onItemClick(int position) {
-
-    }
-
-    //Первичное чтеные баззы данных(получение времени и самого расписания на актуальный день)
-    private void getScheduleToToday(Schedule schedule)
-    {
-        SQLiteDatabase db;
-        //Получаем время
-        TimeDBHelper timeDB = new TimeDBHelper(this, schedule.getNameOfTimeDB());
-        db = timeDB.getReadableDatabase();
-        schedule.setTimes(timeDB.getTime(db));
-
-        //Получаем расписание предметов
-        updateRecycleView();
-    }
-    private void getDisciplines()
-    {
-        SQLiteDatabase db;
-        DisciplineDBHelper disciplineDB;
-
-        if (today.getType() == DataContract.MyAppSettings.SCHEDULE_TYPE_2)//Проверка на тип расписание (одинарное - 0, двойное - 1)
-        {
-            if ((calendar.get(Calendar.DAY_OF_YEAR) + calendar.get(Calendar.DAY_OF_WEEK)) %2 == today.getParity()) {
-                disciplineDB = new DisciplineDBHelper(this, today.getNameOfDB_1());
-            }else {
-                disciplineDB = new DisciplineDBHelper(this, today.getNameOfDB_2());
-            }
-        }else {
-            disciplineDB = new DisciplineDBHelper(this, today.getNameOfDB_1());
-        }
-        db = disciplineDB.getReadableDatabase();
-        today.setDisciplines(disciplineDB.getScheduleToday(db, calendar.get(Calendar.DAY_OF_WEEK),
-                today.getTimes()));
-    }
-
-    /**Data update methods*/
-    private void updateRecycleView()
-    {
-        getDisciplines();
-        DisciplineAdapter adapter = new DisciplineAdapter(this, today.getDisciplines(), this);
-        disciplineList.setAdapter(adapter);
-    }
     private void updateDateButton()
     {
         bDate.setText(DateUtils.formatDateTime(this, calendar.getTimeInMillis(), DateUtils.FORMAT_SHOW_DATE));

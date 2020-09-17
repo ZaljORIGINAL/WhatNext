@@ -100,13 +100,13 @@ public class Schedule implements Parcelable
     {
         this.parity = Byte.parseByte(parity);
     }
-    /*
-    * Применить поссле инициализации основных параметров, используется для Я ХЗ КАК ОБЪЯСНИТЬ ЭТО НОРМАЛЬНО*/public void setTimes(ArrayList<TimeSchedule> times){
+    public void setTimes(ArrayList<TimeSchedule> times){
         this.times = times;
+        changeTimes();
     }
-    /*Используется для установки ПОЛУЧЕННОГО из ДБ расписания на акутуальный день
-    * */public void setDisciplines(ArrayList<Discipline> disciplines) {
+    public void setDisciplines(ArrayList<Discipline> disciplines) {
         this.disciplines = disciplines;
+        changeDisciplines();
         sort();
     }
 
@@ -164,5 +164,26 @@ public class Schedule implements Parcelable
             }
         });
 
+    }
+
+    private void changeDisciplines(){
+        if (times != null && times.size() != 0){
+            for (int index = 0; index < disciplines.size(); index++){
+                Discipline discipline;
+
+                discipline = disciplines.get(index);
+                discipline.setTime(times.get(discipline.getPosition()));
+            }
+        }
+    }
+    private void changeTimes(){
+        if (disciplines != null && disciplines.size() != 0){
+            for (int index = 0; index < disciplines.size(); index++){
+                Discipline discipline;
+
+                discipline = disciplines.get(index);
+                discipline.setTime(times.get(discipline.getPosition()));
+            }
+        }
     }
 }

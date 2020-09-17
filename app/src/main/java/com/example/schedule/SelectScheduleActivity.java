@@ -301,6 +301,7 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
                                 if (complete[index])
                                 {
                                     report.append(DataContract.MyFileManager.REPORT_NO_PROBLEM);
+                                    updateList();
                                 }else
                                 {
                                     report.append(DataContract.MyFileManager.REPORT_ERROR);
@@ -333,9 +334,5 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
 
             dialog.show();
         }
-
-        updateList();
     }
-
-
 }

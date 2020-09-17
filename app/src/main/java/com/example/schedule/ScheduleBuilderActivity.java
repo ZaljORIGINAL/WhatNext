@@ -204,7 +204,7 @@ public class ScheduleBuilderActivity extends AppCompatActivity
             insertDisciplines(loverWeek, disciplineDB);
         }
 
-
+        db.close();
     }
     private void insertDisciplines(Week week, DisciplineDBHelper disciplineDB)
     {

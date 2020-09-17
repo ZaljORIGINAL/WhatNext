@@ -89,7 +89,7 @@ public class DisciplineDBHelper extends SQLiteOpenHelper
         db.update(getDatabaseName(), values, DisciplinesDB._ID + "=?", new String[]{String.valueOf(id)});
     }
 
-    public ArrayList<Discipline> getScheduleToday(SQLiteDatabase db, int dayOfWeek, ArrayList<TimeSchedule> times)
+    public ArrayList<Discipline> getScheduleToday(SQLiteDatabase db, int dayOfWeek)
     {
         this.db = db;
         ArrayList<Discipline> disciplines = new ArrayList<>();
@@ -146,7 +146,7 @@ public class DisciplineDBHelper extends SQLiteOpenHelper
                 disciplines.add(new Discipline(
                         currentID,
                         currentPosition,
-                        times.get(currentTime),
+                        null,
                         currentDayOfWeek,
                         currentDisciplineName,
                         currentType,
@@ -160,7 +160,7 @@ public class DisciplineDBHelper extends SQLiteOpenHelper
         return disciplines;
     }
 
-    public ArrayList<Discipline> getDisciplines(SQLiteDatabase db, ArrayList<TimeSchedule> times)
+    public ArrayList<Discipline> getScheduleToday(SQLiteDatabase db, int dayOfWeek, ArrayList<TimeSchedule> times)
     {
         this.db = db;
         ArrayList<Discipline> disciplines = new ArrayList<>();
@@ -182,8 +182,8 @@ public class DisciplineDBHelper extends SQLiteOpenHelper
         Cursor cursor = db.query(
                 getDatabaseName(),
                 columns,
-                null,
-                null,
+                DisciplinesDB.DAY_OF_WEEK + "=?",
+                new String[]{String.valueOf(dayOfWeek)},
                 null,
                 null,
                 null,
