@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.example.schedule.Objects.TimeSchedule;
 import com.example.schedule.Data.DataContract.TimeDB;
@@ -90,6 +91,7 @@ public class TimeDBHelper extends SQLiteOpenHelper
                     finishHourColumnIndex = cursor.getColumnIndex(TimeDB.FINISH_HOUR),
                     finishMinuteColumnIndex = cursor.getColumnIndex(TimeDB.FINISH_MINUTE);
 
+            Log.i("InfoCOUNT", "Количество записей: " + cursor.getCount());
             while (cursor.moveToNext())
             {
                 byte

@@ -101,7 +101,25 @@ public class Schedule implements Parcelable
         this.parity = Byte.parseByte(parity);
     }
     public void setTimes(ArrayList<TimeSchedule> times){
-        this.times = times;
+        if (times.size() != 0) {
+            this.times = times;
+        }else {
+            ArrayList<TimeSchedule> supportTimes = new ArrayList<>();
+
+            for (int index = 0; index < 5; index++) {
+                TimeSchedule myTime = new TimeSchedule(
+                        index,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0);
+
+                supportTimes.add(myTime);
+            }
+
+            this.times = supportTimes;
+        }
         changeTimes();
     }
     public void setDisciplines(ArrayList<Discipline> disciplines) {

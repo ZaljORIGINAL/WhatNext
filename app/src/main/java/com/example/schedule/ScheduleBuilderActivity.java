@@ -188,13 +188,13 @@ public class ScheduleBuilderActivity extends AppCompatActivity
         {
             timeDB.addTime(times.get(i));
         }
-
-        Week week;
+        db.close();
 
         //Сохранение TopWeek
         DisciplineDBHelper disciplineDB = new DisciplineDBHelper(this, schedule.getNameOfDB_1());
         db = disciplineDB.getReadableDatabase();
         insertDisciplines(topWeek, disciplineDB);
+        db.close();
 
         //Сохранение LoverWeek
         if (schedule.getType() == DataContract.MyAppSettings.SCHEDULE_TYPE_2)
@@ -202,9 +202,8 @@ public class ScheduleBuilderActivity extends AppCompatActivity
             disciplineDB = new DisciplineDBHelper(this, schedule.getNameOfDB_2());
             db = disciplineDB.getReadableDatabase();
             insertDisciplines(loverWeek, disciplineDB);
+            db.close();
         }
-
-        db.close();
     }
     private void insertDisciplines(Week week, DisciplineDBHelper disciplineDB)
     {

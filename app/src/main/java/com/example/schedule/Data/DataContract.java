@@ -11,6 +11,7 @@ import androidx.annotation.RequiresApi;
 import com.example.schedule.Objects.Schedule;
 import com.example.schedule.R;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,9 +19,14 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.InputStream;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.Enumeration;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
 
 public class DataContract
 {
@@ -64,17 +70,18 @@ public class DataContract
     public static class MyFileManager
     {
         //Directory
-        public final static String DATA_DIRECTORY = "database";
+        public final static String DATA_DIRECTORY = "databases";
         public final static String FILE_OF_SCHEDULE_DIRECTORY = "Schedules";
         public final static String MIGRATE_OPTIONS_DIRECTORY = "Options";
         public final static String MIGRATE_DATABASE_DIRECTORY = "Database";
+
+        public final static String SLASH_BACK = "/";
 
         //Report
         public final static String REPORT_NO_PROBLEM = "is complete";
         public final static String REPORT_ERROR = "ERROR";
 
-        public static void createFileOfOptions(String path, Schedule schedule)
-        {
+        public static void createFileOfOptions(String path, Schedule schedule) {
             try
             {
                 File file = new File(path);
@@ -93,8 +100,7 @@ public class DataContract
             }
         }
 
-        public static Schedule readFileOfOptions(String path)
-        {
+        public static Schedule readFileOfOptions(String path) {
             File file  = new File(path);
             Schedule schedule = new Schedule(file.getName());
             try {
@@ -116,8 +122,7 @@ public class DataContract
             return schedule;
         }
 
-        public static void deleteDate(Context context, String name)
-        {
+        public static void deleteDate(Context context, String name) {
             String path;
             File file;
 
@@ -159,8 +164,7 @@ public class DataContract
             }
         }
 
-        public static boolean importFiles(Context context, String name)
-        {
+        public static boolean importFiles(Context context, String name) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
             {
 
@@ -184,6 +188,8 @@ public class DataContract
                         .append(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath())
                         .append(File.separator)
                         .append(name);
+
+                //
 
                 //Проверка наличия файлов
                 fileOfExternal = new File(pathToExternalStorage.toString(), name);
@@ -348,15 +354,13 @@ public class DataContract
             }
         }
 
-        public static boolean exportFiles(Context context, String nameOfOptionsFile)
-        {
+        public static boolean exportFiles(Context context, String nameOfOptionsFile) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
             {
                 //Путь к коренным директориям
                 StringBuilder
                         pathToExternalStorage = new StringBuilder(),
                         pathToInternalStorage = new StringBuilder();
-                String[] nameOfFile;
                 File fileOfExternal;
                 File fileOfInternal;
                 int typeOfSchedule;
@@ -382,17 +386,14 @@ public class DataContract
                 //Получение информации о типе расписания
                 fileOfInternal = new File(pathToInternalStorage.toString(), nameOfOptionsFile + ".txt");
 
-                try (BufferedReader reader = new BufferedReader(new FileReader(fileOfInternal)))
-                {
+                try (BufferedReader reader = new BufferedReader(new FileReader(fileOfInternal))) {
                     typeOfSchedule = Integer.parseInt(reader.readLine());
-                    if (!(typeOfSchedule == MyAppSettings.SCHEDULE_TYPE_1 || typeOfSchedule == MyAppSettings.SCHEDULE_TYPE_2))
-                    {
-                        //Ошибка, в файле неправильная запист типа расписания
+                    if (!(typeOfSchedule == MyAppSettings.SCHEDULE_TYPE_1 || typeOfSchedule == MyAppSettings.SCHEDULE_TYPE_2)) {
+                        Log.i("EXPORT ERROR", "DataContract: тип расписания записан неправильно");
                         return false;
                     }
-                }catch (Exception e)
-                {
-                    //Ошибка, чтение файла не удалось
+                }catch (Exception e) {
+                    Log.i("EXPORT ERROR", "DataContract: Ошибка в чтении файла параметров расписания. Неудалось получить тип расписания");
                     return false;
                 }
 
@@ -400,20 +401,21 @@ public class DataContract
                 fileOfExternal = new File(pathToExternalStorage.toString());
                 fileOfExternal.mkdirs();
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                {
-                    try
-                    {
-                        Files.copy(fileOfInternal.toPath(), fileOfExternal.toPath().resolve(fileOfInternal.getName()), StandardCopyOption.REPLACE_EXISTING);
-                    }catch (Exception e)
-                    {
-                        //Ошибка,
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    try {
+                        Files.copy(
+                                fileOfInternal.toPath(),
+                                fileOfExternal.toPath().resolve(fileOfInternal.getName()),
+                                StandardCopyOption.REPLACE_EXISTING);
+                    }catch (Exception e) {
+                        Log.i("EXPORT ERROR", "DataContract: Неудалось скопировать фаил: " + fileOfInternal.getPath());
                         return false;
                     }
-                }else
-                {
-                    if (!copyFile(fileOfInternal, fileOfExternal))
+                }else {
+                    if (!copyFile(fileOfInternal, fileOfExternal)) {
+                        Log.i("EXPORT ERROR", "DataContract: Неудалось скопировать фаил: " + fileOfInternal.getPath());
                         return false;
+                    }
                 }
 
                 //Обновление коренных файлов
@@ -437,40 +439,43 @@ public class DataContract
 
                 String[] dbFiles;
                 if (typeOfSchedule == MyAppSettings.SCHEDULE_TYPE_2)
-                    dbFiles = new String[]
-                            {
+                    dbFiles = new String[]{
                                     pathToInternalStorage.toString() + File.separator + "top" + nameOfOptionsFile,
                                     pathToInternalStorage.toString() + File.separator + "lower" + nameOfOptionsFile,
                                     pathToInternalStorage.toString() + File.separator + "time" + nameOfOptionsFile
                             };
                 else
-                    dbFiles = new String[]
-                            {
+                    dbFiles = new String[]{
                                     pathToInternalStorage.toString() + File.separator + "top" + nameOfOptionsFile,
                                     pathToInternalStorage.toString() + File.separator + "time" + nameOfOptionsFile
                             };
 
 
                 try {
-
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                    {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         for (String dbFile : dbFiles) {
                             fileOfInternal = new File(dbFile);
                             Files.copy(fileOfInternal.toPath(), fileOfExternal.toPath().resolve(fileOfInternal.getName()), StandardCopyOption.REPLACE_EXISTING);
                         }
-                    } else
-                    {
+                    } else {
                         for (String dbFile : dbFiles) {
                             fileOfInternal = new File(dbFile);
                             copyFile(fileOfInternal, fileOfExternal);
                         }
                     }
-                } catch (Exception e)
-                {
+                } catch (Exception e) {
                     //Ошибка,
+                    Log.i("EXPORT ERROR", "DataContract: неудалось скопировать ваил bd расписания");
                     return false;
                 }
+
+                //Архивирование
+                zipFile(new File(pathToExternalStorage.toString()).getParentFile());
+
+                //Удаление пака
+                fileOfExternal = new File(pathToExternalStorage.toString()).getParentFile();
+                if (!fileOfExternal.delete())
+                    return false;
 
                 return true;
             }else
@@ -480,8 +485,7 @@ public class DataContract
             }
         }
 
-        private static boolean copyFile(File original, File directory)
-        {
+        private static boolean copyFile(File original, File directory) {
             try
             {
                 if (!original.exists()) {
@@ -510,6 +514,69 @@ public class DataContract
                 return true;
             }catch (Exception e)
             {
+                return false;
+            }
+        }
+
+        public static boolean zipFile(File file){
+            try{
+                ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(file.getPath() + ".zip"));
+
+                addDirectoryToZip(zipOut, file);
+
+                return true;
+            } catch (Exception e){
+                Log.i("EXPORT ERROR", "DataContract: (метод zipFile) неудлось провести архивацию");
+                return false;
+            }
+        }
+
+        private static void addDirectoryToZip(ZipOutputStream zipOut, File file) throws Exception{
+            File[] files = file.listFiles();
+
+            for (int index = 0; index<files.length; index++){
+                if (files[index].isDirectory()){
+                    addDirectoryToZip(zipOut, files[index]);
+                    continue;
+                }
+
+                FileInputStream fileStream = new FileInputStream(files[index]);
+                zipOut.putNextEntry(new ZipEntry(files[index].getPath()));
+
+                byte[] buffer = new byte[fileStream.available()];
+                zipOut.write(buffer);
+
+                zipOut.closeEntry();
+                fileStream.close();
+            }
+        }
+
+        public static boolean unzipFile(File file){
+                try {
+                    ZipFile zipFile = new ZipFile(file);
+                    Enumeration<?> entries = zipFile.entries();
+
+                    while (entries.hasMoreElements()){
+                        ZipEntry entry = (ZipEntry) entries.nextElement();
+                        String entryName = entry.getName();
+
+                        if (entry.getName().endsWith(SLASH_BACK)){
+                            File dir = new File(entryName.substring(0, entryName.indexOf(SLASH_BACK)));
+                            dir.mkdirs();
+                        }
+
+                        InputStream inputStream = (InputStream) zipFile.getInputStream(entry);
+
+                        FileOutputStream outputStream = new FileOutputStream(entryName);
+                        byte[] buffer = new byte[inputStream.available()];
+                        inputStream.read(buffer, 0, buffer.length);
+                        outputStream.write(buffer, 0, buffer.length);
+
+                        inputStream.close();
+                        outputStream.close();
+                    }
+                    return true;
+                }catch (Exception e){
                 return false;
             }
         }

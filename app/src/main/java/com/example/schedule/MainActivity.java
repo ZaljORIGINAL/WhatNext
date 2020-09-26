@@ -309,7 +309,8 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
         }
 
         updateDateButton();
-        //FIXME Надо отсоритировать. Расписание может быть в разнобой
+        updateDisciplines();
+
         updateRecycleView();
     }
 
