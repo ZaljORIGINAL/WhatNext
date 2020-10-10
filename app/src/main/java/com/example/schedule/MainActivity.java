@@ -1,13 +1,5 @@
 package com.example.schedule;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -29,6 +21,14 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.schedule.Adapters.DisciplineAdapter;
 import com.example.schedule.Data.DataContract;
 import com.example.schedule.Data.DisciplineDBHelper;
@@ -38,6 +38,7 @@ import com.example.schedule.Objects.Schedule;
 import java.io.File;
 import java.util.Calendar;
 
+import static com.example.schedule.Data.DataContract.MyAppSettings;
 import static com.example.schedule.Data.DataContract.MyAppSettings.PERMISSION_REQUEST_EXTERNAL_STORAGE;
 
 public class MainActivity extends AppCompatActivity implements DisciplineAdapter.iOnItemClickListener

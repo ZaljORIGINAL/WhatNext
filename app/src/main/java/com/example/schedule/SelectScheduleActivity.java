@@ -109,7 +109,6 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
         {
             case R.id.importSchedule:
             {
-                //TODO Получить доступ к файлу Download на внутренней и внешней памяти и вывести в виде диологово окна список всех файлов начинающихся с "mSch". Напртив каждого варианта должен быть CheckButton, после чего выбранный варианты будут загружены в храниие приложения
                 //Провверка на доступ к внешней памяти
                 if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
                 {
@@ -203,8 +202,7 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
         }
     }
 
-    private void updateList()
-    {
+    private void updateList() {
         //Обнаволи массив имен
         files = Arrays.asList(file.list());
         //Сообщаем адаптеру что мы обновили данные
@@ -212,8 +210,7 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
         scheduleList.setAdapter(adapter);
     }
 
-    private void findScheduleFile(final Context context)
-    {
+    private void findScheduleFile(final Context context) {
         Log.i("Copy/Import/Export", "Начало поиска файлов");
         //Получаем путь к папке Download во внешнейй памяти
         file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath());
@@ -221,24 +218,13 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
         String[] files = file.list();
 
         //Фильтр
-        int isTrue = 0;
-        for (int index = 0; index < files.length; index++)
-        {
-            if (files[index].indexOf("mSch") == 0 && !files[index].contains("."))
-            {
-                files[isTrue] = files[index];
-                isTrue++;
-            }
-        }
-
-        final String[] trueFiles = Arrays.copyOf(files, isTrue);
+        files = filterForRarFile(files);
 
         //Диалоговое окно для выбора требуемых файлов.
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setTitle(R.string.SelectScheduleActivity_Dialog_ChooseFile);
 
-        if (trueFiles.length == 0)
-        {
+        if (files.length == 0) {
             dialog.setMessage(R.string.SelectScheduleActivity_Dialog_NotFound);
             dialog.setPositiveButton(R.string.Standard_dialog_positive_button,
                     new DialogInterface.OnClickListener()
@@ -249,41 +235,44 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
 
                         }
                     });
-
-            dialog.show();
-        }else
-        {
+        }else {
             View dialogView = View.inflate(this, R.layout.dialog_choose_files, null);
             dialog.setView(dialogView);
-            final RecyclerView fileList;
+            RecyclerView fileList;
             fileList = dialogView.findViewById(R.id.filesLlist);
             fileList.setLayoutManager(new LinearLayoutManager(this));
-            final ChooseListAdapter adapter = new ChooseListAdapter(trueFiles);
+            final ChooseListAdapter adapter = new ChooseListAdapter(files);
             fileList.setAdapter(adapter);
 
             //FIXME Если мы выберем 1 фаил, то нам так же в окне отчете выведится отчет по файлу, который мы не пожелали импортировать(выводит ответ ERROR по невыбранному файлу)
+            final String[] finalFiles = files;
             dialog.setPositiveButton(R.string.Standard_dialog_positive_button,
                     new DialogInterface.OnClickListener()
                     {
                         @Override
-                        public void onClick(DialogInterface dialog, int which)
-                        {
+                        public void onClick(DialogInterface dialog, int which) {
                             boolean[] chose = adapter.getCheckBoxStatus();
-                            boolean[] complete = new boolean[trueFiles.length];
+                            //Обновить список выбранных файлов для иммпорта
+                            int isTrue = 0;
+                            for (int index = 0; index < chose.length; index++) {
+                                if (chose[index]) {
+                                    chose[isTrue] = chose[index];
+                                    finalFiles[isTrue] = finalFiles[index];
+                                    isTrue++;
+                                }
+                            }
 
-                            for (int index = 0; index < trueFiles.length; index++)
-                            {
-                                if (chose[index])
-                                {
+                            boolean[] complete = new boolean[finalFiles.length];
+
+                            for (int index = 0; index < isTrue; index++) {
+                                if (chose[index]) {
                                     //Получаем ошибки и результаты импортирования
-                                    if (DataContract.MyFileManager.importFiles(getApplicationContext() ,trueFiles[index]))
-                                    {
+                                    if (DataContract.MyFileManager.importFiles(getApplicationContext() , new File(finalFiles[index]))) {
                                         //Сообщить об успешном импортировании
                                         complete[index] = true;
-                                    }else
-                                    {
+                                    }else {
                                         complete[index] = false;
-                                        DataContract.MyFileManager.deleteDate(getApplicationContext(), trueFiles[index]);
+                                        DataContract.MyFileManager.deleteDate(getApplicationContext(), finalFiles[index]);
                                     }
                                 }
                             }
@@ -292,10 +281,10 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
                             AlertDialog.Builder messageDialog = new AlertDialog.Builder(context);
                             messageDialog.setTitle(R.string.Standard_Dialog_Report);
                             StringBuilder report = new StringBuilder();
-                            for (int index = 0; index < trueFiles.length; index++)
+                            for (int index = 0; index < isTrue; index++)
                             {
                                 report
-                                        .append(trueFiles[index])
+                                        .append(finalFiles[index])
                                         .append(": ");
 
                                 if (complete[index])
@@ -332,7 +321,21 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
                 }
             });
 
-            dialog.show();
         }
+        dialog.show();
+    }
+    private String[] filterForRarFile(String[] filesName){
+        int isTrue = 0;
+        for (int index = 0; index < filesName.length; index++)
+        {
+            if (filesName[index].indexOf("mSch") == 0 && filesName[index].contains(".zip"))
+            {
+                filesName[isTrue] = filesName[index];
+                isTrue++;
+            }
+        }
+
+        filesName = Arrays.copyOf(filesName, isTrue);
+        return filesName;
     }
 }
