@@ -159,9 +159,9 @@ public class DataContract
                         deleteDir(file);
                     }
                 }
-
-                dir.delete();
             }
+
+            dir.delete();
         }
 
         /**
@@ -175,13 +175,13 @@ public class DataContract
         public static boolean importFiles(Context context, File fileToImport) {
             //Плучим имя пакета
             String packageName;
-            packageName = fileToImport.getName().substring(fileToImport.getName().indexOf("."));
+            packageName = fileToImport.getName().substring(0, fileToImport.getName().indexOf("."));
 
             //Разархивируем полученный фаил
             if (unzipFile(fileToImport)) {
                 File packageToImport = new File(
-                        fileToImport.getPath().substring(fileToImport.getPath().indexOf(".zip"))
-                );
+                        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+                        packageName);
 
                 //Проверить на целостность
                 if (checkingForFiles(packageToImport)
@@ -493,6 +493,10 @@ public class DataContract
                     String entryName = entry.getName();
 
                     File exportFile = new File(entry.getName());
+                    if (!exportFile.getParentFile().exists()) {
+                        exportFile.getParentFile().mkdirs();
+                    }
+
                     exportFile.createNewFile();
 
                     InputStream inputStream = zipFile.getInputStream(entry);

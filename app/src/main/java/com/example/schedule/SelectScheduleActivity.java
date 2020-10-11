@@ -52,8 +52,7 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
     private SchedulesAdapter adapter;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_schedule);
 
@@ -73,14 +72,12 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
                     DataContract.MyFileManager.FILE_OF_SCHEDULE_DIRECTORY;
             file = new File(path);
             String[] filesArr;
-            if (!file.exists())
-            {
+            if (!file.exists()) {
                 file.mkdir();
             }
             filesArr = file.list();
             files = Arrays.asList(filesArr);
-        }catch (Exception e)
-        {
+        }catch (Exception e) {
             Log.e("FILE", "Error in class SelectScheduleActivity");
         }
 
@@ -91,8 +88,7 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
+    public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_select_schedule, menu);
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N)
@@ -105,25 +101,20 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId())
-        {
-            case R.id.importSchedule:
-            {
+        switch (item.getItemId()) {
+            case R.id.importSchedule: {
                 //Провверка на доступ к внешней памяти
-                if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
-                {
+                if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
                     Log.i("Copy/Import/Export", "Внешняя память доступна");
 
                     //Проверка разрешения на доступ к хранилищу
                     if (ContextCompat.checkSelfPermission(this,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
-                    {
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                         Log.i("Copy/Import/Export", "Разрешение на внешнее хранилище получено");
 
                         //Получаем путь к папке Download во внешнейй памяти
                         findScheduleFile(this);
-                    } else
-                    {
+                    } else {
                         Log.i("Copy/Import/Export", "Разрешение на внешнее хранилище не получено, запрошиваю доступ");
 
                         //Запрашиваем разрешение у пользователя. Статья: https://habr.com/ru/post/278945/
@@ -131,8 +122,7 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
                                 new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE},
                                 PERMISSION_REQUEST_EXTERNAL_STORAGE);
                     }
-                }else
-                {
+                }else {
                     Log.i("Copy/Import/Export", "Внешняя память не доступна. " + Environment.getExternalStorageState());
                     Toast.makeText(this, R.string.SelectScheduleActivity_Toast_storageIsNotAvailable, Toast.LENGTH_LONG).show();
                 }
@@ -142,8 +132,7 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
     }
 
     @Override
-    public void onItemClick(int position)
-    {
+    public void onItemClick(int position) {
         Intent intent = new Intent();
         intent.putExtra(IntentHelper.NAME, files.get(position));
         setResult(IntentHelper.SELECT_SCHEDULE, intent);
@@ -151,8 +140,7 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
         finish();
     }
 
-    private void createNewSchedule()
-    {
+    private void createNewSchedule() {
         //Schedule
         Calendar calendar = Calendar.getInstance();
         Intent intent = new Intent(this, ScheduleBuilderActivity.class);
@@ -162,22 +150,17 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
-    {
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case IntentHelper.CREATE_NEW_SCHEDULE:
-            {
-                if (resultCode == RESULT_OK)
-                {
+            case IntentHelper.CREATE_NEW_SCHEDULE: {
+                if (resultCode == RESULT_OK) {
                     updateList();
                 }
             }break;
 
-            case IntentHelper.SCHEDULE_OPTIONS:
-            {
-                if (resultCode == RESULT_OK || resultCode == IntentHelper.RESULT_DELETED)
-                {
+            case IntentHelper.SCHEDULE_OPTIONS: {
+                if (resultCode == RESULT_OK || resultCode == IntentHelper.RESULT_DELETED) {
                     updateList();
                 }
             }
@@ -185,8 +168,10 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
-    {
+    public void onRequestPermissionsResult(
+            int requestCode,
+            @NonNull String[] permissions,
+            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         switch (requestCode)
@@ -212,10 +197,11 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
 
     private void findScheduleFile(final Context context) {
         Log.i("Copy/Import/Export", "Начало поиска файлов");
-        //Получаем путь к папке Download во внешнейй памяти
-        file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath());
 
-        String[] files = file.list();
+        String[] files = new File(
+                Environment.getExternalStoragePublicDirectory(
+                        Environment.DIRECTORY_DOWNLOADS).getPath())
+                .list();
 
         //Фильтр
         files = filterForRarFile(files);
@@ -267,7 +253,10 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
                             for (int index = 0; index < isTrue; index++) {
                                 if (chose[index]) {
                                     //Получаем ошибки и результаты импортирования
-                                    if (DataContract.MyFileManager.importFiles(getApplicationContext() , new File(finalFiles[index]))) {
+                                    if (DataContract.MyFileManager.importFiles(getApplicationContext(),
+                                            new File(
+                                                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                                                    ,finalFiles[index]))) {
                                         //Сообщить об успешном импортировании
                                         complete[index] = true;
                                     }else {
@@ -281,18 +270,15 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
                             AlertDialog.Builder messageDialog = new AlertDialog.Builder(context);
                             messageDialog.setTitle(R.string.Standard_Dialog_Report);
                             StringBuilder report = new StringBuilder();
-                            for (int index = 0; index < isTrue; index++)
-                            {
+                            for (int index = 0; index < isTrue; index++) {
                                 report
                                         .append(finalFiles[index])
                                         .append(": ");
 
-                                if (complete[index])
-                                {
+                                if (complete[index]) {
                                     report.append(DataContract.MyFileManager.REPORT_NO_PROBLEM);
                                     updateList();
-                                }else
-                                {
+                                }else {
                                     report.append(DataContract.MyFileManager.REPORT_ERROR);
                                 }
 

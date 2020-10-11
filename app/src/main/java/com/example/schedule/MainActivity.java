@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
                     File.separator +
                     settings.getString(DataContract.MyAppSettings.LAST_SCHEDULE, DataContract.MyAppSettings.NULL) +
                     ".txt";
-            //FIXME Возможно стоило сделать методы updateDisciplines и updateTimes методами класса Schedule
+
             schedule = DataContract.MyFileManager.readFileOfOptions(path);
 
             updateRecycleView();
@@ -195,8 +195,7 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
                         File.separator +
                         data.getStringExtra(IntentHelper.NAME);
                 schedule = DataContract.MyFileManager.readFileOfOptions(path);
-                updateDisciplines();
-                updateTimes();
+
                 updateRecycleView();
 
                 //Сохраняем открывшуюся расписание
@@ -247,10 +246,6 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
     /**
      * schedule update methods
      * */
-    /*
-    * TODO доделать обновления для параметров schedule:
-    *   *Имя расписания
-    *   *Тип расписания*/
     private void updateSchedule(){
         updateTimes();
         updateDisciplines();
