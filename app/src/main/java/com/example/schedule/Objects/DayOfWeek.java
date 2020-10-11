@@ -59,7 +59,7 @@ public class DayOfWeek implements Parcelable
     public ArrayList<Discipline> getDisciplines(){
         return disciplines;
     }
-    public byte getCount(){return (byte) disciplines.size();}
+    public int getCount(){return disciplines.size();}
     public Discipline getDiscipline(int position){
         return disciplines.get(position);
     }

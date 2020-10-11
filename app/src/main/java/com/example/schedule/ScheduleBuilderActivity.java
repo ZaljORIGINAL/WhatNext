@@ -35,6 +35,8 @@ public class ScheduleBuilderActivity extends AppCompatActivity
             loverWeek;
     public static ArrayList<TimeSchedule> times;
     public static ArrayList<String> namesOfDisciplines;
+    public static ArrayList<String> auditoryOfDisciplines;
+    public static ArrayList<String> buildingOfDisciplines;
     public Intent parentIntent;
 
     @Override
@@ -86,6 +88,8 @@ public class ScheduleBuilderActivity extends AppCompatActivity
             }
 
             namesOfDisciplines = new ArrayList<>();
+            auditoryOfDisciplines = new ArrayList<>();
+            buildingOfDisciplines = new ArrayList<>();
 
         }else
         {

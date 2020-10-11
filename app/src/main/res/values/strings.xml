@@ -54,6 +54,7 @@
     <string-array name="type_of_discipline">
         <item>Lecture</item>
         <item>Practice</item>
+        <item>Laboratory</item>
     </string-array>
 
     <!--CreateScheduleOfTime-->
@@ -88,10 +89,6 @@
     <string name="activity_ScheduleOfDay_dialog_position">Position</string>
     <string name="activity_ScheduleOfDay_dialog_name">Name</string>
     <string name="activity_ScheduleOfDay_dialog_type">Type</string>
-    <string-array name="activity_ScheduleOfDay_dialog_types">
-        <item>Lecture</item>
-        <item>Practice</item>
-    </string-array>
     <string name="activity_ScheduleOfDay_dialog_building">Building</string>
     <string name="activity_ScheduleOfDay_dialog_auditory">Lecture hall</string>
     <string name="activity_ScheduleOfDay_dialog_newDiscipline">Add Discipline</string>

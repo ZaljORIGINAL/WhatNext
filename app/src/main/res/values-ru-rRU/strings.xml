@@ -52,6 +52,7 @@
     <string-array name="type_of_discipline">
         <item>Лекция</item>
         <item>Практика</item>
+        <item>Лабораторная</item>
     </string-array>
 
     <!--CreateScheduleOfTime-->
@@ -86,11 +87,6 @@
     <string name="activity_ScheduleOfDay_dialog_position">Позиция</string>
     <string name="activity_ScheduleOfDay_dialog_name">Наименование</string>
     <string name="activity_ScheduleOfDay_dialog_type">Тип</string>
-<!--TODO Имеется 2 массива с типо дисциплины, ОДНО ИЗ НИХ ДОЛЖНО ЖИТЬ-->
-    <string-array name="activity_ScheduleOfDay_dialog_types">
-        <item>Лекция</item>
-        <item>Практика</item>
-    </string-array>
     <string name="activity_ScheduleOfDay_dialog_building">Здание</string>
     <string name="activity_ScheduleOfDay_dialog_auditory">Аудитория</string>
     <string name="activity_ScheduleOfDay_dialog_newDiscipline">Добавить предмет</string>

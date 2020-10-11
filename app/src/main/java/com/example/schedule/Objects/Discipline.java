@@ -10,12 +10,13 @@ public class Discipline implements Parcelable
     private TimeSchedule time;
     private byte dayOfWeek;
     private String disciplineName;
-    private byte type;
+    private int type;
     private String building;
     private String auditorium;
 
     public static final byte
-            LECTURE = 1,
+            LECTURE = 0,
+            PRACTICE = 1,
             LABORATORY = 2;
 
     /**
@@ -125,7 +126,7 @@ public class Discipline implements Parcelable
     {
         return disciplineName;
     }
-    public int getType(){return (int) type;}
+    public int getType(){return type;}
     public int getDayOfWeek()
     {
         return dayOfWeek;
@@ -156,7 +157,7 @@ public class Discipline implements Parcelable
     {
         this.disciplineName = name;
     }
-    public void setType(byte type){this.type = type;}
+    public void setType(int type){this.type = type;}
     public void setDayOfWeek(int dayOfWeek)
     {
         this.dayOfWeek = (byte) dayOfWeek;
@@ -169,7 +170,7 @@ public class Discipline implements Parcelable
     {
         this.position = (byte)position;
     }
-    public void setDisceplines(TimeSchedule time){
+    public void setDisciplines(TimeSchedule time){
         this.time = time;
         this.position = (byte) time.getNumber();
     }
@@ -194,7 +195,7 @@ public class Discipline implements Parcelable
         dest.writeParcelable(time, flags);
         dest.writeByte(dayOfWeek);
         dest.writeString(disciplineName);
-        dest.writeByte(type);
+        dest.writeInt(type);
         dest.writeString(building);
         dest.writeString(auditorium);
     }

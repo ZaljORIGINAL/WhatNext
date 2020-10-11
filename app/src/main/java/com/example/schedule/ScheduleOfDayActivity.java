@@ -67,13 +67,12 @@ public class ScheduleOfDayActivity extends AppCompatActivity implements Discipli
         * как выбранным будет указана как последняя. Так же при созднаии новой пары в
         * positionSpinner для следующей пары будет указана +1 к позиции*/
         if (day != null && day.getCount() != 0){
-            //FIXME отсартирован ли день?
             ArrayList<Discipline> disciplines = day.getDisciplines();
 
             //Получаем номер дисциплины у последнего элемента в массиве. Надеясь на то,
             // что он является последней парой за день
             maxPositionSelected = disciplines.get(disciplines.size() - 1).getPosition();
-            if (maxPositionSelected <= ScheduleBuilderActivity.times.size() - 1)
+            if (maxPositionSelected < ScheduleBuilderActivity.times.size() - 1)
                 maxPositionSelected++;
         }else {
             maxPositionSelected = 0;
@@ -111,7 +110,7 @@ public class ScheduleOfDayActivity extends AppCompatActivity implements Discipli
     {
         disciplineBuilder = day.getDiscipline(position);
 
-        setDisciplineOptions(disciplineBuilder, position);
+        setDisciplineOptions(disciplineBuilder, disciplineBuilder.getPosition());
     }
 
     @Override
@@ -166,9 +165,8 @@ public class ScheduleOfDayActivity extends AppCompatActivity implements Discipli
         /*View elements*/
         final Spinner positionSpinner,
                 setTypeSpinner;
-        final AutoCompleteTextView setNameAC;
-        final EditText setBuilding,
-                setAuditory;
+        final AutoCompleteTextView nameAC, buildingAC, auditoryAC;
+
         Button delete;
 
         positionSpinner = view.findViewById(R.id.setPosition);
@@ -178,17 +176,20 @@ public class ScheduleOfDayActivity extends AppCompatActivity implements Discipli
                 getPosition(ScheduleBuilderActivity.times.size()));
         adapterPosition.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         positionSpinner.setAdapter(adapterPosition);
-        positionSpinner.setSelection(maxPositionSelected);
+        if (position != -1){
+            positionSpinner.setSelection(position);
+        }else {
+            positionSpinner.setSelection(maxPositionSelected);
+        }
 
-        setNameAC = view.findViewById(R.id.setName);
-        //Сделать адаптер, получить инфу из ScheduleCreatingActivity.discipline + (последний пункт "добавить новый предмет"
+        nameAC = view.findViewById(R.id.setName);
         adapterNames = new ArrayAdapter<>(
                 this,
                 android.R.layout.simple_dropdown_item_1line,
                 ScheduleBuilderActivity.namesOfDisciplines);
-        setNameAC.setAdapter(adapterNames);
+        nameAC.setAdapter(adapterNames);
         try {
-            setNameAC.setText(disciplineBuilder.getDisciplineName());
+            nameAC.setText(disciplineBuilder.getDisciplineName());
         }catch (Exception e)
         {
         }
@@ -196,47 +197,36 @@ public class ScheduleOfDayActivity extends AppCompatActivity implements Discipli
         setTypeSpinner = view.findViewById(R.id.setType);
         //Уже имеет добавить прослушиваетль
         setTypeSpinner.setSelection(discipline.getType());
-        setTypeSpinner.setOnItemSelectedListener(
-                new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        switch (position)
-                        {
-                            case Discipline.LECTURE:
-                                disciplineBuilder.setType(Discipline.LECTURE);
-                                break;
 
-                            case Discipline.LABORATORY:
-                                disciplineBuilder.setType(Discipline.LABORATORY);
-                                break;
-                        }
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
-
-                    }
-                });
-
-        /*FIXME Сделать так же как и с названиями*/
-        setBuilding =  view.findViewById(R.id.setBuilding);
+        buildingAC = view.findViewById(R.id.setBuilding);
+        adapterNames = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_dropdown_item_1line,
+                ScheduleBuilderActivity.buildingOfDisciplines);
+        buildingAC.setAdapter(adapterNames);
         try {
-            setBuilding.setText(disciplineBuilder.getBuilding());
-        }catch (Exception e){
+            buildingAC.setText(disciplineBuilder.getBuilding());
+        }catch (Exception e)
+        {
         }
 
-        /*FIXME Сделать так же как и с названиями*/
-        setAuditory = view.findViewById(R.id.setAuditory);
+        auditoryAC = view.findViewById(R.id.setAuditory);
+        adapterNames = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_dropdown_item_1line,
+                ScheduleBuilderActivity.auditoryOfDisciplines);
+        auditoryAC.setAdapter(adapterNames);
         try {
-            setAuditory.setText(disciplineBuilder.getAuditorium());
-        }catch (Exception e){
+            auditoryAC.setText(disciplineBuilder.getAuditorium());
+        }catch (Exception e)
+        {
         }
 
         dialog.setPositiveButton(R.string.Standard_dialog_positive_button, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //Сохранение предмета
-                if (setNameAC.getText().toString().isEmpty())
+                if (nameAC.getText().toString().isEmpty())
                 {
                     //Сообщение об ошибка
                     AlertDialog.Builder errorDialog = new AlertDialog.Builder(getApplicationContext());
@@ -263,14 +253,28 @@ public class ScheduleOfDayActivity extends AppCompatActivity implements Discipli
                     }
 
                     //Установка имени дисциплины
-                    disciplineBuilder.setDisciplineName(setNameAC.getText().toString());
-                    if (!ScheduleBuilderActivity.namesOfDisciplines.contains(setNameAC.getText().toString()))
+                    disciplineBuilder.setDisciplineName(nameAC.getText().toString());
+                    if (!ScheduleBuilderActivity.namesOfDisciplines.contains(nameAC.getText().toString()))
                     {
-                        ScheduleBuilderActivity.namesOfDisciplines.add(setNameAC.getText().toString());
+                        ScheduleBuilderActivity.namesOfDisciplines.add(nameAC.getText().toString());
                         updateNameOfDisciplineAdapter();
                     }
-                    disciplineBuilder.setBuilding(setBuilding.getText().toString());
-                    disciplineBuilder.setAuditorium(setAuditory.getText().toString());
+                    //Установка здания
+                    disciplineBuilder.setBuilding(buildingAC.getText().toString());
+                    if (!ScheduleBuilderActivity.buildingOfDisciplines.contains(buildingAC.getText().toString()))
+                    {
+                        ScheduleBuilderActivity.buildingOfDisciplines.add(buildingAC.getText().toString());
+                        updateNameOfDisciplineAdapter();
+                    }
+                    //Установка номера аудитории
+                    disciplineBuilder.setAuditorium(auditoryAC.getText().toString());
+                    if (!ScheduleBuilderActivity.auditoryOfDisciplines.contains(auditoryAC.getText().toString()))
+                    {
+                        ScheduleBuilderActivity.auditoryOfDisciplines.add(auditoryAC.getText().toString());
+                        updateNameOfDisciplineAdapter();
+                    }
+                    //Установка типа дисциплины
+                    disciplineBuilder.setType(setTypeSpinner.getSelectedItemPosition());
 
                     if (position != -1)
                     {
@@ -292,7 +296,6 @@ public class ScheduleOfDayActivity extends AppCompatActivity implements Discipli
         dialog.setNegativeButton(R.string.Standard_dialog_negative_button, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
             }
         });
 
