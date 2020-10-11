@@ -120,7 +120,8 @@ public class TimeFragment extends Fragment implements SchedulesAdapter.iItemClic
     }
 
     private void createTime() {
-        TimeSchedule timeSchedule = new TimeSchedule(ScheduleBuilderActivity.times.size() /*times.size()*/);
+        TimeSchedule timeSchedule =
+                new TimeSchedule(ScheduleBuilderActivity.times.size() /*times.size()*/);
 
         setTimeOptions(timeSchedule, -1);
     }
@@ -133,8 +134,8 @@ public class TimeFragment extends Fragment implements SchedulesAdapter.iItemClic
         TextView text;
 
         final Button
-                setStartTimeButton,
-                setFinishTimeButton;
+                startTimeButton,
+                finishTimeButton;
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(context);
         dialog.setTitle(R.string.fragment_dialog_newTime);
@@ -144,17 +145,23 @@ public class TimeFragment extends Fragment implements SchedulesAdapter.iItemClic
         text = (TextView)view.findViewById(R.id.setNumber);
         text.setText(timeSchedule.getNumber() + 1 + " " + getResources().getString(R.string.fragment_text_Discipline));
 
-        setStartTimeButton = (Button) view.findViewById(R.id.setStartTime);
+        startTimeButton = (Button) view.findViewById(R.id.setStartTime);
+        finishTimeButton = (Button) view.findViewById(R.id.setFinishTime);
+
+        //Следующий блок отвечает отвечает за кноаку startTimeButton
         if(position != -1)
         {
             calendar.set(Calendar.HOUR_OF_DAY, time.getStartHour());
             calendar.set(Calendar.MINUTE, time.getStartMinute());
-            setStartTimeButton.setText(DateUtils.formatDateTime(getContext(), calendar.getTimeInMillis(), DateUtils.FORMAT_SHOW_TIME));
+            startTimeButton.setText(
+                    DateUtils.formatDateTime(getContext(),
+                            calendar.getTimeInMillis(),
+                            DateUtils.FORMAT_SHOW_TIME));
         }else
         {
-            setStartTimeButton.setText(R.string.fragment_text_startTime);
+            startTimeButton.setText(R.string.fragment_text_startTime);
         }
-        setStartTimeButton.setOnClickListener(new View.OnClickListener() {
+        startTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
@@ -168,7 +175,25 @@ public class TimeFragment extends Fragment implements SchedulesAdapter.iItemClic
                                 calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
                                 calendar.set(Calendar.MINUTE, minute);
                                 time.setStartTime(hourOfDay, minute);
-                                setStartTimeButton.setText(DateUtils.formatDateTime(getContext(), calendar.getTimeInMillis(), DateUtils.FORMAT_SHOW_TIME));
+                                startTimeButton.setText(
+                                        DateUtils.formatDateTime(getContext(),
+                                                calendar.getTimeInMillis(),
+                                                DateUtils.FORMAT_SHOW_TIME));
+
+                                /**После установки начального времени мы автоматически
+                                 * добавляем 1 час 30 мин, тем самым облечаем ввод времени
+                                 * окончания пары*/
+                                calendar.add(Calendar.MINUTE, 90);
+                                finishTimeButton.setText(
+                                        DateUtils.formatDateTime(getContext(),
+                                                calendar.getTimeInMillis(),
+                                                DateUtils.FORMAT_SHOW_TIME));
+
+                                time.setFinishTime(
+                                        calendar.get(Calendar.HOUR_OF_DAY),
+                                        calendar.get(Calendar.MINUTE));
+
+                                calendar.add(Calendar.MINUTE, 10);
                             }
                         },
                         calendar.get(Calendar.HOUR_OF_DAY),
@@ -178,17 +203,20 @@ public class TimeFragment extends Fragment implements SchedulesAdapter.iItemClic
             }
         });
 
-        setFinishTimeButton = (Button) view.findViewById(R.id.setFinishTime);
+        //Следующий блок отвечает отвечает за кноаку finishTimeButton
         if (position != -1)
         {
             calendar.set(Calendar.HOUR_OF_DAY, time.getFinishHour());
             calendar.set(Calendar.MINUTE, time.getFinishMinute());
-            setFinishTimeButton.setText(DateUtils.formatDateTime(getContext(), calendar.getTimeInMillis(), DateUtils.FORMAT_SHOW_TIME));
+            finishTimeButton.setText(
+                    DateUtils.formatDateTime(getContext(),
+                            calendar.getTimeInMillis(),
+                            DateUtils.FORMAT_SHOW_TIME));
         }else
         {
-            setFinishTimeButton.setText(R.string.fragment_text_finishTime);
+            finishTimeButton.setText(R.string.fragment_text_finishTime);
         }
-        setFinishTimeButton.setOnClickListener(new View.OnClickListener() {
+        finishTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
@@ -202,8 +230,15 @@ public class TimeFragment extends Fragment implements SchedulesAdapter.iItemClic
                                 calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
                                 calendar.set(Calendar.MINUTE, minute);
                                 time.setFinishTime(hourOfDay, minute);
-                                setFinishTimeButton.setText(DateUtils.formatDateTime(getContext(), calendar.getTimeInMillis(), DateUtils.FORMAT_SHOW_TIME));
+                                finishTimeButton.setText(
+                                        DateUtils.formatDateTime(getContext(),
+                                                calendar.getTimeInMillis(),
+                                                DateUtils.FORMAT_SHOW_TIME));
 
+                                /**После установки установки времени конца занятия
+                                 * добавляем 10 мин, тем самым облечаем ввод времени
+                                 * начала следующего занятия*/
+                                calendar.add(Calendar.MINUTE, 10);
                             }
                         },
                         calendar.get(Calendar.HOUR_OF_DAY),

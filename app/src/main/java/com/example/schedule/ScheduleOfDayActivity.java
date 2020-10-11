@@ -24,6 +24,8 @@ import com.example.schedule.Objects.DayOfWeek;
 import com.example.schedule.Objects.Discipline;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.ArrayList;
+
 public class ScheduleOfDayActivity extends AppCompatActivity implements DisciplineAdapter.iOnItemClickListener
 {
     /**View*/
@@ -39,6 +41,7 @@ public class ScheduleOfDayActivity extends AppCompatActivity implements Discipli
     private ArrayAdapter<String> adapterNames;
 
     private Intent intent;
+    private int maxPositionSelected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -55,6 +58,27 @@ public class ScheduleOfDayActivity extends AppCompatActivity implements Discipli
         list = (RecyclerView)findViewById(R.id.elementsList);
         list.setLayoutManager(new LinearLayoutManager(this));
         day = intent.getParcelableExtra("DAY");
+        /*Для упрощения установки номера пары требуется провести анализ.
+        * Если день пуст, то в positionSpinner первым выбранным элемментом будет указана
+        * первая пара. Если же день не пуст, то выискивается самая поздняя пара в спинере как
+        * выбранная будет указана "поздняя пара" + 1. Тем самым мы исключаем возможность
+        * установления подряд несскольких пар в одно и то же время, но требуется ввести проверку
+        * на количество возможных пар в ДЕНЬ. Если мы достигли максимума, то в positionSpinner
+        * как выбранным будет указана как последняя. Так же при созднаии новой пары в
+        * positionSpinner для следующей пары будет указана +1 к позиции*/
+        if (day != null && day.getCount() != 0){
+            //FIXME отсартирован ли день?
+            ArrayList<Discipline> disciplines = day.getDisciplines();
+
+            //Получаем номер дисциплины у последнего элемента в массиве. Надеясь на то,
+            // что он является последней парой за день
+            maxPositionSelected = disciplines.get(disciplines.size() - 1).getPosition();
+            if (maxPositionSelected <= ScheduleBuilderActivity.times.size() - 1)
+                maxPositionSelected++;
+        }else {
+            maxPositionSelected = 0;
+        }
+
         adapter = new DisciplineAdapter(this, day.getDisciplines(), this);
         list.setAdapter(adapter);
 
@@ -131,7 +155,7 @@ public class ScheduleOfDayActivity extends AppCompatActivity implements Discipli
         adapter.notifyDataSetChanged();
     }
 
-    private void setDisciplineOptions(Discipline discipline, final int position)
+    private void setDisciplineOptions(final Discipline discipline, final int position)
     {
         //Показать диалог для редактирования
         final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
@@ -140,35 +164,21 @@ public class ScheduleOfDayActivity extends AppCompatActivity implements Discipli
         dialog.setView(view);
 
         /*View elements*/
-        final Spinner setPositionSpinner,
+        final Spinner positionSpinner,
                 setTypeSpinner;
         final AutoCompleteTextView setNameAC;
         final EditText setBuilding,
                 setAuditory;
         Button delete;
 
-        setPositionSpinner = view.findViewById(R.id.setPosition);
+        positionSpinner = view.findViewById(R.id.setPosition);
         adapterPosition = new ArrayAdapter<String>(
                 this,
                 android.R.layout.simple_spinner_item,
                 getPosition(ScheduleBuilderActivity.times.size()));
         adapterPosition.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        setPositionSpinner.setAdapter(adapterPosition);
-        setPositionSpinner.setSelection(disciplineBuilder.getPosition());
-        setPositionSpinner.setOnItemSelectedListener(
-                new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        disciplineBuilder.setPosition(position);
-                        disciplineBuilder.setTime(ScheduleBuilderActivity.times.get(position));
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
-
-                    }
-                }
-        );
+        positionSpinner.setAdapter(adapterPosition);
+        positionSpinner.setSelection(maxPositionSelected);
 
         setNameAC = view.findViewById(R.id.setName);
         //Сделать адаптер, получить инфу из ScheduleCreatingActivity.discipline + (последний пункт "добавить новый предмет"
@@ -236,6 +246,23 @@ public class ScheduleOfDayActivity extends AppCompatActivity implements Discipli
                     errorDialog.show();
                 }else
                 {
+                    //Установка порядкого номера дисциплины
+                    int positionScheduleOfDay;
+                    positionScheduleOfDay = positionSpinner.getSelectedItemPosition();
+                    disciplineBuilder.setPosition(positionScheduleOfDay);
+                    //Устанвока времени
+                    disciplineBuilder.setTime(
+                            ScheduleBuilderActivity.times.get(positionScheduleOfDay));
+
+                    if (maxPositionSelected <= positionScheduleOfDay){
+                        if (positionScheduleOfDay == ScheduleBuilderActivity.times.size() - 1){
+                            maxPositionSelected = positionScheduleOfDay;
+                        }else {
+                            maxPositionSelected = positionScheduleOfDay + 1;
+                        }
+                    }
+
+                    //Установка имени дисциплины
                     disciplineBuilder.setDisciplineName(setNameAC.getText().toString());
                     if (!ScheduleBuilderActivity.namesOfDisciplines.contains(setNameAC.getText().toString()))
                     {
@@ -254,6 +281,8 @@ public class ScheduleOfDayActivity extends AppCompatActivity implements Discipli
                     }
 
                     day.sortDisciplines();
+
+                    positionSpinner.setSelection(maxPositionSelected);
 
                     updateDisciplineAdapter();
                 }
