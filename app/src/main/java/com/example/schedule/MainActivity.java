@@ -90,8 +90,6 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
                     ".txt";
             //FIXME Возможно стоило сделать методы updateDisciplines и updateTimes методами класса Schedule
             schedule = DataContract.MyFileManager.readFileOfOptions(path);
-            updateDisciplines();
-            updateTimes();
 
             updateRecycleView();
         }
@@ -254,8 +252,8 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
     *   *Имя расписания
     *   *Тип расписания*/
     private void updateSchedule(){
-        updateDisciplines();
         updateTimes();
+        updateDisciplines();
     }
 
     private void updateDisciplines() {
@@ -290,6 +288,7 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
 
     private void updateRecycleView()
     {
+        updateSchedule();
         DisciplineAdapter adapter = new DisciplineAdapter(this, schedule.getDisciplines(), this);
         disciplineList.setAdapter(adapter);
     }
@@ -310,7 +309,6 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
         }
 
         updateDateButton();
-        updateDisciplines();
 
         updateRecycleView();
     }
@@ -326,6 +324,7 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
                     {
                         calendar.set(year, month, dayOfMonth);
                         updateDateButton();
+
                         updateRecycleView();
                     }
                 },

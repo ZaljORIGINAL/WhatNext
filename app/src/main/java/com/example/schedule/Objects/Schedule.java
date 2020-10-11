@@ -1,4 +1,3 @@
-/**Можно было ли применить паттерн Builder?*/
 package com.example.schedule.Objects;
 
 import android.os.Parcel;
