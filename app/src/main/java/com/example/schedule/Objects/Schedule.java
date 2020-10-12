@@ -9,8 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class Schedule implements Parcelable
-{
+public class Schedule implements Parcelable {
     private String nameOfFileSchedule;  /*Фаил в котором хранятся пареметры Расписаня, в качестве имени указывается дата создания*/
     private String nameOfSchedule;      /*Наименование расписания*/
     private byte type;                  /*Тип расписания (двойное/одинарное)*/
@@ -23,19 +22,15 @@ public class Schedule implements Parcelable
     /**
      * Constructors
      * */
-    public Schedule()
-    {
+    public Schedule() {
     }
 
     public Schedule(
             String nameOfFileSchedule
-    )
-    {
-        if (nameOfFileSchedule.contains("."))
-        {
+    ) {
+        if (nameOfFileSchedule.contains(".")) {
             this.nameOfFileSchedule = nameOfFileSchedule.substring(0, nameOfFileSchedule.indexOf('.'));
-        }else
-        {
+        }else {
             this.nameOfFileSchedule = nameOfFileSchedule;
         }
 
@@ -171,10 +166,8 @@ public class Schedule implements Parcelable
         disciplines.add(index, discipline);
     }
 
-    private void sort()
-    {
-        Collections.sort(disciplines, new Comparator<Discipline>()
-        {
+    private void sort() {
+        Collections.sort(disciplines, new Comparator<Discipline>() {
             @Override
             public int compare(Discipline o1, Discipline o2) {
                 return o1.getNumber().compareTo(o2.getNumber());

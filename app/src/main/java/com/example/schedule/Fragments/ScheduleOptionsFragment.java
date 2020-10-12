@@ -1,9 +1,3 @@
-/**
- * Values "kay":
- *  @NAME - name of schedule
- *  @CHANGE - switch status
- *  @PARITY - parity*/
-
 package com.example.schedule.Fragments;
 
 import android.app.DatePickerDialog;
@@ -59,15 +53,13 @@ public class ScheduleOptionsFragment extends Fragment
     }
 
     @Override
-    public void onAttach(@NonNull Context context)
-    {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context = context;
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState)
-    {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         calendar = Calendar.getInstance();
     }
@@ -76,8 +68,7 @@ public class ScheduleOptionsFragment extends Fragment
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState)
-    {
+                             @Nullable Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.fragment_main_settings_of_schedule, container, false);
 
         //Инициализация элементов
@@ -98,32 +89,27 @@ public class ScheduleOptionsFragment extends Fragment
         });
         isDouble = view.findViewById(R.id.setDouble);
         isDouble.setOnCheckedChangeListener(
-                (buttonView, isChecked) ->
-                    {
-                        if (isChecked)
-                        {
-                            info.setVisibility(View.VISIBLE);
-                            selectWeek.setVisibility(View.VISIBLE);
-                            schedule.setType(DataContract.MyAppSettings.SCHEDULE_TYPE_2);
-                            selectWeek.setText(R.string.fragment_button_setWeek);
-                        }else
-                        {
-                            info.setVisibility(View.GONE);
-                            selectWeek.setVisibility(View.GONE);
-                            schedule.setType(DataContract.MyAppSettings.SCHEDULE_TYPE_1);
-                            schedule.setParity(-1);
-                        }
-                    });
+                (buttonView, isChecked) -> {
+                    if (isChecked) {
+                        info.setVisibility(View.VISIBLE);
+                        selectWeek.setVisibility(View.VISIBLE);
+                        schedule.setType(DataContract.MyAppSettings.SCHEDULE_TYPE_2);
+                        selectWeek.setText(R.string.fragment_button_setWeek);
+                    }else {
+                        info.setVisibility(View.GONE);
+                        selectWeek.setVisibility(View.GONE);
+                        schedule.setType(DataContract.MyAppSettings.SCHEDULE_TYPE_1);
+                        schedule.setParity(-1);
+                    }
+                });
         info = view.findViewById(R.id.infoAboutOfDouble);
 
-        //TODO При изменении расписания требуется вывести на кнопку дату понедельника, которая относится к следующей верхней неделие
         selectWeek = view.findViewById(R.id.selectWeek);
         selectWeek.setOnClickListener(
-                (v) ->
-                    {
+                (v) -> {
                         new DatePickerDialog(
-                                context,
-                                (view1, year, month, dayOfMonth) -> {
+                            context,
+                            (view1, year, month, dayOfMonth) -> {
                                     calendar.set(year, month, dayOfMonth);
                                     schedule.setParity((calendar.get(Calendar.WEEK_OF_YEAR) % 2));
                                     selectWeek.setText(
@@ -132,7 +118,7 @@ public class ScheduleOptionsFragment extends Fragment
                                                             context,
                                                             calendar.getTimeInMillis(),
                                                             DateUtils.FORMAT_SHOW_DATE)));
-                                },
+                                    },
                                 calendar.get(Calendar.YEAR),
                                 calendar.get(Calendar.MONTH),
                                 calendar.get(Calendar.DAY_OF_MONTH)

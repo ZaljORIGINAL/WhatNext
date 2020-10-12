@@ -49,8 +49,7 @@ public class ScheduleBuilderActivity extends AppCompatActivity
 
         Calendar calendar = Calendar.getInstance();
 
-        if (parentIntent.getIntExtra(IntentHelper.COMMAND, 0) == IntentHelper.EDIT_SCHEDULE)
-        {
+        if (parentIntent.getIntExtra(IntentHelper.COMMAND, 0) == IntentHelper.EDIT_SCHEDULE) {
             schedule = parentIntent.getParcelableExtra(IntentHelper.SCHEDULE);
 
             SQLiteDatabase db;
@@ -59,14 +58,12 @@ public class ScheduleBuilderActivity extends AppCompatActivity
             db = timeDB.getReadableDatabase();
             times = timeDB.getTime(db);
 
-            Week week;
             DisciplineDBHelper disciplineDB;
 
             topWeek = new Week((byte) 0);
             disciplineDB = new DisciplineDBHelper(this, schedule.getNameOfDB_1());
             db = disciplineDB.getReadableDatabase();
-            for (int index = 0; index < 7; index++)
-            {
+            for (int index = 0; index < 7; index++) {
                 DayOfWeek day = topWeek.getDayOfWeek(index);
                 day.setDisciplines(disciplineDB.getScheduleToday(db, day.getDayOfWeek(), times));
                 topWeek.setDayOfWeek(index, day);
@@ -76,14 +73,12 @@ public class ScheduleBuilderActivity extends AppCompatActivity
             try {
                 disciplineDB = new DisciplineDBHelper(this, schedule.getNameOfDB_2());
                 db = disciplineDB.getReadableDatabase();
-                for (int index = 0; index < 7; index++)
-                {
+                for (int index = 0; index < 7; index++) {
                     DayOfWeek day = loverWeek.getDayOfWeek(index);
                     day.setDisciplines(disciplineDB.getScheduleToday(db, day.getDayOfWeek(), times));
                     loverWeek.setDayOfWeek(index, day);
                 }
-            }catch (Exception e)
-            {
+            }catch (Exception e) {
                 loverWeek = new Week((byte) 1);
             }
 
@@ -91,8 +86,7 @@ public class ScheduleBuilderActivity extends AppCompatActivity
             auditoryOfDisciplines = new ArrayList<>();
             buildingOfDisciplines = new ArrayList<>();
 
-        }else
-        {
+        }else {
             schedule = new Schedule(String.valueOf(calendar.getTimeInMillis()));
             topWeek = new Week((byte) 0);
             loverWeek = new Week((byte) 1);
@@ -114,15 +108,11 @@ public class ScheduleBuilderActivity extends AppCompatActivity
         return super.onCreateOptionsMenu(menu);
     }
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item)
-    {
-        switch (item.getItemId())
-        {
-            case R.id.saveSchedule:
-            {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.saveSchedule: {
                 //Сохранение всего расписания
-                if (checkScheduleFields())
-                {
+                if (checkScheduleFields()) {
                     saveSchedule();
 
                     setResult(RESULT_OK);
@@ -130,31 +120,26 @@ public class ScheduleBuilderActivity extends AppCompatActivity
                 }
             }break;
 
-            case R.id.deleteSchedule:
-            {
+            case R.id.deleteSchedule: {
                 deleteSchedule();
             }
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private boolean checkScheduleFields()
-    {
+    private boolean checkScheduleFields() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setTitle(R.string.Standard_Error);
 
         boolean result = true;
 
-        if (schedule.getNameOfSchedule().isEmpty())
-        {
+        if (schedule.getNameOfSchedule().isEmpty()) {
             result = false;
             dialog.setMessage(getResources().getString(R.string.ScheduleCreatingActivity_Error_fieldOfNameIsClear));
             dialog.setPositiveButton(R.string.Standard_dialog_positive_button, null);
             dialog.show();
-        }else if (schedule.getType() == DataContract.MyAppSettings.SCHEDULE_TYPE_2)
-        {
-            if (schedule.getParity() == -1)
-            {
+        }else if (schedule.getType() == DataContract.MyAppSettings.SCHEDULE_TYPE_2) {
+            if (schedule.getParity() == -1) {
                 result = false;
                 dialog.setMessage(getResources().getString(R.string.ScheduleCreatingActivity_Error_topWeekIsNotSelected));
                 dialog.setPositiveButton(R.string.Standard_dialog_positive_button, null);
@@ -168,8 +153,7 @@ public class ScheduleBuilderActivity extends AppCompatActivity
     //Сохранить расписание
     private void saveSchedule()
     {
-        if (parentIntent.getIntExtra(IntentHelper.COMMAND, 0) == IntentHelper.EDIT_SCHEDULE)
-        {
+        if (parentIntent.getIntExtra(IntentHelper.COMMAND, 0) == IntentHelper.EDIT_SCHEDULE) {
             DataContract.MyFileManager.deleteDate(this, schedule.getNameOfFileSchedule());
         }
 
@@ -188,8 +172,7 @@ public class ScheduleBuilderActivity extends AppCompatActivity
         //Сохранение TimeSchedule
         TimeDBHelper timeDB = new TimeDBHelper(this, schedule.getNameOfTimeDB());
         db = timeDB.getReadableDatabase();
-        for (byte i = 0; i < times.size(); i++)
-        {
+        for (byte i = 0; i < times.size(); i++) {
             timeDB.addTime(times.get(i));
         }
         db.close();
@@ -201,55 +184,41 @@ public class ScheduleBuilderActivity extends AppCompatActivity
         db.close();
 
         //Сохранение LoverWeek
-        if (schedule.getType() == DataContract.MyAppSettings.SCHEDULE_TYPE_2)
-        {
+        if (schedule.getType() == DataContract.MyAppSettings.SCHEDULE_TYPE_2) {
             disciplineDB = new DisciplineDBHelper(this, schedule.getNameOfDB_2());
             db = disciplineDB.getReadableDatabase();
             insertDisciplines(loverWeek, disciplineDB);
             db.close();
         }
     }
-    private void insertDisciplines(Week week, DisciplineDBHelper disciplineDB)
-    {
+    private void insertDisciplines(Week week, DisciplineDBHelper disciplineDB) {
         int index;
-        for (index = 0; index < 7; index++)
-        {
+        for (index = 0; index < 7; index++) {
             DayOfWeek day = week.getDayOfWeek(index);
-            for (int b = 0; b < day.getDisciplines().size(); b++)
-            {
+            for (int b = 0; b < day.getDisciplines().size(); b++) {
                 disciplineDB.addDiscipline(day.getDisciplines().get(b), day.getDayOfWeek());
             }
         }
     }
 
     //Удаление расписания
-    private void deleteSchedule()
-    {
-        if (parentIntent.getIntExtra(IntentHelper.COMMAND, 0) != IntentHelper.EDIT_SCHEDULE)
-        {
+    private void deleteSchedule() {
+        if (parentIntent.getIntExtra(IntentHelper.COMMAND, 0) != IntentHelper.EDIT_SCHEDULE) {
             setResult(IntentHelper.RESULT_ERROR);
             finish();
-        }else
-        {
+        }else {
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);
             dialog.setTitle(this.getResources().getString(R.string.Standard_Delete));
             dialog.setMessage(this.getResources().getString(R.string.Standard_QuestionOfDelete));
             dialog.setPositiveButton(R.string.Standard_dialog_positive_button,
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            DataContract.MyFileManager.deleteDate(getApplicationContext(), schedule.getNameOfFileSchedule());
+                    (dialog1, which) -> {
+                        DataContract.MyFileManager.deleteDate(getApplicationContext(), schedule.getNameOfFileSchedule());
 
-                            setResult(IntentHelper.RESULT_DELETED);
-                            finish();
-                        }
+                        setResult(IntentHelper.RESULT_DELETED);
+                        finish();
                     });
             dialog.setNegativeButton(R.string.Standard_dialog_negative_button,
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
+                    (dialog12, which) -> {
                     });
             dialog.show();
         }

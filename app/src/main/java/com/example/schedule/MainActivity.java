@@ -38,7 +38,6 @@ import com.example.schedule.Objects.Schedule;
 import java.io.File;
 import java.util.Calendar;
 
-import static com.example.schedule.Data.DataContract.MyAppSettings;
 import static com.example.schedule.Data.DataContract.MyAppSettings.PERMISSION_REQUEST_EXTERNAL_STORAGE;
 
 public class MainActivity extends AppCompatActivity implements DisciplineAdapter.iOnItemClickListener
@@ -57,8 +56,7 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
     private RecyclerView disciplineList;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -74,13 +72,11 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
 
         /*Проверка на последнее просматриваемое расписание.
          * Если пользователь уже работал с каким то расписание и не вышел из него, то оно и запустится*/
-        if (settings.getString(DataContract.MyAppSettings.LAST_SCHEDULE, DataContract.MyAppSettings.NULL).equals(DataContract.MyAppSettings.NULL))
-        {
+        if (settings.getString(DataContract.MyAppSettings.LAST_SCHEDULE, DataContract.MyAppSettings.NULL).equals(DataContract.MyAppSettings.NULL)) {
             //Открываем активити выбора расписания
             Intent intent = new Intent(this, SelectScheduleActivity.class);
             startActivityForResult(intent, IntentHelper.SELECT_SCHEDULE);
-        }else
-        {
+        }else {
             //Считывается весь документ и сохраняется в объекте
             String path = this.getFilesDir().getPath() +
                     File.separator +
@@ -108,10 +104,8 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
     }
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId())
-        {
-            case R.id.selectNewSchedules:
-            {
+        switch (item.getItemId()) {
+            case R.id.selectNewSchedules: {
                 Intent intent = new Intent(this, SelectScheduleActivity.class);
                 startActivityForResult(intent, IntentHelper.SELECT_SCHEDULE);
 
@@ -120,8 +114,7 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
                 editor.apply();
             }break;
 
-            case R.id.edit:
-            {
+            case R.id.edit: {
                 Intent intent = new Intent(this, ScheduleBuilderActivity.class);
 
                 intent.putExtra(IntentHelper.COMMAND, IntentHelper.EDIT_SCHEDULE);
@@ -129,33 +122,24 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
                 startActivityForResult(intent, IntentHelper.EDIT_SCHEDULE);
             }break;
 
-            case R.id.exportSchedule:
-            {
-                if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
-                {
+            case R.id.exportSchedule: {
+                if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
                     Log.i("Copy/Import/Export", "Внешняя память доступна");
 
                     //Проверка разрешения на доступ к хранилищу
                     if (ContextCompat.checkSelfPermission(this,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
-                    {
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
                         dialog.setTitle(R.string.Standard_Dialog_Report);
 
-                        if(DataContract.MyFileManager.exportFiles(this, schedule.getNameOfFileSchedule()))
-                        {
+                        if(DataContract.MyFileManager.exportFiles(this, schedule.getNameOfFileSchedule())) {
                             dialog.setMessage(R.string.Standard_isComplete);
-                        }else
-                        {
+                        }else {
                             dialog.setMessage(R.string.Standard_Error);
                         }
 
                         dialog.setPositiveButton(R.string.Standard_dialog_positive_button,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-
-                                    }
+                                (dialog1, which) -> {
                                 });
 
                         dialog.show();
@@ -168,8 +152,7 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
                                 new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE},
                                 PERMISSION_REQUEST_EXTERNAL_STORAGE);
                     }
-                }else
-                {
+                }else {
                     Log.i("Copy/Import/Export", "Внешняя память не доступна. " + Environment.getExternalStorageState());
                     Toast.makeText(this, R.string.SelectScheduleActivity_Toast_storageIsNotAvailable, Toast.LENGTH_LONG).show();
                 }
@@ -179,14 +162,11 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
-    {
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        switch (requestCode)
-        {
-            case IntentHelper.SELECT_SCHEDULE:
-            {
+        switch (requestCode) {
+            case IntentHelper.SELECT_SCHEDULE: {
                 /*FIXME Возможна ошибка, пользователь может выйти выбрать новое расписание,
                 *  но он этого не делает, а значит в data, ничего не передается*/
                 String path = this.getFilesDir().getPath() +
@@ -204,17 +184,13 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
                 editor.apply();
             }break;
 
-            case IntentHelper.EDIT_SCHEDULE:
-            {
-                switch (resultCode)
-                {
-                    case RESULT_OK:
-                    {
+            case IntentHelper.EDIT_SCHEDULE: {
+                switch (resultCode) {
+                    case RESULT_OK: {
                         updateRecycleView();
                     }break;
 
-                    case IntentHelper.RESULT_DELETED:
-                    {
+                    case IntentHelper.RESULT_DELETED: {
                         Intent intent = new Intent(this, SelectScheduleActivity.class);
                         startActivityForResult(intent, IntentHelper.SELECT_SCHEDULE);
 
@@ -223,13 +199,11 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
                         editor.apply();
                     }break;
 
-                    case RESULT_CANCELED:
-                    {
+                    case RESULT_CANCELED: {
 
                     };
 
-                    case IntentHelper.RESULT_ERROR:
-                    {
+                    case IntentHelper.RESULT_ERROR: {
                         Toast.makeText(this, this.getText(R.string.toast_message_scheduleIsNotCreated), Toast.LENGTH_LONG).show();
                     }
                 }
@@ -255,8 +229,7 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
         SQLiteDatabase db;
         DisciplineDBHelper disciplineDB;
 
-        if (schedule.getType() == DataContract.MyAppSettings.SCHEDULE_TYPE_2)
-        {
+        if (schedule.getType() == DataContract.MyAppSettings.SCHEDULE_TYPE_2) {
             if (calendar.get(Calendar.WEEK_OF_YEAR) % 2 == schedule.getParity()) {
                 disciplineDB = new DisciplineDBHelper(this, schedule.getNameOfDB_1());
             }else {
@@ -281,16 +254,14 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
         db.close();
     }
 
-    private void updateRecycleView()
-    {
+    private void updateRecycleView() {
         updateSchedule();
         DisciplineAdapter adapter = new DisciplineAdapter(this, schedule.getDisciplines(), this);
         disciplineList.setAdapter(adapter);
     }
 
     /**Navigation buttons methods*/
-    public void onNavigationButtonClicked(View view)
-    {
+    public void onNavigationButtonClicked(View view) {
         //Перейти на сследующий или предидущий день
         switch (view.getId())
         {
@@ -308,20 +279,15 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
         updateRecycleView();
     }
 
-    public void onDateChangeButtonClicked(View view)
-    {
+    public void onDateChangeButtonClicked(View view) {
         //Вывести диалоговое окно для выбора нужного дня и после представить
         new DatePickerDialog(
                 this,
-                new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth)
-                    {
-                        calendar.set(year, month, dayOfMonth);
-                        updateDateButton();
+                (view1, year, month, dayOfMonth) -> {
+                    calendar.set(year, month, dayOfMonth);
+                    updateDateButton();
 
-                        updateRecycleView();
-                    }
+                    updateRecycleView();
                 },
                 calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),
@@ -329,8 +295,7 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
         ).show();
     }
 
-    private void updateDateButton()
-    {
+    private void updateDateButton() {
         bDate.setText(DateUtils.formatDateTime(this, calendar.getTimeInMillis(), DateUtils.FORMAT_SHOW_DATE));
     }
 }
