@@ -28,7 +28,6 @@ import java.util.Calendar;
 public class ScheduleBuilderActivity extends AppCompatActivity
 {
     //Данные
-    //FIXME возможно стоит применить паттерн Singleton.
     public static Schedule schedule;
     public static Week
             topWeek,

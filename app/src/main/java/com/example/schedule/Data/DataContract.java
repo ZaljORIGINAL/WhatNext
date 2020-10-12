@@ -273,9 +273,6 @@ public class DataContract
         }
 
         private static boolean moveScheduleToInternalMemory(Context context, File dir) {
-            /*TODO МЫ ОСТАНОВИЛИСЬ ТУТ. ТЕПЕРЬ НАДО ПЕРЕПИСАТЬ ПЕРЕНОС ФАЙЛОВ
-             *  1. Перенести параметры
-             *  2. Перенести базы данных*/
             File[] files = dir.listFiles();
 
             if (!importFileOfScheduleOptions(context, files[0])) {
