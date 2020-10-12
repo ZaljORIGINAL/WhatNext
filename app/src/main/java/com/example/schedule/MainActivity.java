@@ -257,7 +257,7 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
 
         if (schedule.getType() == DataContract.MyAppSettings.SCHEDULE_TYPE_2)
         {
-            if ((calendar.get(Calendar.DAY_OF_YEAR) + calendar.get(Calendar.DAY_OF_WEEK)) %2 == schedule.getParity()) {
+            if (calendar.get(Calendar.WEEK_OF_YEAR) % 2 == schedule.getParity()) {
                 disciplineDB = new DisciplineDBHelper(this, schedule.getNameOfDB_1());
             }else {
                 disciplineDB = new DisciplineDBHelper(this, schedule.getNameOfDB_2());

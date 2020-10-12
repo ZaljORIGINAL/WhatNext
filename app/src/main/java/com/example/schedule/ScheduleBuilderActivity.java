@@ -37,7 +37,7 @@ public class ScheduleBuilderActivity extends AppCompatActivity
     public static ArrayList<String> namesOfDisciplines;
     public static ArrayList<String> auditoryOfDisciplines;
     public static ArrayList<String> buildingOfDisciplines;
-    public Intent parentIntent;
+    public static Intent parentIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)

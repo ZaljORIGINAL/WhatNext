@@ -16,8 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -27,7 +25,10 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.schedule.Data.DataContract;
+import com.example.schedule.IntentHelper;
 import com.example.schedule.R;
+import com.example.schedule.ScheduleBuilderActivity;
+
 import java.util.Calendar;
 
 import static com.example.schedule.ScheduleBuilderActivity.schedule;
@@ -84,29 +85,20 @@ public class ScheduleOptionsFragment extends Fragment
         name.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                try {
-                    schedule.setNameOfSchedule(s.toString());
-                }catch (Exception e)
-                {
-
-                }
+                schedule.setNameOfSchedule(s.toString());
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-
             }
         });
-        isDouble = (Switch)view.findViewById(R.id.setDouble);
+        isDouble = view.findViewById(R.id.setDouble);
         isDouble.setOnCheckedChangeListener(
-                new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+                (buttonView, isChecked) ->
                     {
                         if (isChecked)
                         {
@@ -119,51 +111,56 @@ public class ScheduleOptionsFragment extends Fragment
                             info.setVisibility(View.GONE);
                             selectWeek.setVisibility(View.GONE);
                             schedule.setType(DataContract.MyAppSettings.SCHEDULE_TYPE_1);
+                            schedule.setParity(-1);
                         }
-                    }
-                }
-        );
-        info = (TextView) view.findViewById(R.id.infoAboutOfDouble);
+                    });
+        info = view.findViewById(R.id.infoAboutOfDouble);
 
-
-        selectWeek = (Button) view.findViewById(R.id.selectWeek);
+        //TODO При изменении расписания требуется вывести на кнопку дату понедельника, которая относится к следующей верхней неделие
+        selectWeek = view.findViewById(R.id.selectWeek);
         selectWeek.setOnClickListener(
-                new View.OnClickListener()
-                {
-                    @Override
-                    public void onClick(View v)
+                (v) ->
                     {
                         new DatePickerDialog(
                                 context,
-                                new DatePickerDialog.OnDateSetListener() {
-                                    @Override
-                                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth)
-                                    {
-                                        calendar.set(year, month, dayOfMonth);
-                                        schedule.setParity((calendar.get(Calendar.DAY_OF_YEAR) + calendar.get(Calendar.DAY_OF_MONTH)) % 2);
-                                        selectWeek.setText(String.valueOf(DateUtils.formatDateTime(context, calendar.getTimeInMillis(), DateUtils.FORMAT_SHOW_DATE)));
-                                    }
+                                (view1, year, month, dayOfMonth) -> {
+                                    calendar.set(year, month, dayOfMonth);
+                                    schedule.setParity((calendar.get(Calendar.WEEK_OF_YEAR) % 2));
+                                    selectWeek.setText(
+                                            String.valueOf(
+                                                    DateUtils.formatDateTime(
+                                                            context,
+                                                            calendar.getTimeInMillis(),
+                                                            DateUtils.FORMAT_SHOW_DATE)));
                                 },
                                 calendar.get(Calendar.YEAR),
                                 calendar.get(Calendar.MONTH),
                                 calendar.get(Calendar.DAY_OF_MONTH)
                                 ).show();
-                    }
-                }
-        );
+                    });
 
-        //Заполнение данными
-        try {
+        //В случе изменении расписания заполненим поля данными
+        if (ScheduleBuilderActivity.parentIntent.getIntExtra(
+                IntentHelper.COMMAND, 0) == IntentHelper.EDIT_SCHEDULE){
+            //Устаанавливаем время
             name.setText(schedule.getNameOfSchedule());
-        }catch (Exception e)
-        {
-        }
+            //Установка типа расписания
+            if (schedule.getType() == DataContract.MyAppSettings.SCHEDULE_TYPE_2){
+                isDouble.setChecked(true);
+                //Устанавливаем следующий понедельник верхней недели
+                if ((calendar.get(Calendar.WEEK_OF_YEAR) % 2) != schedule.getParity())
+                    calendar.add(Calendar.DATE, 7);
 
-        if (schedule.getType() == DataContract.MyAppSettings.SCHEDULE_TYPE_2)
-            isDouble.setChecked(true);
-        else
-            isDouble.setChecked(false);
-        selectWeek.setText(getArguments().getString(KAY_PARITY));
+                selectWeek.setText(
+                        String.valueOf(
+                                DateUtils.formatDateTime(
+                                        context,
+                                        calendar.getTimeInMillis(),
+                                        DateUtils.FORMAT_SHOW_DATE)));
+            } else{
+                isDouble.setChecked(false);
+            }
+        }
 
         return view;
     }
