@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.TimePicker;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -88,18 +87,11 @@ public class TimeFragment extends Fragment implements SchedulesAdapter.iItemClic
 //        {
 //            times = getArguments().getParcelableArrayList(KAY_TIMES);
 //        }
-        adapter = new TimesAdapter(context,ScheduleBuilderActivity.times /*times*/, this);
+        adapter = new TimesAdapter(context,ScheduleBuilderActivity.times , this);
         timeList.setAdapter(adapter);
 
-        fab = (FloatingActionButton) view.findViewById(R.id.addElement);
-        fab.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                createTime();
-            }
-        });
+        fab = view.findViewById(R.id.addElement);
+        fab.setOnClickListener(v -> createTime());
 
         return view;
     }
@@ -142,11 +134,11 @@ public class TimeFragment extends Fragment implements SchedulesAdapter.iItemClic
         View view = getLayoutInflater().inflate(R.layout.dialog_time_of_shedule_options, null);
         dialog.setView(view);
 
-        text = (TextView)view.findViewById(R.id.setNumber);
+        text = view.findViewById(R.id.setNumber);
         text.setText(timeSchedule.getNumber() + 1 + " " + getResources().getString(R.string.fragment_text_Discipline));
 
-        startTimeButton = (Button) view.findViewById(R.id.setStartTime);
-        finishTimeButton = (Button) view.findViewById(R.id.setFinishTime);
+        startTimeButton = view.findViewById(R.id.setStartTime);
+        finishTimeButton = view.findViewById(R.id.setFinishTime);
 
         //Следующий блок отвечает отвечает за кноаку startTimeButton
         if(position != -1)
@@ -161,47 +153,36 @@ public class TimeFragment extends Fragment implements SchedulesAdapter.iItemClic
         {
             startTimeButton.setText(R.string.fragment_text_startTime);
         }
-        startTimeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                new TimePickerDialog(
-                        context,
-                        new TimePickerDialog.OnTimeSetListener()
-                        {
-                            @Override
-                            public void onTimeSet(TimePicker view, int hourOfDay, int minute)
-                            {
-                                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                                calendar.set(Calendar.MINUTE, minute);
-                                time.setStartTime(hourOfDay, minute);
-                                startTimeButton.setText(
-                                        DateUtils.formatDateTime(getContext(),
-                                                calendar.getTimeInMillis(),
-                                                DateUtils.FORMAT_SHOW_TIME));
+        startTimeButton.setOnClickListener(v -> new TimePickerDialog(
+                context,
+                (view1, hourOfDay, minute) -> {
+                    calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                    calendar.set(Calendar.MINUTE, minute);
+                    time.setStartTime(hourOfDay, minute);
+                    startTimeButton.setText(
+                            DateUtils.formatDateTime(getContext(),
+                                    calendar.getTimeInMillis(),
+                                    DateUtils.FORMAT_SHOW_TIME));
 
-                                /**После установки начального времени мы автоматически
-                                 * добавляем 1 час 30 мин, тем самым облечаем ввод времени
-                                 * окончания пары*/
-                                calendar.add(Calendar.MINUTE, 90);
-                                finishTimeButton.setText(
-                                        DateUtils.formatDateTime(getContext(),
-                                                calendar.getTimeInMillis(),
-                                                DateUtils.FORMAT_SHOW_TIME));
+                    /**После установки начального времени мы автоматически
+                     * добавляем 1 час 30 мин, тем самым облечаем ввод времени
+                     * окончания пары*/
+                    calendar.add(Calendar.MINUTE, 90);
+                    finishTimeButton.setText(
+                            DateUtils.formatDateTime(getContext(),
+                                    calendar.getTimeInMillis(),
+                                    DateUtils.FORMAT_SHOW_TIME));
 
-                                time.setFinishTime(
-                                        calendar.get(Calendar.HOUR_OF_DAY),
-                                        calendar.get(Calendar.MINUTE));
+                    time.setFinishTime(
+                            calendar.get(Calendar.HOUR_OF_DAY),
+                            calendar.get(Calendar.MINUTE));
 
-                                calendar.add(Calendar.MINUTE, 10);
-                            }
-                        },
-                        calendar.get(Calendar.HOUR_OF_DAY),
-                        calendar.get(Calendar.MINUTE),
-                        true
-                ).show();
-            }
-        });
+                    calendar.add(Calendar.MINUTE, 10);
+                },
+                calendar.get(Calendar.HOUR_OF_DAY),
+                calendar.get(Calendar.MINUTE),
+                true
+        ).show());
 
         //Следующий блок отвечает отвечает за кноаку finishTimeButton
         if (position != -1)
@@ -216,37 +197,26 @@ public class TimeFragment extends Fragment implements SchedulesAdapter.iItemClic
         {
             finishTimeButton.setText(R.string.fragment_text_finishTime);
         }
-        finishTimeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                new TimePickerDialog(
-                        context,
-                        new TimePickerDialog.OnTimeSetListener()
-                        {
-                            @Override
-                            public void onTimeSet(TimePicker view, int hourOfDay, int minute)
-                            {
-                                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                                calendar.set(Calendar.MINUTE, minute);
-                                time.setFinishTime(hourOfDay, minute);
-                                finishTimeButton.setText(
-                                        DateUtils.formatDateTime(getContext(),
-                                                calendar.getTimeInMillis(),
-                                                DateUtils.FORMAT_SHOW_TIME));
+        finishTimeButton.setOnClickListener(v -> new TimePickerDialog(
+                context,
+                (view12, hourOfDay, minute) -> {
+                    calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                    calendar.set(Calendar.MINUTE, minute);
+                    time.setFinishTime(hourOfDay, minute);
+                    finishTimeButton.setText(
+                            DateUtils.formatDateTime(getContext(),
+                                    calendar.getTimeInMillis(),
+                                    DateUtils.FORMAT_SHOW_TIME));
 
-                                /**После установки установки времени конца занятия
-                                 * добавляем 10 мин, тем самым облечаем ввод времени
-                                 * начала следующего занятия*/
-                                calendar.add(Calendar.MINUTE, 10);
-                            }
-                        },
-                        calendar.get(Calendar.HOUR_OF_DAY),
-                        calendar.get(Calendar.MINUTE),
-                        true
-                ).show();
-            }
-        });
+                    /**После установки установки времени конца занятия
+                     * добавляем 10 мин, тем самым облечаем ввод времени
+                     * начала следующего занятия*/
+                    calendar.add(Calendar.MINUTE, 10);
+                },
+                calendar.get(Calendar.HOUR_OF_DAY),
+                calendar.get(Calendar.MINUTE),
+                true
+        ).show());
 
         dialog.setPositiveButton(R.string.Standard_dialog_positive_button, new DialogInterface.OnClickListener()
         {
@@ -265,11 +235,7 @@ public class TimeFragment extends Fragment implements SchedulesAdapter.iItemClic
             }
         });
 
-        dialog.setNegativeButton(R.string.Standard_dialog_negative_button, new DialogInterface.OnClickListener()
-        {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
+        dialog.setNegativeButton(R.string.Standard_dialog_negative_button, (dialog1, which) -> {
         });
 
         dialog.show();

@@ -33,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:background="@color/timeBackground">
+            android:background="@color/background_Orange">
 
             <TextView
                 android:id="@+id/startTime"

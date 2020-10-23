@@ -77,6 +77,9 @@
     <string name="fragment_dialog_newTime">New time</string>
     <string name="fragment_text_Discipline">Discipline</string>
 
+    <!--Fragment options of notification-->
+    <string name="fragment_name_optoinsOfDisciplineeNotification">Notification</string>
+
     <!--Fragment top week-->
     <string name="fragment_name_topWeek">Top week</string>
 
@@ -105,4 +108,23 @@
     <!-- menu_select_schedule.xml -->
     <string name="menu_select_schedule_menu_import">Import</string>
 
+    <!--Уведомления-->
+    <!--MyDisciplineNotificationManager.java-->
+    <string name="Notification_Discipline_BeforeStart">Before the start</string>
+    <string name="Notification_Discipline_Started">Class started</string>
+    <string name="Notification_Discipline_BeforeFinish">Before the finish</string>
+    <string name="Notification_Discipline_Finish">Class finished</string>
+    <string name="Notification_Discipline_Minute">minute</string>
+
+    <!--fragment_options_of_discipline_notification-->
+    <string name="fragment_options_of_discipline_notification_TextView_Notification">Notification settings</string>
+        <!--Switch-->
+        <string name="fragment_options_of_discipline_notification_Switch_beforeStart">How long before the start</string>
+        <string name="fragment_options_of_discipline_notification_Switch_start">Notify about start</string>
+        <string name="fragment_options_of_discipline_notification_Switch_beforeFinish">How long until the end</string>
+        <string name="fragment_options_of_discipline_notification_Switch_finish">Notify about finish</string>
+    <string name="fragment_options_of_discipline_notification_EditText">min</string>
+
+    <!--Notification chanel-->
+    <string name="Notification_chanelName_Discipline">Notification of discipline</string>
 </resources>

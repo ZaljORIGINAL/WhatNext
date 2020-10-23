@@ -27,7 +27,7 @@ import java.util.Calendar;
 
 import static com.example.schedule.ScheduleBuilderActivity.schedule;
 
-public class ScheduleOptionsFragment extends Fragment
+public class OptionsOfScheduleFragment extends Fragment
 {
     /**View elements*/
     private EditText name;
@@ -42,9 +42,9 @@ public class ScheduleOptionsFragment extends Fragment
             KAY_NUMBER = "NUMBER",
             KAY_PARITY = "PARITY";
 
-    public static ScheduleOptionsFragment newInstance(int number)
+    public static OptionsOfScheduleFragment newInstance(int number)
     {
-        ScheduleOptionsFragment fragment = new ScheduleOptionsFragment();
+        OptionsOfScheduleFragment fragment = new OptionsOfScheduleFragment();
         Bundle value = new Bundle();
         value.putInt(KAY_NUMBER, number);
         fragment.setArguments(value);
