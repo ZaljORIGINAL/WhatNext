@@ -56,6 +56,7 @@ public class MyAlarm extends BroadcastReceiver {
                 .setSmallIcon(R.drawable.discipline_notification)
                 .setContentTitle(title)
                 .setContentText(message)
+                .setStyle(new NotificationCompat.BigTextStyle())
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setVibrate(new long[]
                         {
@@ -84,6 +85,7 @@ public class MyAlarm extends BroadcastReceiver {
         schedule = intent.getParcelableExtra(IntentHelper.SCHEDULE);
         disciplineNotificationManager = MyDisciplineNotificationManager.getInstance(context, schedule);
 
-        disciplineNotificationManager.updateAlarm(schedule.getDisciplines());
+        disciplineNotificationManager.updateAllAlarm();
+        Log.i("Notification", "Уведомления обнавлены!");
     }
 }

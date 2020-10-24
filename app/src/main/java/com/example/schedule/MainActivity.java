@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -29,8 +28,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.schedule.Adapters.DisciplineAdapter;
 import com.example.schedule.Data.DataContract;
-import com.example.schedule.Data.DisciplineDBHelper;
-import com.example.schedule.Data.TimeDBHelper;
 import com.example.schedule.MyNotifications.MyDisciplineNotificationManager;
 import com.example.schedule.Objects.Schedule;
 
@@ -174,6 +171,7 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
 
     private void clearObjects() {
         schedule = null;
+        notificationManager.deleteAllAlarm();
         notificationManager.setNull();
     }
 
@@ -183,6 +181,7 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
 
         switch (requestCode) {
             case IntentHelper.SELECT_SCHEDULE: {
+
                 String path = this.getFilesDir().getPath() +
                         File.separator +
                         DataContract.MyFileManager.FILE_OF_SCHEDULE_DIRECTORY +
@@ -191,10 +190,7 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
                 schedule = DataContract.MyFileManager.readFileOfOptions(path);
 
                 updateRecycleView();
-
-                notificationManager = MyDisciplineNotificationManager
-                        .getInstance(getApplicationContext(), schedule);
-                notificationManager.updateAlarm(schedule.getDisciplines());
+                notificationManager = MyDisciplineNotificationManager.getInstance(this, schedule);
 
                 //Сохраняем открывшуюся расписание
                 SharedPreferences.Editor editor = settings.edit();
@@ -207,12 +203,14 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
                     case RESULT_OK: {
                         updateRecycleView();
 
-                        notificationManager.updateAlarm(schedule.getDisciplines());
+                        notificationManager.updateAllAlarm();
                     }break;
 
                     case IntentHelper.RESULT_DELETED: {
                         Intent intent = new Intent(this, SelectScheduleActivity.class);
                         startActivityForResult(intent, IntentHelper.SELECT_SCHEDULE);
+
+                        clearObjects();
 
                         SharedPreferences.Editor editor = settings.edit();
                         editor.putString(DataContract.MyAppSettings.LAST_SCHEDULE, DataContract.MyAppSettings.NULL);

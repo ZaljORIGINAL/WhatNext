@@ -51,6 +51,8 @@ public class Schedule implements Parcelable {
         nameOfSchedule = in.readString();
         type = in.readByte();
         parity = in.readByte();
+        times = in.readArrayList(TimeSchedule.class.getClassLoader());
+        disciplines = in.readArrayList(Discipline.class.getClassLoader());
     }
 
     @Override
@@ -59,6 +61,8 @@ public class Schedule implements Parcelable {
         dest.writeString(nameOfSchedule);
         dest.writeByte(type);
         dest.writeByte(parity);
+        dest.writeList(times);
+        dest.writeList(disciplines);
     }
 
     @Override
