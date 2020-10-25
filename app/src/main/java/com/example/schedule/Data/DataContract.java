@@ -67,8 +67,10 @@ public class DataContract
 
     public static class MyFileManager {
         //Directory
+        public final static String NO_INFO = "NO_INFO";
         public final static String DATA_DIRECTORY = "databases";
         public final static String FILE_OF_SCHEDULE_DIRECTORY = "Schedules";
+        public final static String FILE_OF_OPTIONS_OF_DISCIPLINE_NOTIFICATION = "OptionsOfDisciplineNotification";
         public final static String MIGRATE_OPTIONS_DIRECTORY = "Options";
         public final static String MIGRATE_DATABASE_DIRECTORY = "Database";
 
@@ -76,6 +78,7 @@ public class DataContract
         public final static String REPORT_NO_PROBLEM = "is complete";
         public final static String REPORT_ERROR = "ERROR";
 
+        //TODO Можно провести сериализацию класса Schedule. Что упростить получение параметров с расписания
         public static void createFileOfOptions(String path, Schedule schedule) {
             try {
                 File file = new File(path);
@@ -92,6 +95,7 @@ public class DataContract
             }
         }
 
+        //TODO Можно провести сериализацию класса Schedule. Что упростить получение параметров с расписания
         public static Schedule readFileOfOptions(String path) {
             File file = new File(path);
             Schedule schedule = new Schedule(file.getName());
@@ -112,6 +116,9 @@ public class DataContract
             return schedule;
         }
 
+        /*TODO Требуется дописать удаление файла настроек уведемолений расписания
+        *  Так как мы планируем сериализововать классы Schedule и OptionsOfNotificationsDiscipline
+        *  имеет смысл дописать методы удалиний именно у этих классов и просто обратиться к ним*/
         public static void deleteDate(Context context, String name) {
             String path;
             File file;

@@ -8,10 +8,9 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
-import com.example.schedule.Fragments.ScheduleOptionsFragment;
+import com.example.schedule.Fragments.OptionsOfDisciplineNotificationFragment;
+import com.example.schedule.Fragments.OptionsOfScheduleFragment;
 import com.example.schedule.Fragments.TimeFragment;
-import com.example.schedule.IntentHelper;
-import com.example.schedule.Objects.Week;
 import com.example.schedule.R;
 import com.example.schedule.Fragments.WeekFragment;
 
@@ -35,16 +34,20 @@ public class FragmentAdapter extends FragmentPagerAdapter
         {
             case 0:
                 //Main settings
-                main = ScheduleOptionsFragment.newInstance(position);
+                main = OptionsOfScheduleFragment.newInstance(position);
                 return main;
             case 1:
                 //Time list
                 return TimeFragment.newInstance(position);
 
             case 2:
-                return WeekFragment.newInstance(topWeek.getNumber());
+                //Options Of Notification
+                return OptionsOfDisciplineNotificationFragment.newInstance();
 
             case 3:
+                return WeekFragment.newInstance(topWeek.getNumber());
+
+            case 4:
                 return WeekFragment.newInstance(loverWeek.getNumber());
                 default:
                     return WeekFragment.newInstance(position - 2);
@@ -65,10 +68,14 @@ public class FragmentAdapter extends FragmentPagerAdapter
                 return resources.getString(R.string.fragment_name_timeOfSchedule);
 
             case 2:
+                //Options Of Notification
+                return resources.getString(R.string.fragment_name_optoinsOfDisciplineeNotification);
+
+            case 3:
                 //Top week
                 return resources.getString(R.string.fragment_name_topWeek);
 
-            case 3:
+            case 4:
                 //Lower week
                 return resources.getString(R.string.fragment_name_lowerWeek);
 
@@ -79,6 +86,9 @@ public class FragmentAdapter extends FragmentPagerAdapter
 
     @Override
     public int getCount() {
-        return 4;
+        return 5;
     }
+
+    //TODO Поручить адаптеру собрать всю информацию с фрагментов, информацию каждого фрагмента
+    // упаковать по объектам и вернуть их в одном пакетет. Это позволит нам избавить от статических классов.
 }

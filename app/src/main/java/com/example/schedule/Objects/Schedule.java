@@ -1,11 +1,16 @@
 package com.example.schedule.Objects;
 
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.example.schedule.Data.DataContract;
+import com.example.schedule.Data.DisciplineDBHelper;
+import com.example.schedule.Data.TimeDBHelper;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 
@@ -46,6 +51,8 @@ public class Schedule implements Parcelable {
         nameOfSchedule = in.readString();
         type = in.readByte();
         parity = in.readByte();
+        times = in.readArrayList(TimeSchedule.class.getClassLoader());
+        disciplines = in.readArrayList(Discipline.class.getClassLoader());
     }
 
     @Override
@@ -54,6 +61,8 @@ public class Schedule implements Parcelable {
         dest.writeString(nameOfSchedule);
         dest.writeByte(type);
         dest.writeByte(parity);
+        dest.writeList(times);
+        dest.writeList(disciplines);
     }
 
     @Override
@@ -164,6 +173,37 @@ public class Schedule implements Parcelable {
 
     public void changeDisciplineParams(Discipline discipline, int index) {
         disciplines.add(index, discipline);
+    }
+
+    public void updateDiscipline(Context context, Calendar calendar){
+        SQLiteDatabase db;
+        DisciplineDBHelper disciplineDB;
+
+        if (this.type == DataContract.MyAppSettings.SCHEDULE_TYPE_2) {
+            if (calendar.get(Calendar.WEEK_OF_YEAR) % 2 == this.parity) {
+                disciplineDB = new DisciplineDBHelper(context, getNameOfDB_1());
+            }else {
+                disciplineDB = new DisciplineDBHelper(context, getNameOfDB_2());
+            }
+        }else {
+            disciplineDB = new DisciplineDBHelper(context, getNameOfDB_1());
+        }
+        db = disciplineDB.getReadableDatabase();
+
+        setDisciplines(disciplineDB.getScheduleToday(db, calendar.get(Calendar.DAY_OF_WEEK)));
+
+        db.close();
+    }
+
+    public void updateTimes(Context context){
+        SQLiteDatabase db;
+        //Получаем время
+        TimeDBHelper timeDB = new TimeDBHelper(context, getNameOfTimeDB());
+        db = timeDB.getReadableDatabase();
+
+        setTimes(timeDB.getTime(db));
+
+        db.close();
     }
 
     private void sort() {

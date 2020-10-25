@@ -4,11 +4,9 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -18,7 +16,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -31,8 +28,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.schedule.Adapters.DisciplineAdapter;
 import com.example.schedule.Data.DataContract;
-import com.example.schedule.Data.DisciplineDBHelper;
-import com.example.schedule.Data.TimeDBHelper;
+import com.example.schedule.MyNotifications.MyDisciplineNotificationManager;
 import com.example.schedule.Objects.Schedule;
 
 import java.io.File;
@@ -47,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
 
     //Object
     private Schedule schedule;
+    private MyDisciplineNotificationManager notificationManager;
 
     //Расписане
     private Calendar calendar;
@@ -68,11 +65,16 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
         updateDateButton();
 
         //Имя файла настроек
-        settings = getSharedPreferences(DataContract.MyAppSettings.LAST_VIEWED_SCHEDULE, Context.MODE_PRIVATE);
+        settings = getSharedPreferences(
+                DataContract.MyAppSettings.LAST_VIEWED_SCHEDULE,
+                Context.MODE_PRIVATE);
 
-        /*Проверка на последнее просматриваемое расписание.
+        /**Проверка на последнее просматриваемое расписание.
          * Если пользователь уже работал с каким то расписание и не вышел из него, то оно и запустится*/
-        if (settings.getString(DataContract.MyAppSettings.LAST_SCHEDULE, DataContract.MyAppSettings.NULL).equals(DataContract.MyAppSettings.NULL)) {
+        if (settings.getString(
+                DataContract.MyAppSettings.LAST_SCHEDULE,
+                DataContract.MyAppSettings.NULL)
+                .equals(DataContract.MyAppSettings.NULL)) {
             //Открываем активити выбора расписания
             Intent intent = new Intent(this, SelectScheduleActivity.class);
             startActivityForResult(intent, IntentHelper.SELECT_SCHEDULE);
@@ -88,6 +90,10 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
             schedule = DataContract.MyFileManager.readFileOfOptions(path);
 
             updateRecycleView();
+
+            //Считываются настройки уведомлений по расписанию
+            notificationManager = MyDisciplineNotificationManager
+                    .getInstance(getApplicationContext(), schedule);
         }
     }
 
@@ -108,6 +114,10 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
             case R.id.selectNewSchedules: {
                 Intent intent = new Intent(this, SelectScheduleActivity.class);
                 startActivityForResult(intent, IntentHelper.SELECT_SCHEDULE);
+
+                notificationManager.deleteAllAlarm();
+                notificationManager.setNull();
+                schedule = null;
 
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putString(DataContract.MyAppSettings.LAST_SCHEDULE, DataContract.MyAppSettings.NULL);
@@ -167,8 +177,7 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
 
         switch (requestCode) {
             case IntentHelper.SELECT_SCHEDULE: {
-                /*FIXME Возможна ошибка, пользователь может выйти выбрать новое расписание,
-                *  но он этого не делает, а значит в data, ничего не передается*/
+
                 String path = this.getFilesDir().getPath() +
                         File.separator +
                         DataContract.MyFileManager.FILE_OF_SCHEDULE_DIRECTORY +
@@ -177,6 +186,7 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
                 schedule = DataContract.MyFileManager.readFileOfOptions(path);
 
                 updateRecycleView();
+                notificationManager = MyDisciplineNotificationManager.getInstance(this, schedule);
 
                 //Сохраняем открывшуюся расписание
                 SharedPreferences.Editor editor = settings.edit();
@@ -188,9 +198,18 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
                 switch (resultCode) {
                     case RESULT_OK: {
                         updateRecycleView();
+
+                        notificationManager.updateAllAlarm();
                     }break;
 
                     case IntentHelper.RESULT_DELETED: {
+
+                        DataContract.MyFileManager.deleteDate(this, schedule.getNameOfFileSchedule());
+                        notificationManager.deleteAllAlarm();
+                        notificationManager.deleteOptionsFile(this);
+                        notificationManager.setNull();
+                        schedule = null;
+
                         Intent intent = new Intent(this, SelectScheduleActivity.class);
                         startActivityForResult(intent, IntentHelper.SELECT_SCHEDULE);
 
@@ -221,37 +240,8 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
      * schedule update methods
      * */
     private void updateSchedule(){
-        updateTimes();
-        updateDisciplines();
-    }
-
-    private void updateDisciplines() {
-        SQLiteDatabase db;
-        DisciplineDBHelper disciplineDB;
-
-        if (schedule.getType() == DataContract.MyAppSettings.SCHEDULE_TYPE_2) {
-            if (calendar.get(Calendar.WEEK_OF_YEAR) % 2 == schedule.getParity()) {
-                disciplineDB = new DisciplineDBHelper(this, schedule.getNameOfDB_1());
-            }else {
-                disciplineDB = new DisciplineDBHelper(this, schedule.getNameOfDB_2());
-            }
-        }else {
-            disciplineDB = new DisciplineDBHelper(this, schedule.getNameOfDB_1());
-        }
-        db = disciplineDB.getReadableDatabase();
-        schedule.setDisciplines(disciplineDB.getScheduleToday(db, calendar.get(Calendar.DAY_OF_WEEK)));
-
-        db.close();
-    }
-
-    private void updateTimes(){
-        SQLiteDatabase db;
-        //Получаем время
-        TimeDBHelper timeDB = new TimeDBHelper(this, schedule.getNameOfTimeDB());
-        db = timeDB.getReadableDatabase();
-        schedule.setTimes(timeDB.getTime(db));
-
-        db.close();
+        schedule.updateTimes(this);
+        schedule.updateDiscipline(this, calendar);
     }
 
     private void updateRecycleView() {

@@ -75,6 +75,9 @@
     <string name="fragment_dialog_newTime">Новое время</string>
     <string name="fragment_text_Discipline">Пара</string>
 
+    <!--Fragment options of notification-->
+    <string name="fragment_name_optoinsOfDisciplineeNotification">Уведомления</string>
+
     <!--Fragment top week-->
     <string name="fragment_name_topWeek">Верхняя неделя</string>
 
@@ -102,4 +105,26 @@
 
     <!-- menu_select_schedule.xml -->
     <string name="menu_select_schedule_menu_import">Импортировать</string>
+
+    <!--Уведомления-->
+    <!--MyDisciplineNotificationManager.java-->
+    <string name="Notification_Discipline_BeforeStart">До начала</string>
+    <string name="Notification_Discipline_TimeToGo">Время идти</string>
+    <string name="Notification_Discipline_Started">Пара началась</string>
+    <string name="Notification_Discipline_BeforeFinish">До конца пары</string>
+    <string name="Notification_Discipline_Finish">Пара закончилась</string>
+    <string name="Notification_Discipline_Minute">мин.</string>
+
+    <!--fragment_options_of_discipline_notification-->
+    <string name="fragment_options_of_discipline_notification_TextView_Notification">Настройки уведомлений</string>
+        <!--Switch-->
+        <string name="fragment_options_of_discipline_notification_Switch_beforeStart">Уведомлять до начала</string>
+        <string name="fragment_options_of_discipline_notification_Switch_beforeStart_TimeToGo">Уведомление для выдвижения</string>
+        <string name="fragment_options_of_discipline_notification_Switch_start">Уведомить о начале</string>
+        <string name="fragment_options_of_discipline_notification_Switch_beforeFinish">Уведомить до конца</string>
+        <string name="fragment_options_of_discipline_notification_Switch_finish">Уведомить об окончании</string>
+    <string name="fragment_options_of_discipline_notification_EditText">мин</string>
+
+    <!--Notification chanel-->
+    <string name="Notification_chanelName_Discipline">Уведомления о парах</string>
 </resources>

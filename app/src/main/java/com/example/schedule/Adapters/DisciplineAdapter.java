@@ -21,8 +21,7 @@ public class DisciplineAdapter extends RecyclerView.Adapter<DisciplineAdapter.My
     private String[] type;
     private iOnItemClickListener onClick;
 
-    public DisciplineAdapter(Context context, ArrayList<Discipline> disciplines, iOnItemClickListener onClick)
-    {
+    public DisciplineAdapter(Context context, ArrayList<Discipline> disciplines, iOnItemClickListener onClick) {
         this.context = context;
         this.disciplines = disciplines;
         this.onClick = onClick;
@@ -31,14 +30,11 @@ public class DisciplineAdapter extends RecyclerView.Adapter<DisciplineAdapter.My
 
     @NonNull
     @Override
-    public MyHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
-    {
+    public MyHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType){
         View view;
-        if (disciplines.size() == 0)
-        {
+        if (disciplines.size() == 0) {
             view = (View) LayoutInflater.from(parent.getContext()).inflate(R.layout.element_of_list_no_info, parent, false);
-        }else
-        {
+        }else {
             view = (View) LayoutInflater.from(parent.getContext()).inflate(R.layout.element_of_list_discipline, parent, false);
 
         }
@@ -46,30 +42,24 @@ public class DisciplineAdapter extends RecyclerView.Adapter<DisciplineAdapter.My
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyHolder holder, int position)
-    {
-        if (disciplines.size() == 0)
-        {
+    public void onBindViewHolder(@NonNull MyHolder holder, int position) {
+        if (disciplines.size() == 0) {
             holder.builderNoInfo();
-        }else
-        {
+        }else {
             holder.builder(disciplines.get(position));
         }
     }
 
     @Override
     public int getItemCount() {
-        if (disciplines.size() == 0)
-        {
+        if (disciplines.size() == 0) {
             return 1;
-        }else
-        {
+        }else {
             return disciplines.size();
         }
     }
 
-    public class MyHolder extends RecyclerView.ViewHolder implements View.OnClickListener
-    {
+    public class MyHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView
                 tNoInfoText,
                 position,
@@ -81,12 +71,10 @@ public class DisciplineAdapter extends RecyclerView.Adapter<DisciplineAdapter.My
 
         private iOnItemClickListener onItemClick;
 
-        public MyHolder(@NonNull View itemView, iOnItemClickListener onItemClick)
-        {
+        public MyHolder(@NonNull View itemView, iOnItemClickListener onItemClick) {
             super(itemView);
 
-            if (itemView.findViewById(R.id.tListHasNotInfo) == null)
-            {
+            if (itemView.findViewById(R.id.tListHasNotInfo) == null) {
                 position = (TextView)itemView.findViewById(R.id.position);
                 startTime = (TextView)itemView.findViewById(R.id.startTime);
                 finishTime = (TextView)itemView.findViewById(R.id.finishTime);
@@ -95,16 +83,14 @@ public class DisciplineAdapter extends RecyclerView.Adapter<DisciplineAdapter.My
                 auditorium = (TextView)itemView.findViewById(R.id.auditorium);
 
                 itemView.setOnClickListener(this);
-            }else
-            {
+            }else {
                 tNoInfoText = itemView.findViewById(R.id.tListHasNotInfo);
             }
 
             this.onItemClick = onItemClick;
         }
 
-        public void builder(Discipline discipline)
-        {
+        public void builder(Discipline discipline) {
             //Очередность пары
             position.setText(String.valueOf(discipline.getPosition() + 1));
             //Время начала
@@ -119,8 +105,7 @@ public class DisciplineAdapter extends RecyclerView.Adapter<DisciplineAdapter.My
             auditorium.setText(discipline.getAuditorium());
         }
 
-        public void builderNoInfo()
-        {
+        public void builderNoInfo() {
             tNoInfoText.setText(context.getString(R.string.activity_MainActivity_text_ListHasNotInfo));
         }
 
@@ -130,8 +115,7 @@ public class DisciplineAdapter extends RecyclerView.Adapter<DisciplineAdapter.My
         }
     }
 
-    public interface iOnItemClickListener
-    {
+    public interface iOnItemClickListener {
         void onItemClick(int position);
     }
 }

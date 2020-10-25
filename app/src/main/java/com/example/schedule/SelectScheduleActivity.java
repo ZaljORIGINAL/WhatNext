@@ -141,8 +141,6 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
     }
 
     private void createNewSchedule() {
-        //Schedule
-        Calendar calendar = Calendar.getInstance();
         Intent intent = new Intent(this, ScheduleBuilderActivity.class);
 
         intent.putExtra(IntentHelper.COMMAND, IntentHelper.CREATE_NEW_SCHEDULE);

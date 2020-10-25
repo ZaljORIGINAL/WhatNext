@@ -5,7 +5,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -16,6 +15,7 @@ import com.example.schedule.Adapters.FragmentAdapter;
 import com.example.schedule.Data.DataContract;
 import com.example.schedule.Data.DisciplineDBHelper;
 import com.example.schedule.Data.TimeDBHelper;
+import com.example.schedule.MyNotifications.MyDisciplineNotificationManager;
 import com.example.schedule.Objects.DayOfWeek;
 import com.example.schedule.Objects.Schedule;
 import com.example.schedule.Objects.TimeSchedule;
@@ -29,6 +29,7 @@ public class ScheduleBuilderActivity extends AppCompatActivity
 {
     //Данные
     public static Schedule schedule;
+    public static MyDisciplineNotificationManager.Options options;
     public static Week
             topWeek,
             loverWeek;
@@ -49,7 +50,12 @@ public class ScheduleBuilderActivity extends AppCompatActivity
         Calendar calendar = Calendar.getInstance();
 
         if (parentIntent.getIntExtra(IntentHelper.COMMAND, 0) == IntentHelper.EDIT_SCHEDULE) {
+
             schedule = parentIntent.getParcelableExtra(IntentHelper.SCHEDULE);
+
+            options = new MyDisciplineNotificationManager.Options(
+                            this,
+                            schedule.getNameOfFileSchedule());
 
             SQLiteDatabase db;
 
@@ -80,18 +86,19 @@ public class ScheduleBuilderActivity extends AppCompatActivity
             }catch (Exception e) {
                 loverWeek = new Week((byte) 1);
             }
-
-            namesOfDisciplines = new ArrayList<>();
-            auditoryOfDisciplines = new ArrayList<>();
-            buildingOfDisciplines = new ArrayList<>();
-
         }else {
             schedule = new Schedule(String.valueOf(calendar.getTimeInMillis()));
+            options = new MyDisciplineNotificationManager.Options(
+                    this,
+                    DataContract.MyFileManager.NO_INFO);
             topWeek = new Week((byte) 0);
             loverWeek = new Week((byte) 1);
             times = new ArrayList<>();
-            namesOfDisciplines = new ArrayList<>();
         }
+
+        namesOfDisciplines = new ArrayList<>();
+        auditoryOfDisciplines = new ArrayList<>();
+        buildingOfDisciplines = new ArrayList<>();
 
         //Представления
         ViewPager pager = findViewById(R.id.scheduleCreatingViewPager);
@@ -166,6 +173,12 @@ public class ScheduleBuilderActivity extends AppCompatActivity
                 .append(".txt");
         DataContract.MyFileManager.createFileOfOptions(path.toString(), schedule);
 
+        //Сохранение настроек уведомлений
+        if (!options.save()){
+            options.setPathToFile(this, schedule.getNameOfFileSchedule());
+            options.save();
+        }
+
         SQLiteDatabase db;
 
         //Сохранение TimeSchedule
@@ -211,8 +224,6 @@ public class ScheduleBuilderActivity extends AppCompatActivity
             dialog.setMessage(this.getResources().getString(R.string.Standard_QuestionOfDelete));
             dialog.setPositiveButton(R.string.Standard_dialog_positive_button,
                     (dialog1, which) -> {
-                        DataContract.MyFileManager.deleteDate(getApplicationContext(), schedule.getNameOfFileSchedule());
-
                         setResult(IntentHelper.RESULT_DELETED);
                         finish();
                     });

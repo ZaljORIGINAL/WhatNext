@@ -4,14 +4,15 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#67BFE8</color>
 
-    <color name="timeBackground">#E69C3A</color>
+    <color name="background_Orange">#E69C3A</color>
     <color name="textColor">#222222</color>
-    <color name="backgroundOfElementSchedule">#ECD7BF</color>
+    <color name="backgroundOfListElement">#ECD7BF</color>
     <color name="error">#7E1A24</color>
     <color name="timeSchedule">#FCEC93</color>
     <color name="startTime">#83C039</color>
     <color name="finishTime">#C05439</color>
     <color name="addNewElement">#79CF11</color>
+    <color name="white">#FFFFFF</color>
 
     <!--Text Color-->
     <color name="title">#181818</color>
