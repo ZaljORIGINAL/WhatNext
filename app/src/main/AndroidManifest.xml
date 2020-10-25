@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.schedule">
+    package="com.zalj.schedule">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
@@ -13,18 +13,18 @@
         android:theme="@style/AppTheme">
 
         <receiver
-            android:name=".MyNotifications.MyAlarm"
+            android:name="com.zalj.schedule.MyNotifications.MyAlarm"
             android:enabled="true"
             android:exported="true"></receiver>
 
-        <activity android:name=".ScheduleOfDayActivity" />
+        <activity android:name="com.zalj.schedule.ScheduleOfDayActivity" />
         <activity
-            android:name=".ScheduleBuilderActivity"
+            android:name="com.zalj.schedule.ScheduleBuilderActivity"
             android:label="@string/nameOfActivity_ScheduleCreating" />
         <activity
-            android:name=".SelectScheduleActivity"
+            android:name="com.zalj.schedule.SelectScheduleActivity"
             android:label="@string/nameOfActivity_SelectSchedule" />
-        <activity android:name=".MainActivity">
+        <activity android:name="com.zalj.schedule.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
