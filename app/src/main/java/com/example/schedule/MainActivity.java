@@ -115,7 +115,9 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
                 Intent intent = new Intent(this, SelectScheduleActivity.class);
                 startActivityForResult(intent, IntentHelper.SELECT_SCHEDULE);
 
-                clearObjects();
+                notificationManager.deleteAllAlarm();
+                notificationManager.setNull();
+                schedule = null;
 
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putString(DataContract.MyAppSettings.LAST_SCHEDULE, DataContract.MyAppSettings.NULL);
@@ -169,12 +171,6 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
         return super.onOptionsItemSelected(item);
     }
 
-    private void clearObjects() {
-        schedule = null;
-        notificationManager.deleteAllAlarm();
-        notificationManager.setNull();
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -207,10 +203,15 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
                     }break;
 
                     case IntentHelper.RESULT_DELETED: {
+
+                        DataContract.MyFileManager.deleteDate(this, schedule.getNameOfFileSchedule());
+                        notificationManager.deleteAllAlarm();
+                        notificationManager.deleteOptionsFile(this);
+                        notificationManager.setNull();
+                        schedule = null;
+
                         Intent intent = new Intent(this, SelectScheduleActivity.class);
                         startActivityForResult(intent, IntentHelper.SELECT_SCHEDULE);
-
-                        clearObjects();
 
                         SharedPreferences.Editor editor = settings.edit();
                         editor.putString(DataContract.MyAppSettings.LAST_SCHEDULE, DataContract.MyAppSettings.NULL);

@@ -109,6 +109,7 @@
     <!--Уведомления-->
     <!--MyDisciplineNotificationManager.java-->
     <string name="Notification_Discipline_BeforeStart">До начала</string>
+    <string name="Notification_Discipline_TimeToGo">Время идти</string>
     <string name="Notification_Discipline_Started">Пара началась</string>
     <string name="Notification_Discipline_BeforeFinish">До конца пары</string>
     <string name="Notification_Discipline_Finish">Пара закончилась</string>
@@ -117,12 +118,13 @@
     <!--fragment_options_of_discipline_notification-->
     <string name="fragment_options_of_discipline_notification_TextView_Notification">Настройки уведомлений</string>
         <!--Switch-->
-        <string name="fragment_options_of_discipline_notification_Switch_beforeStart">How long before the start</string>
-        <string name="fragment_options_of_discipline_notification_Switch_start">Notifi about start</string>
-        <string name="fragment_options_of_discipline_notification_Switch_beforeFinish">How long until the end</string>
-        <string name="fragment_options_of_discipline_notification_Switch_finish">Notifi about finish</string>
+        <string name="fragment_options_of_discipline_notification_Switch_beforeStart">Уведомлять до начала</string>
+        <string name="fragment_options_of_discipline_notification_Switch_beforeStart_TimeToGo">Уведомление для выдвижения</string>
+        <string name="fragment_options_of_discipline_notification_Switch_start">Уведомить о начале</string>
+        <string name="fragment_options_of_discipline_notification_Switch_beforeFinish">Уведомить до конца</string>
+        <string name="fragment_options_of_discipline_notification_Switch_finish">Уведомить об окончании</string>
     <string name="fragment_options_of_discipline_notification_EditText">мин</string>
 
     <!--Notification chanel-->
-    <string name="Notification_chanelName_Discipline">Notification of discipline</string>
+    <string name="Notification_chanelName_Discipline">Уведомления о парах</string>
 </resources>

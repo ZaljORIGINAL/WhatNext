@@ -40,6 +40,7 @@ public class MyDisciplineNotificationManager {
     //Для реализации патттерна Singleton
     private static MyDisciplineNotificationManager instance;
     private final int BEFORE_START = 0;
+    private final int TIME_TO_GO = 4;
     private final int START = 1;
     private final int BEFORE_FINISH = 2;
     private final int FINISH = 3;
@@ -95,6 +96,11 @@ public class MyDisciplineNotificationManager {
                 Log.i("Notification", "Уведомление: До начала осталось...");
             }
 
+            if (options.getTimeToGo()){
+                setAlarm(TIME_TO_GO, discipline, options);
+                Log.i("Notification", "Уведомление: Время для выхода...");
+            }
+
             if (options.getStart()){
                 setAlarm(START, discipline, options);
                 Log.i("Notification", "Уведомление: Пара началась...");
@@ -147,6 +153,10 @@ public class MyDisciplineNotificationManager {
         deleteAlarmToUpdateDisciplineOfNextDay();
     }
 
+    public void deleteOptionsFile(Context context){
+        Options.delete(context, schedule.getNameOfFileSchedule());
+    }
+
     //TODO При нажатии открыть расписание на день.
     //TODO Если закончилась последняя пара, то сообщить дальше пар нет.
     private void setAlarm(int type, Discipline discipline, MyDisciplineNotificationManager.Options options){
@@ -173,6 +183,23 @@ public class MyDisciplineNotificationManager {
                 calendar.set(Calendar.SECOND, 0);
 
                 id = (discipline.getPosition() + 1) * 10 + 1;
+            }break;
+
+            case TIME_TO_GO:{
+                message
+                        .append(context.getString(R.string.Notification_Discipline_TimeToGo))
+                        .append(" ")
+                        .append(options.getBeforeStartMin())
+                        .append(" ")
+                        .append(context.getString(R.string.Notification_Discipline_Minute))
+                        .append("\n");
+
+                calendar.set(Calendar.HOUR_OF_DAY, discipline.getStartHour());
+                calendar.set(Calendar.MINUTE, discipline.getStartMinute());
+                calendar.add(Calendar.MINUTE, -options.getTimeToGoMin());
+                calendar.set(Calendar.SECOND, 0);
+
+                id = (discipline.getPosition() + 1) * 10 + 5;
             }break;
 
             case START:{
@@ -385,6 +412,7 @@ public class MyDisciplineNotificationManager {
     public static class Options implements Serializable {
 
         private int beforeStart;
+        private int timeToGo;
         private boolean start;
         private int beforeFinish;
         private boolean finish;
@@ -418,11 +446,13 @@ public class MyDisciplineNotificationManager {
 
         private Options(
                 int beforeStart,
+                int timeToGo,
                 boolean start,
                 int beforeFinish,
                 boolean finish
         ){
             this.beforeStart = beforeStart;
+            this.timeToGo = timeToGo;
             this.start = start;
             this.beforeFinish = beforeFinish;
             this.finish = finish;
@@ -433,10 +463,14 @@ public class MyDisciplineNotificationManager {
             return beforeStart != -1;
         }
         public int getBeforeStartMin(){
-            if (beforeFinish == -1)
-                return 10;
-            else
-                return beforeStart;
+            return beforeStart;
+        }
+
+        public boolean getTimeToGo(){
+            return timeToGo != -1;
+        }
+        public int getTimeToGoMin(){
+            return timeToGo;
         }
 
         public boolean getStart(){
@@ -447,10 +481,7 @@ public class MyDisciplineNotificationManager {
             return beforeFinish != -1;
         }
         public int getBeforeFinishMin(){
-            if (beforeFinish == -1)
-                return 10;
-            else
-                return beforeFinish;
+            return beforeFinish;
         }
 
         public boolean getFinish(){
@@ -464,6 +495,10 @@ public class MyDisciplineNotificationManager {
         /**Set methods*/
         public void setBeforeStart(int beforeStart){
             this.beforeStart = beforeStart;
+        }
+
+        public void setTimeToGo(int timeToGo){
+            this.timeToGo = timeToGo;
         }
 
         public void setStart(boolean start) {
@@ -495,6 +530,7 @@ public class MyDisciplineNotificationManager {
                     deserialize.close();
 
                     this.beforeStart = object.getBeforeStartMin();
+                    this.timeToGo = object.getTimeToGoMin();
                     this.start = object.getStart();
                     this.beforeFinish = object.getBeforeFinishMin();
                     this.finish = object.getFinish();
@@ -522,6 +558,7 @@ public class MyDisciplineNotificationManager {
                     serialize.writeObject(
                             new Options(
                                     this.beforeStart,
+                                    this.timeToGo,
                                     this.start,
                                     this.beforeFinish,
                                     this.finish)
@@ -538,16 +575,13 @@ public class MyDisciplineNotificationManager {
             return false;
         }
 
-        public boolean delete(){
-            if (pathToFile != null){
-                File file = new File(pathToFile);
-                return file.delete();
-            }
+        public static boolean delete(Context context, String name){
+            File file = new File(getOptionsFilePath(context, name));
 
-            return false;
+            return file.delete();
         }
 
-        private String getOptionsFilePath(Context context, String name){
+        private static String getOptionsFilePath(Context context, String name){
             return new File(
                     context.getFilesDir(),
                     DataContract.MyFileManager.FILE_OF_OPTIONS_OF_DISCIPLINE_NOTIFICATION
@@ -557,6 +591,7 @@ public class MyDisciplineNotificationManager {
 
         private void setDefaultParams(){
             this.beforeStart = -1;
+            this.timeToGo = -1;
             this.start = false;
             this.beforeFinish = -1;
             this.finish = false;

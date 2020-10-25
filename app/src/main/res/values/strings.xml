@@ -111,6 +111,7 @@
     <!--Уведомления-->
     <!--MyDisciplineNotificationManager.java-->
     <string name="Notification_Discipline_BeforeStart">Before the start</string>
+    <string name="Notification_Discipline_TimeToGo">Time to go</string>
     <string name="Notification_Discipline_Started">Class started</string>
     <string name="Notification_Discipline_BeforeFinish">Before the finish</string>
     <string name="Notification_Discipline_Finish">Class finished</string>
@@ -120,6 +121,7 @@
     <string name="fragment_options_of_discipline_notification_TextView_Notification">Notification settings</string>
         <!--Switch-->
         <string name="fragment_options_of_discipline_notification_Switch_beforeStart">How long before the start</string>
+        <string name="fragment_options_of_discipline_notification_Switch_beforeStart_TimeToGo">Time to go</string>
         <string name="fragment_options_of_discipline_notification_Switch_start">Notify about start</string>
         <string name="fragment_options_of_discipline_notification_Switch_beforeFinish">How long until the end</string>
         <string name="fragment_options_of_discipline_notification_Switch_finish">Notify about finish</string>

@@ -60,7 +60,7 @@ public class MyAlarm extends BroadcastReceiver {
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setVibrate(new long[]
                         {
-                                1000, 400, 1000
+                                0, 400, 200, 400
                         })
                 .setAutoCancel(true);
 

@@ -6,7 +6,7 @@
 
     <color name="background_Orange">#E69C3A</color>
     <color name="textColor">#222222</color>
-    <color name="backgroundOfElementSchedule">#ECD7BF</color>
+    <color name="backgroundOfListElement">#ECD7BF</color>
     <color name="error">#7E1A24</color>
     <color name="timeSchedule">#FCEC93</color>
     <color name="startTime">#83C039</color>

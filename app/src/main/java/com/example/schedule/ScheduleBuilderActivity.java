@@ -224,10 +224,6 @@ public class ScheduleBuilderActivity extends AppCompatActivity
             dialog.setMessage(this.getResources().getString(R.string.Standard_QuestionOfDelete));
             dialog.setPositiveButton(R.string.Standard_dialog_positive_button,
                     (dialog1, which) -> {
-                        DataContract.MyFileManager.deleteDate(this, schedule.getNameOfFileSchedule());
-
-                        options.delete();
-
                         setResult(IntentHelper.RESULT_DELETED);
                         finish();
                     });
