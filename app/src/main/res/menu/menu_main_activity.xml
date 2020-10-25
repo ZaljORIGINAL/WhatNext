@@ -7,7 +7,7 @@
         android:title="@string/menu_main_activity_Schedules" />
     <item
         android:id="@+id/edit"
-        android:icon="@drawable/edit"
+        android:icon="@drawable/edit_black"
         android:title="@string/menu_main_activity_Edit"
         app:showAsAction="always" />
     <item

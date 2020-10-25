@@ -62,7 +62,6 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
         disciplineList.setLayoutManager(new LinearLayoutManager(this));
 
         calendar = Calendar.getInstance();
-        updateDateButton();
 
         //Имя файла настроек
         settings = getSharedPreferences(
@@ -89,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
 
             schedule = DataContract.MyFileManager.readFileOfOptions(path);
 
+            updateDateButton();
             updateRecycleView();
 
             //Считываются настройки уведомлений по расписанию
@@ -286,6 +286,21 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
     }
 
     private void updateDateButton() {
-        bDate.setText(DateUtils.formatDateTime(this, calendar.getTimeInMillis(), DateUtils.FORMAT_SHOW_DATE));
+        StringBuilder string = new StringBuilder();
+
+        string.append(DateUtils.formatDateTime(this, calendar.getTimeInMillis(), DateUtils.FORMAT_SHOW_DATE));
+
+        if (schedule.getType() == DataContract.MyAppSettings.SCHEDULE_TYPE_2){
+
+            string.append(" (");
+            if (calendar.get(Calendar.WEEK_OF_YEAR) % 2 == schedule.getParity())
+                string.append(getString(R.string.fragment_name_topWeek));
+            else
+                string.append(getString(R.string.fragment_name_lowerWeek));
+
+            string.append(")");
+        }
+
+        bDate.setText(string.toString());
     }
 }
