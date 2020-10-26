@@ -88,17 +88,19 @@ public class MyDisciplineNotificationManager {
 
         ArrayList<Discipline> disciplines = schedule.getDisciplines();
 
-        for (int index = 0; index < disciplines.size(); index++){
-            Discipline discipline = disciplines.get(index);
-
-            if (options.getBeforeStart()){
-                setAlarm(BEFORE_START, discipline, options);
-                Log.i("Notification", "Уведомление: До начала осталось...");
-            }
+        //Устанавливаем будильники для первой паре отдельно, по той причине, что для того что бы
+        //оказаться на ней, надой выйти из дома.
+        if (disciplines.size() != 0){
+            Discipline discipline = disciplines.get(0);
 
             if (options.getTimeToGo()){
                 setAlarm(TIME_TO_GO, discipline, options);
                 Log.i("Notification", "Уведомление: Время для выхода...");
+            }
+
+            if (options.getBeforeStart()){
+                setAlarm(BEFORE_START, discipline, options);
+                Log.i("Notification", "Уведомление: До начала осталось...");
             }
 
             if (options.getStart()){
@@ -114,6 +116,31 @@ public class MyDisciplineNotificationManager {
             if (options.getFinish()){
                 setAlarm(FINISH, discipline, options);
                 Log.i("Notification", "Уведомление: Пара закончилась...");
+            }
+
+            //Устанавливаем будильники для оставшихся дисциплин
+            for (int index = 0; index < disciplines.size(); index++){
+                discipline = disciplines.get(index);
+
+                if (options.getBeforeStart()){
+                    setAlarm(BEFORE_START, discipline, options);
+                    Log.i("Notification", "Уведомление: До начала осталось...");
+                }
+
+                if (options.getStart()){
+                    setAlarm(START, discipline, options);
+                    Log.i("Notification", "Уведомление: Пара началась...");
+                }
+
+                if (options.getBeforeFinish()){
+                    setAlarm(BEFORE_FINISH, discipline, options);
+                    Log.i("Notification", "Уведомление: До конца осталось...");
+                }
+
+                if (options.getFinish()){
+                    setAlarm(FINISH, discipline, options);
+                    Log.i("Notification", "Уведомление: Пара закончилась...");
+                }
             }
         }
 
@@ -189,7 +216,7 @@ public class MyDisciplineNotificationManager {
                 message
                         .append(context.getString(R.string.Notification_Discipline_TimeToGo))
                         .append(" ")
-                        .append(options.getBeforeStartMin())
+                        .append(options.getTimeToGoMin())
                         .append(" ")
                         .append(context.getString(R.string.Notification_Discipline_Minute))
                         .append("\n");
