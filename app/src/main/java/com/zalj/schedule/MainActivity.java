@@ -43,7 +43,6 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
 
     //Object
     private Schedule schedule;
-    private MyDisciplineNotificationManager notificationManager;
 
     //Расписане
     private Calendar calendar;
@@ -90,10 +89,6 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
 
             updateDateButton();
             updateRecycleView();
-
-            //Считываются настройки уведомлений по расписанию
-            notificationManager = MyDisciplineNotificationManager
-                    .getInstance(getApplicationContext(), schedule);
         }
     }
 
@@ -115,8 +110,7 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
                 Intent intent = new Intent(this, SelectScheduleActivity.class);
                 startActivityForResult(intent, IntentHelper.SELECT_SCHEDULE);
 
-                notificationManager.deleteAllAlarm();
-                notificationManager.setNull();
+                MyDisciplineNotificationManager.deleteAllAlarm(getApplicationContext(), schedule);
                 schedule = null;
 
                 SharedPreferences.Editor editor = settings.edit();
@@ -186,7 +180,6 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
                 schedule = DataContract.MyFileManager.readFileOfOptions(path);
 
                 updateRecycleView();
-                notificationManager = MyDisciplineNotificationManager.getInstance(this, schedule);
 
                 //Сохраняем открывшуюся расписание
                 SharedPreferences.Editor editor = settings.edit();
@@ -199,15 +192,14 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
                     case RESULT_OK: {
                         updateRecycleView();
 
-                        notificationManager.updateAllAlarm();
+                        MyDisciplineNotificationManager.updateAllAlarm(getApplicationContext(), schedule);
                     }break;
 
                     case IntentHelper.RESULT_DELETED: {
 
                         DataContract.MyFileManager.deleteDate(this, schedule.getNameOfFileSchedule());
-                        notificationManager.deleteAllAlarm();
-                        notificationManager.deleteOptionsFile(this);
-                        notificationManager.setNull();
+                        MyDisciplineNotificationManager.deleteAllAlarm(getApplicationContext(), schedule);
+                        MyDisciplineNotificationManager.deleteOptionsFile(getApplicationContext(), schedule.getNameOfFileSchedule());
                         schedule = null;
 
                         Intent intent = new Intent(this, SelectScheduleActivity.class);

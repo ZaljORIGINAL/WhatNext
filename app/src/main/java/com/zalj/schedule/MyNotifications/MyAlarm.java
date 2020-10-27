@@ -82,9 +82,8 @@ public class MyAlarm extends BroadcastReceiver {
         MyDisciplineNotificationManager disciplineNotificationManager;
 
         schedule = intent.getParcelableExtra(IntentHelper.SCHEDULE);
-        disciplineNotificationManager = MyDisciplineNotificationManager.getInstance(context, schedule);
 
-        disciplineNotificationManager.updateAllAlarm();
+        MyDisciplineNotificationManager.updateAllAlarm(context, schedule);
         Log.i("Notification", "Уведомления обнавлены!");
     }
 }
