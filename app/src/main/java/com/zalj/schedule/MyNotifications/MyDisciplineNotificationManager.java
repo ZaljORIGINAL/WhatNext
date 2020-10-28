@@ -66,26 +66,6 @@ public class MyDisciplineNotificationManager {
                 Log.i("Notification", "Уведомление: Время для выхода...");
             }
 
-            if (options.getBeforeStart()){
-                setAlarm(context, alarmManager, BEFORE_START, discipline, options);
-                Log.i("Notification", "Уведомление: До начала осталось...");
-            }
-
-            if (options.getStart()){
-                setAlarm(context, alarmManager, START, discipline, options);
-                Log.i("Notification", "Уведомление: Пара началась...");
-            }
-
-            if (options.getBeforeFinish()){
-                setAlarm(context, alarmManager, BEFORE_FINISH, discipline, options);
-                Log.i("Notification", "Уведомление: До конца осталось...");
-            }
-
-            if (options.getFinish()){
-                setAlarm(context, alarmManager, FINISH, discipline, options);
-                Log.i("Notification", "Уведомление: Пара закончилась...");
-            }
-
             //Устанавливаем будильники для оставшихся дисциплин
             for (int index = 0; index < disciplines.size(); index++){
                 discipline = disciplines.get(index);
@@ -110,6 +90,8 @@ public class MyDisciplineNotificationManager {
                     Log.i("Notification", "Уведомление: Пара закончилась...");
                 }
             }
+
+            //TODO оповестить что уччебый день окончен
         }
 
         setAlarmToUpdateDisciplineOfNextDay(context, schedule, alarmManager);

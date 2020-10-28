@@ -57,10 +57,8 @@ public class MyAlarm extends BroadcastReceiver {
                 .setContentText(message)
                 .setStyle(new NotificationCompat.BigTextStyle())
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setVibrate(new long[]
-                        {
-                                0, 400, 200, 400
-                        })
+                .setSound(NotificationHelper.getSound())
+                .setVibrate(NotificationHelper.getVibrate())
                 .setAutoCancel(true);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
