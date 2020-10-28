@@ -11,6 +11,6 @@ public class NotificationHelper {
     }
 
     public static long[] getVibrate(){
-        return new long[]{700,400,700};
+        return new long[]{400,800,400,800};
     }
 }
