@@ -206,7 +206,7 @@ public class OptionsOfDisciplineNotificationFragment extends Fragment {
 
         /**Блок по finish*/
         checkBoxes[3] = view.findViewById(R.id.checkBoxFinish);
-        checkBoxes[3].setChecked(ScheduleBuilderActivity.options.getStart());
+        checkBoxes[3].setChecked(ScheduleBuilderActivity.options.getFinish());
         checkBoxes[3].setOnCheckedChangeListener((buttonView, isChecked) -> {
             ScheduleBuilderActivity.options.setFinish(isChecked);
         });
