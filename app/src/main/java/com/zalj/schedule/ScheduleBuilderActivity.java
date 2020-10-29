@@ -1,6 +1,7 @@
 package com.zalj.schedule;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
@@ -44,6 +45,11 @@ public class ScheduleBuilderActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_creating_new_schedule);
+
+        ActionBar actionBar = getSupportActionBar();
+
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         parentIntent = getIntent();
 
@@ -116,6 +122,11 @@ public class ScheduleBuilderActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                setResult(RESULT_CANCELED);
+                finish();
+                return true;
+
             case R.id.saveSchedule: {
                 //Сохранение всего расписания
                 if (checkScheduleFields()) {

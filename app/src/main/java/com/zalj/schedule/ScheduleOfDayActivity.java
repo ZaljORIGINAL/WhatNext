@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import com.zalj.schedule.Objects.Discipline;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class ScheduleOfDayActivity extends AppCompatActivity implements DisciplineAdapter.iOnItemClickListener
 {
@@ -56,6 +58,8 @@ public class ScheduleOfDayActivity extends AppCompatActivity implements Discipli
         list = (RecyclerView)findViewById(R.id.elementsList);
         list.setLayoutManager(new LinearLayoutManager(this));
         day = intent.getParcelableExtra("DAY");
+
+        updateTitleOfActivity(this, actionBar, day.getDayOfWeek());
         /*Для упрощения установки номера пары требуется провести анализ.
         * Если день пуст, то в positionSpinner первым выбранным элемментом будет указана
         * первая пара. Если же день не пуст, то выискивается самая поздняя пара в спинере как
@@ -108,7 +112,7 @@ public class ScheduleOfDayActivity extends AppCompatActivity implements Discipli
     {
         disciplineBuilder = day.getDiscipline(position);
 
-        setDisciplineOptions(disciplineBuilder, disciplineBuilder.getPosition());
+        setDisciplineOptions(disciplineBuilder, position);
     }
 
     @Override
@@ -165,8 +169,6 @@ public class ScheduleOfDayActivity extends AppCompatActivity implements Discipli
                 setTypeSpinner;
         final AutoCompleteTextView nameAC, buildingAC, auditoryAC;
 
-        Button delete;
-
         positionSpinner = view.findViewById(R.id.setPosition);
         adapterPosition = new ArrayAdapter<String>(
                 this,
@@ -175,7 +177,7 @@ public class ScheduleOfDayActivity extends AppCompatActivity implements Discipli
         adapterPosition.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         positionSpinner.setAdapter(adapterPosition);
         if (position != -1){
-            positionSpinner.setSelection(position);
+            positionSpinner.setSelection(discipline.getPosition());
         }else {
             positionSpinner.setSelection(maxPositionSelected);
         }
@@ -220,81 +222,75 @@ public class ScheduleOfDayActivity extends AppCompatActivity implements Discipli
         {
         }
 
-        dialog.setPositiveButton(R.string.Standard_dialog_positive_button, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //Сохранение предмета
-                if (nameAC.getText().toString().isEmpty())
+        dialog.setPositiveButton(R.string.Standard_dialog_positive_button, (dialog1, which) -> {
+            //Сохранение предмета
+            if (nameAC.getText().toString().isEmpty())
+            {
+                //Сообщение об ошибка
+                AlertDialog.Builder errorDialog = new AlertDialog.Builder(getApplicationContext());
+                errorDialog.setTitle(R.string.Standard_Error);
+                errorDialog.setMessage(getResources().getString(R.string.ScheduleCreatingActivity_Error_fieldOfNameIsClear));
+                errorDialog.setPositiveButton(R.string.Standard_dialog_positive_button, null);
+                errorDialog.show();
+            }else
+            {
+                //Установка порядкого номера дисциплины
+                int positionScheduleOfDay;
+                positionScheduleOfDay = positionSpinner.getSelectedItemPosition();
+                disciplineBuilder.setPosition(positionScheduleOfDay);
+                //Устанвока времени
+                disciplineBuilder.setTime(
+                        ScheduleBuilderActivity.times.get(positionScheduleOfDay));
+
+                if (maxPositionSelected <= positionScheduleOfDay){
+                    if (positionScheduleOfDay == ScheduleBuilderActivity.times.size() - 1){
+                        maxPositionSelected = positionScheduleOfDay;
+                    }else {
+                        maxPositionSelected = positionScheduleOfDay + 1;
+                    }
+                }
+
+                //Установка имени дисциплины
+                disciplineBuilder.setDisciplineName(nameAC.getText().toString());
+                if (!ScheduleBuilderActivity.namesOfDisciplines.contains(nameAC.getText().toString()))
                 {
-                    //Сообщение об ошибка
-                    AlertDialog.Builder errorDialog = new AlertDialog.Builder(getApplicationContext());
-                    errorDialog.setTitle(R.string.Standard_Error);
-                    errorDialog.setMessage(getResources().getString(R.string.ScheduleCreatingActivity_Error_fieldOfNameIsClear));
-                    errorDialog.setPositiveButton(R.string.Standard_dialog_positive_button, null);
-                    errorDialog.show();
+                    ScheduleBuilderActivity.namesOfDisciplines.add(nameAC.getText().toString());
+                    updateNameOfDisciplineAdapter();
+                }
+                //Установка здания
+                disciplineBuilder.setBuilding(buildingAC.getText().toString());
+                if (!ScheduleBuilderActivity.buildingOfDisciplines.contains(buildingAC.getText().toString()))
+                {
+                    ScheduleBuilderActivity.buildingOfDisciplines.add(buildingAC.getText().toString());
+                    updateNameOfDisciplineAdapter();
+                }
+                //Установка номера аудитории
+                disciplineBuilder.setAuditorium(auditoryAC.getText().toString());
+                if (!ScheduleBuilderActivity.auditoryOfDisciplines.contains(auditoryAC.getText().toString()))
+                {
+                    ScheduleBuilderActivity.auditoryOfDisciplines.add(auditoryAC.getText().toString());
+                    updateNameOfDisciplineAdapter();
+                }
+                //Установка типа дисциплины
+                disciplineBuilder.setType(setTypeSpinner.getSelectedItemPosition());
+
+                if (position != -1)
+                {
+                    day.updateDiscipline(disciplineBuilder, position);
                 }else
                 {
-                    //Установка порядкого номера дисциплины
-                    int positionScheduleOfDay;
-                    positionScheduleOfDay = positionSpinner.getSelectedItemPosition();
-                    disciplineBuilder.setPosition(positionScheduleOfDay);
-                    //Устанвока времени
-                    disciplineBuilder.setTime(
-                            ScheduleBuilderActivity.times.get(positionScheduleOfDay));
-
-                    if (maxPositionSelected <= positionScheduleOfDay){
-                        if (positionScheduleOfDay == ScheduleBuilderActivity.times.size() - 1){
-                            maxPositionSelected = positionScheduleOfDay;
-                        }else {
-                            maxPositionSelected = positionScheduleOfDay + 1;
-                        }
-                    }
-
-                    //Установка имени дисциплины
-                    disciplineBuilder.setDisciplineName(nameAC.getText().toString());
-                    if (!ScheduleBuilderActivity.namesOfDisciplines.contains(nameAC.getText().toString()))
-                    {
-                        ScheduleBuilderActivity.namesOfDisciplines.add(nameAC.getText().toString());
-                        updateNameOfDisciplineAdapter();
-                    }
-                    //Установка здания
-                    disciplineBuilder.setBuilding(buildingAC.getText().toString());
-                    if (!ScheduleBuilderActivity.buildingOfDisciplines.contains(buildingAC.getText().toString()))
-                    {
-                        ScheduleBuilderActivity.buildingOfDisciplines.add(buildingAC.getText().toString());
-                        updateNameOfDisciplineAdapter();
-                    }
-                    //Установка номера аудитории
-                    disciplineBuilder.setAuditorium(auditoryAC.getText().toString());
-                    if (!ScheduleBuilderActivity.auditoryOfDisciplines.contains(auditoryAC.getText().toString()))
-                    {
-                        ScheduleBuilderActivity.auditoryOfDisciplines.add(auditoryAC.getText().toString());
-                        updateNameOfDisciplineAdapter();
-                    }
-                    //Установка типа дисциплины
-                    disciplineBuilder.setType(setTypeSpinner.getSelectedItemPosition());
-
-                    if (position != -1)
-                    {
-                        day.updateDiscipline(disciplineBuilder, position);
-                    }else
-                    {
-                        day.addDiscipline(disciplineBuilder);
-                    }
-
-                    day.sortDisciplines();
-
-                    positionSpinner.setSelection(maxPositionSelected);
-
-                    updateDisciplineAdapter();
+                    day.addDiscipline(disciplineBuilder);
                 }
+
+                day.sortDisciplines();
+
+                positionSpinner.setSelection(maxPositionSelected);
+
+                updateDisciplineAdapter();
             }
         });
 
-        dialog.setNegativeButton(R.string.Standard_dialog_negative_button, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
+        dialog.setNegativeButton(R.string.Standard_dialog_negative_button, (dialog12, which) -> {
         });
 
         if (position != -1)
@@ -309,5 +305,39 @@ public class ScheduleOfDayActivity extends AppCompatActivity implements Discipli
         }
 
         dialog.show();
+    }
+
+    private void updateTitleOfActivity(Context context, ActionBar actionBar, int dayOfWeek){
+        String[] daysOfWeek = context.getResources().getStringArray(R.array.day_of_week_array);
+
+        switch (dayOfWeek){
+            case Calendar.MONDAY:
+                actionBar.setTitle(daysOfWeek[0]);
+                break;
+
+            case Calendar.TUESDAY:
+                actionBar.setTitle(daysOfWeek[1]);
+                break;
+
+            case Calendar.WEDNESDAY:
+                actionBar.setTitle(daysOfWeek[2]);
+                break;
+
+            case Calendar.THURSDAY:
+                actionBar.setTitle(daysOfWeek[3]);
+                break;
+
+            case Calendar.FRIDAY:
+                actionBar.setTitle(daysOfWeek[4]);
+                break;
+
+            case Calendar.SATURDAY:
+                actionBar.setTitle(daysOfWeek[5]);
+                break;
+
+            case Calendar.SUNDAY:
+                actionBar.setTitle(daysOfWeek[6]);
+                break;
+        }
     }
 }

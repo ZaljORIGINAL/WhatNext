@@ -15,6 +15,8 @@ import com.zalj.schedule.IntentHelper;
 import com.zalj.schedule.Objects.Schedule;
 import com.zalj.schedule.R;
 
+import java.util.Calendar;
+
 public class MyAlarm extends BroadcastReceiver {
 
     @Override
@@ -58,7 +60,7 @@ public class MyAlarm extends BroadcastReceiver {
                 .setStyle(new NotificationCompat.BigTextStyle())
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setSound(NotificationHelper.getSound())
-                .setVibrate(NotificationHelper.getVibrate())
+                .setVibrate(NotificationHelper.getVibrate(NotificationHelper.LONG_VIBRATE))
                 .setAutoCancel(true);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
@@ -77,9 +79,10 @@ public class MyAlarm extends BroadcastReceiver {
 
     private void updateAlarmsToNextDay(Context context, Intent intent){
         Schedule schedule;
-        MyDisciplineNotificationManager disciplineNotificationManager;
 
+        Log.i("Notification", "Обновление расписаний на следующий день");
         schedule = intent.getParcelableExtra(IntentHelper.SCHEDULE);
+        schedule.updateDiscipline(context, Calendar.getInstance());
 
         MyDisciplineNotificationManager.updateAllAlarm(context, schedule);
         Log.i("Notification", "Уведомления обнавлены!");

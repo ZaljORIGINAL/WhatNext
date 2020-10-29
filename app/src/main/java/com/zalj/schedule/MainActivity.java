@@ -212,11 +212,11 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
 
                     case RESULT_CANCELED: {
 
-                    };
+                    }break;
 
                     case IntentHelper.RESULT_ERROR: {
                         Toast.makeText(this, this.getText(R.string.toast_message_scheduleIsNotCreated), Toast.LENGTH_LONG).show();
-                    }
+                    }break;
                 }
             }
         }
