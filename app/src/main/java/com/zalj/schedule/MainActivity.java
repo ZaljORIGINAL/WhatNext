@@ -30,6 +30,7 @@ import com.zalj.schedule.Adapters.DisciplineAdapter;
 import com.zalj.schedule.Data.DataContract;
 import com.zalj.schedule.MyNotifications.MyDisciplineNotificationManager;
 import com.zalj.schedule.Objects.Schedule;
+import com.zalj.schedule.Objects.ScheduleBuilder;
 
 import java.io.File;
 import java.util.Calendar;
@@ -78,14 +79,11 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
             startActivityForResult(intent, IntentHelper.SELECT_SCHEDULE);
         }else {
             //Считывается весь документ и сохраняется в объекте
-            String path = this.getFilesDir().getPath() +
-                    File.separator +
-                    DataContract.MyFileManager.FILE_OF_SCHEDULE_DIRECTORY +
-                    File.separator +
-                    settings.getString(DataContract.MyAppSettings.LAST_SCHEDULE, DataContract.MyAppSettings.NULL) +
-                    ".txt";
+            String path = settings.getString(DataContract.MyAppSettings.LAST_SCHEDULE, DataContract.MyAppSettings.NULL);
 
-            schedule = DataContract.MyFileManager.readFileOfOptions(path);
+            ScheduleBuilder scheduleBuilder = new ScheduleBuilder(path);
+            scheduleBuilder.read(getApplicationContext());
+            schedule = scheduleBuilder.build();
 
             updateDateButton();
             updateRecycleView();
@@ -172,14 +170,15 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
         switch (requestCode) {
             case IntentHelper.SELECT_SCHEDULE: {
 
-                String path = this.getFilesDir().getPath() +
-                        File.separator +
-                        DataContract.MyFileManager.FILE_OF_SCHEDULE_DIRECTORY +
-                        File.separator +
-                        data.getStringExtra(IntentHelper.NAME);
-                schedule = DataContract.MyFileManager.readFileOfOptions(path);
+                String path = data.getStringExtra(IntentHelper.NAME);
+
+                ScheduleBuilder scheduleBuilder = new ScheduleBuilder(path);
+                scheduleBuilder.read(getApplicationContext());
+                schedule = scheduleBuilder.build();
 
                 updateRecycleView();
+                updateDateButton();
+                MyDisciplineNotificationManager.updateAllAlarm(getApplicationContext(), schedule);
 
                 //Сохраняем открывшуюся расписание
                 SharedPreferences.Editor editor = settings.edit();
@@ -190,8 +189,13 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
             case IntentHelper.EDIT_SCHEDULE: {
                 switch (resultCode) {
                     case RESULT_OK: {
-                        updateRecycleView();
+                        String name = data.getStringExtra(IntentHelper.SCHEDULE_NAME);
+                        ScheduleBuilder scheduleBuilder = new ScheduleBuilder(name);
+                        scheduleBuilder.read(getApplicationContext());
+                        schedule = scheduleBuilder.build();
 
+                        updateRecycleView();
+                        updateDateButton();
                         MyDisciplineNotificationManager.updateAllAlarm(getApplicationContext(), schedule);
                     }break;
 

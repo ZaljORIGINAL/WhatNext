@@ -5,14 +5,17 @@ import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import com.zalj.schedule.Data.DataContract;
 import com.zalj.schedule.IntentHelper;
 import com.zalj.schedule.Objects.Schedule;
+import com.zalj.schedule.Objects.ScheduleBuilder;
 import com.zalj.schedule.R;
 
 import java.util.Calendar;
@@ -81,7 +84,22 @@ public class MyAlarm extends BroadcastReceiver {
         Schedule schedule;
 
         Log.i("Notification", "Обновление расписаний на следующий день");
-        schedule = intent.getParcelableExtra(IntentHelper.SCHEDULE);
+        String name = intent.getStringExtra(IntentHelper.SCHEDULE_NAME);
+
+        if (name == null){
+            SharedPreferences settings = context.getSharedPreferences(
+                    DataContract.MyAppSettings.LAST_VIEWED_SCHEDULE,
+                    Context.MODE_PRIVATE);
+
+            name = settings.getString(
+                    DataContract.MyAppSettings.LAST_SCHEDULE,
+                    DataContract.MyAppSettings.NULL);
+        }
+
+        ScheduleBuilder scheduleBuilder = new ScheduleBuilder(name);
+        scheduleBuilder.read(context);
+        schedule = scheduleBuilder.build();
+        schedule.updateTimes(context);
         schedule.updateDiscipline(context, Calendar.getInstance());
 
         MyDisciplineNotificationManager.updateAllAlarm(context, schedule);

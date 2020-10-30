@@ -6,6 +6,7 @@ public class IntentHelper
     public static final int RESULT_DELETED = -2;
     public static final int RESULT_ERROR = -222;
     public static final String SCHEDULE = "SCHEDULE";
+    public static final String SCHEDULE_NAME = "SCHEDULE_NAME";
 
     //SelectScheduleActivity -> MainActivity
     public static final String NAME = "NAME";

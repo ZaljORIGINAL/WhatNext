@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.zalj.schedule.Data.DataContract;
+import com.zalj.schedule.Objects.ScheduleBuilder;
 import com.zalj.schedule.R;
 
 import java.io.BufferedReader;
@@ -152,26 +153,10 @@ public class SchedulesAdapter extends RecyclerView.Adapter<SchedulesAdapter.MyHo
 
         public void builder(String name)
         {
-//            fileName = name;
+            ScheduleBuilder scheduleBuilder = new ScheduleBuilder(name);
+            scheduleBuilder.read(context);
 
-            StringBuffer path = new StringBuffer();
-            path.append(context.getFilesDir().getPath())
-                    .append(File.separator)
-                    .append(DataContract.MyFileManager.FILE_OF_SCHEDULE_DIRECTORY)
-                    .append(File.separator)
-                    .append(name);
-
-            try
-            {
-                BufferedReader reader = new BufferedReader(new FileReader(path.toString()));
-                reader.readLine();
-                tNameOfSchedule.setText(reader.readLine());
-                String text = tNameOfSchedule.getText().toString();
-                Log.i("Schedule NAME", tNameOfSchedule.getText().toString());
-            }catch (Exception e)
-            {
-                Log.i("Schedule NAME", "ERROR");
-            }
+            tNameOfSchedule.setText(scheduleBuilder.getNameOfSchedule());
         }
 
         public void builderNoInfo()

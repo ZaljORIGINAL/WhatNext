@@ -9,6 +9,7 @@ import com.zalj.schedule.Data.DataContract;
 import com.zalj.schedule.Data.DisciplineDBHelper;
 import com.zalj.schedule.Data.TimeDBHelper;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -44,6 +45,13 @@ public class Schedule implements Parcelable {
 
         times = new ArrayList<>();
         disciplines = new ArrayList<>();
+    }
+
+    public Schedule(String nameOfFileSchedule, String nameOfSchedule, byte type, byte parity){
+        this.nameOfFileSchedule = nameOfFileSchedule;
+        this.nameOfSchedule = nameOfSchedule;
+        this.type = type;
+        this.parity = parity;
     }
 
     protected Schedule(Parcel in) {
@@ -204,6 +212,20 @@ public class Schedule implements Parcelable {
         setTimes(timeDB.getTime(db));
 
         db.close();
+    }
+
+    public boolean delete(Context context){
+        File file = new File(getOptionsFilePath(context));
+
+        return file.delete();
+    }
+
+    private String getOptionsFilePath(Context context){
+        return new File(
+                context.getFilesDir(),
+                DataContract.MyFileManager.FILE_OF_SCHEDULE_DIRECTORY
+                        + File.separator
+                        + nameOfFileSchedule).getPath();
     }
 
     private void sort() {

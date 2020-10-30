@@ -91,27 +91,6 @@ public class DataContract
             }
         }
 
-        //TODO Можно провести сериализацию класса Schedule. Что упростить получение параметров с расписания
-        public static Schedule readFileOfOptions(String path) {
-            File file = new File(path);
-            Schedule schedule = new Schedule(file.getName());
-            try {
-                BufferedReader reader = new BufferedReader(new FileReader(file));
-                //Первая строка содержит ИМЯ расписания: Читаем
-                schedule.setType(reader.readLine());
-                //Вторая строка содержит ТИП расписания: Читаем
-                schedule.setNameOfSchedule(reader.readLine());
-                //Третья строкаа сожержит параметры четности
-                schedule.setParity(reader.readLine());
-            } catch (FileNotFoundException e) {
-                Log.i("ERROR", "ERROR: File is not founded");
-            } catch (Exception e) {
-                Log.i("ERROR", "Что то явно пошло не по плану");
-            }
-
-            return schedule;
-        }
-
         /*TODO Требуется дописать удаление файла настроек уведемолений расписания
         *  Так как мы планируем сериализововать классы Schedule и OptionsOfNotificationsDiscipline
         *  имеет смысл дописать методы удалиний именно у этих классов и просто обратиться к ним*/
@@ -382,7 +361,7 @@ public class DataContract
                     .append(File.separator)
                     .append(FILE_OF_SCHEDULE_DIRECTORY)
                     .append(File.separator)
-                    .append(name).append(".txt");
+                    .append(name);
 
             if (!copyFile(new File(path.toString()), dir)) {
                 return false;

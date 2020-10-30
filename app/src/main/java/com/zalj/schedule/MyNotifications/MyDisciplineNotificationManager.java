@@ -351,16 +351,16 @@ public class MyDisciplineNotificationManager {
     private static void setAlarmToUpdateDisciplineOfNextDay(Context context, Schedule schedule, AlarmManager alarmManager){
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_YEAR, 1);
-        calendar.set(Calendar.HOUR_OF_DAY, 4);
+        calendar.set(Calendar.HOUR_OF_DAY, 2);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
 
         Intent intent = new Intent(context, MyAlarm.class);
         intent.putExtra(IntentHelper.COMMAND, IntentHelper.COMMAND_NOTIFICATION_UpdateAlarmToDay);
-        intent.putExtra(IntentHelper.SCHEDULE, schedule);
+        intent.putExtra(IntentHelper.SCHEDULE_NAME, schedule.getNameOfFileSchedule());
 
-        Log.i("Notification", "Будильники обновятся в: " + calendar.get(Calendar.DAY_OF_MONTH) + ":" + calendar.get(Calendar.MONTH) + "; " + calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE));
+        Log.i("Notification", "Будильники обновятся в: " + DateUtils.formatDateTime(context, calendar.getTimeInMillis(), DateUtils.FORMAT_SHOW_DATE) + " ; "  + DateUtils.formatDateTime(context, calendar.getTimeInMillis(), DateUtils.FORMAT_SHOW_TIME));
         PendingIntent pIntent  =
                 PendingIntent.getBroadcast(
                         context,
@@ -531,7 +531,7 @@ public class MyDisciplineNotificationManager {
 
                 try {
                     ObjectOutputStream serialize = new ObjectOutputStream(
-                            new FileOutputStream(pathToFile)
+                            new FileOutputStream(file)
                     );
 
                     serialize.writeObject(

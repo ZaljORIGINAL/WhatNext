@@ -19,6 +19,7 @@ import com.zalj.schedule.Data.TimeDBHelper;
 import com.zalj.schedule.MyNotifications.MyDisciplineNotificationManager;
 import com.zalj.schedule.Objects.DayOfWeek;
 import com.zalj.schedule.Objects.Schedule;
+import com.zalj.schedule.Objects.ScheduleBuilder;
 import com.zalj.schedule.Objects.TimeSchedule;
 import com.zalj.schedule.Objects.Week;
 
@@ -132,7 +133,10 @@ public class ScheduleBuilderActivity extends AppCompatActivity
                 if (checkScheduleFields()) {
                     saveSchedule();
 
-                    setResult(RESULT_OK);
+                    Intent intent = new Intent();
+                    intent.putExtra(IntentHelper.SCHEDULE_NAME, schedule.getNameOfFileSchedule());
+
+                    setResult(RESULT_OK, intent);
                     finish();
                 }
             }break;
@@ -174,15 +178,9 @@ public class ScheduleBuilderActivity extends AppCompatActivity
             DataContract.MyFileManager.deleteDate(this, schedule.getNameOfFileSchedule());
         }
 
-        //Сохранение основных параметров
-        StringBuffer path = new StringBuffer();
-        path.append(this.getFilesDir().getPath())
-                .append(File.separator)
-                .append(DataContract.MyFileManager.FILE_OF_SCHEDULE_DIRECTORY)
-                .append(File.separator)
-                .append(schedule.getNameOfFileSchedule())
-                .append(".txt");
-        DataContract.MyFileManager.createFileOfOptions(path.toString(), schedule);
+        //Сохранение параметров расписания
+        ScheduleBuilder scheduleBuilder = new ScheduleBuilder();
+        scheduleBuilder.save(schedule, getApplicationContext());
 
         //Сохранение настроек уведомлений
         if (!options.save()){
