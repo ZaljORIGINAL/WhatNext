@@ -42,6 +42,11 @@
 
     <!--ScheduleBuilderActivity-->
     <string name="nameOfActivity_ScheduleCreating">Edit</string>
+    <string name="ScheduleBuilderActivity_Dialog_dataCheck_title">Data is incomplete</string>//Данные не полны
+    <string name="ScheduleBuilderActivity_Dialog_dataCheck_message_warning">Enter the following information:</string>//Enter the following information
+    <string name="ScheduleBuilderActivity_Dialog_dataCheck_message_name">Name of schedule</string>//Название расписания
+    <string name="ScheduleBuilderActivity_Dialog_dataCheck_message_date">Day of top week</string>//Дата не выбрана
+    <string name="ScheduleBuilderActivity_Dialog_dataCheck_message_times">Times schedule</string> //Расписание времени
     <string-array name="day_of_week_array">
         <item>Monday</item>
         <item>Tuesday</item>

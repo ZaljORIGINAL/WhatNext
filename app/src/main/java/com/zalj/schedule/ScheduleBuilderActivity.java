@@ -6,6 +6,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -138,6 +139,8 @@ public class ScheduleBuilderActivity extends AppCompatActivity
 
                     setResult(RESULT_OK, intent);
                     finish();
+                }else {
+                    //TODO Cообщить, что не все данные вбиты
                 }
             }break;
 
@@ -149,23 +152,55 @@ public class ScheduleBuilderActivity extends AppCompatActivity
     }
 
     private boolean checkScheduleFields() {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle(R.string.Standard_Error);
+        StringBuilder message = new StringBuilder();
 
         boolean result = true;
 
+        message
+                .append(getString(R.string.ScheduleBuilderActivity_Dialog_dataCheck_message_warning))
+                .append("\n");
+
         if (schedule.getNameOfSchedule().isEmpty()) {
             result = false;
-            dialog.setMessage(getResources().getString(R.string.ScheduleCreatingActivity_Error_fieldOfNameIsClear));
+
+            message
+                    .append(getString(R.string.ScheduleBuilderActivity_Dialog_dataCheck_message_name))
+                    .append("\n");
+/*            dialog.setMessage(getResources().getString(R.string.ScheduleCreatingActivity_Error_fieldOfNameIsClear));
             dialog.setPositiveButton(R.string.Standard_dialog_positive_button, null);
-            dialog.show();
-        }else if (schedule.getType() == DataContract.MyAppSettings.SCHEDULE_TYPE_2) {
+            dialog.show();*/
+        }
+
+        if (schedule.getType() == DataContract.MyAppSettings.SCHEDULE_TYPE_2) {
             if (schedule.getParity() == -1) {
                 result = false;
-                dialog.setMessage(getResources().getString(R.string.ScheduleCreatingActivity_Error_topWeekIsNotSelected));
+
+                message
+                        .append(getString(R.string.ScheduleBuilderActivity_Dialog_dataCheck_message_date))
+                        .append("\n");
+/*                dialog.setMessage(getResources().getString(R.string.ScheduleCreatingActivity_Error_topWeekIsNotSelected));
                 dialog.setPositiveButton(R.string.Standard_dialog_positive_button, null);
-                dialog.show();
+                dialog.show();*/
             }
+        }
+
+        if (times.size() == 0){
+            result = false;
+
+            message
+                    .append(getString(R.string.ScheduleBuilderActivity_Dialog_dataCheck_message_date))
+                    .append("\n");
+        }
+
+        if (!result){
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+            dialog.setTitle(R.string.ScheduleBuilderActivity_Dialog_dataCheck_title);
+            dialog.setMessage(message.toString());
+            dialog.setPositiveButton(R.string.Standard_dialog_positive_button,
+                    (dialog1, which) -> {
+
+                    });
+            dialog.show();
         }
 
         return result;

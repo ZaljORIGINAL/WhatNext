@@ -40,6 +40,11 @@
 
     <!--ScheduleBuilderActivity-->
     <string name="nameOfActivity_ScheduleCreating">Редактирование</string>
+    <string name="ScheduleBuilderActivity_Dialog_dataCheck_title">Данные не полны</string>
+    <string name="ScheduleBuilderActivity_Dialog_dataCheck_message_warning">Введите следующую данные:</string>
+    <string name="ScheduleBuilderActivity_Dialog_dataCheck_message_name">Название расписания</string>
+    <string name="ScheduleBuilderActivity_Dialog_dataCheck_message_date">День верхней недели</string>
+    <string name="ScheduleBuilderActivity_Dialog_dataCheck_message_times">Расписание времени</string>
     <string-array name="day_of_week_array">
         <item>Понедельник</item>
         <item>Вторник</item>
