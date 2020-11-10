@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -290,7 +291,10 @@ public class MyDisciplineNotificationManager {
 
         //Установка будильника
         Log.i("Notification", "Уведомление произойдет в:" + DateUtils.formatDateTime(context, calendar.getTimeInMillis(), DateUtils.FORMAT_SHOW_DATE) + " ; "  + DateUtils.formatDateTime(context, calendar.getTimeInMillis(), DateUtils.FORMAT_SHOW_TIME));
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pIntent);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pIntent);
+        else
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pIntent);
     }
 
     private static void deleteAlarm(Context context, AlarmManager alarmManager, int type, Discipline discipline, MyDisciplineNotificationManager.Options options){
@@ -368,7 +372,10 @@ public class MyDisciplineNotificationManager {
                         intent,
                         PendingIntent.FLAG_UPDATE_CURRENT);
 
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pIntent);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pIntent);
+        else
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pIntent);
         Log.i("Notification", "Будильник на обновление уведомлений установлен");
     }
 
@@ -554,8 +561,8 @@ public class MyDisciplineNotificationManager {
             return false;
         }
 
-        public static boolean delete(Context context, String name){
-            File file = new File(getOptionsFilePath(context, name));
+        public static boolean delete(Context context, String nameOfFile){
+            File file = new File(getOptionsFilePath(context, nameOfFile));
 
             return file.delete();
         }

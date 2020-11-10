@@ -153,8 +153,7 @@ public class SchedulesAdapter extends RecyclerView.Adapter<SchedulesAdapter.MyHo
 
         public void builder(String name)
         {
-            ScheduleBuilder scheduleBuilder = new ScheduleBuilder(name);
-            scheduleBuilder.read(context);
+            ScheduleBuilder scheduleBuilder = ScheduleBuilder.getInternalSchedule(context, name);
 
             tNameOfSchedule.setText(scheduleBuilder.getNameOfSchedule());
         }

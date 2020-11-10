@@ -72,7 +72,7 @@
     <string name="fragment_name_mainSettingsOfFragment">Main settings</string>
     <string name="fragment_text_nameOfSchedule">Name of schedule</string>
     <string name="fragment_text_infoAboutOfDouble">Please select parity week(day of week)</string>
-    <string name="fragment_switch_double">Double</string>
+    <string name="fragment_switch_double">Schedule is double</string>
     <string name="fragment_button_setWeek">Select week</string>
 
     <!--Fragment time of schedule-->

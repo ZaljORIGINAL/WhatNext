@@ -81,8 +81,7 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
             //Считывается весь документ и сохраняется в объекте
             String path = settings.getString(DataContract.MyAppSettings.LAST_SCHEDULE, DataContract.MyAppSettings.NULL);
 
-            ScheduleBuilder scheduleBuilder = new ScheduleBuilder(path);
-            scheduleBuilder.read(getApplicationContext());
+            ScheduleBuilder scheduleBuilder = ScheduleBuilder.getInternalSchedule(getApplicationContext(), path);
             schedule = scheduleBuilder.build();
 
             updateDateButton();
@@ -172,8 +171,7 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
 
                 String path = data.getStringExtra(IntentHelper.NAME);
 
-                ScheduleBuilder scheduleBuilder = new ScheduleBuilder(path);
-                scheduleBuilder.read(getApplicationContext());
+                ScheduleBuilder scheduleBuilder = ScheduleBuilder.getInternalSchedule(getApplicationContext(), path);
                 schedule = scheduleBuilder.build();
 
                 updateRecycleView();
@@ -190,8 +188,7 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
                 switch (resultCode) {
                     case RESULT_OK: {
                         String name = data.getStringExtra(IntentHelper.SCHEDULE_NAME);
-                        ScheduleBuilder scheduleBuilder = new ScheduleBuilder(name);
-                        scheduleBuilder.read(getApplicationContext());
+                        ScheduleBuilder scheduleBuilder = ScheduleBuilder.getInternalSchedule(getApplicationContext(), name);
                         schedule = scheduleBuilder.build();
 
                         updateRecycleView();

@@ -8,6 +8,7 @@ import android.os.Parcelable;
 import com.zalj.schedule.Data.DataContract;
 import com.zalj.schedule.Data.DisciplineDBHelper;
 import com.zalj.schedule.Data.TimeDBHelper;
+import com.zalj.schedule.MyNotifications.MyDisciplineNotificationManager;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -215,10 +216,9 @@ public class Schedule implements Parcelable {
         db.close();
     }
 
-    public boolean delete(Context context){
-        File file = new File(getOptionsFilePath(context));
-
-        return file.delete();
+    public void delete(Context context){
+        DataContract.MyFileManager.deleteDate(context, getNameOfFileSchedule());
+        MyDisciplineNotificationManager.Options.delete(context, getNameOfFileSchedule());
     }
 
     private String getOptionsFilePath(Context context){

@@ -96,8 +96,7 @@ public class MyAlarm extends BroadcastReceiver {
                     DataContract.MyAppSettings.NULL);
         }
 
-        ScheduleBuilder scheduleBuilder = new ScheduleBuilder(name);
-        scheduleBuilder.read(context);
+        ScheduleBuilder scheduleBuilder = ScheduleBuilder.getInternalSchedule(context, name);
         schedule = scheduleBuilder.build();
         schedule.updateTimes(context);
         schedule.updateDiscipline(context, Calendar.getInstance());

@@ -70,7 +70,7 @@
     <string name="fragment_name_mainSettingsOfFragment">Главные настройки</string>
     <string name="fragment_text_nameOfSchedule">Имя расписания</string>
     <string name="fragment_text_infoAboutOfDouble">Выберите верхню неделю выбрав ее любой день недели</string>
-    <string name="fragment_switch_double">Двойное</string>
+    <string name="fragment_switch_double">Двойное расписание</string>
     <string name="fragment_button_setWeek">Выбор недели</string>
 
     <!--Fragment time of schedule-->

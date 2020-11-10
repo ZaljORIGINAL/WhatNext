@@ -56,17 +56,10 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
         setContentView(R.layout.activity_select_schedule);
 
         FloatingActionButton fab = findViewById(R.id.addNewSchedule);
-        fab.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                createNewSchedule();
-            }
-        });
+        fab.setOnClickListener(v -> createNewSchedule());
 
         try {
-            String path = this.getFilesDir().getPath() +
+            String path = getFilesDir().getPath() +
                     File.separator +
                     DataContract.MyFileManager.FILE_OF_SCHEDULE_DIRECTORY;
             file = new File(path);
@@ -210,13 +203,8 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
         if (files.length == 0) {
             dialog.setMessage(R.string.SelectScheduleActivity_Dialog_NotFound);
             dialog.setPositiveButton(R.string.Standard_dialog_positive_button,
-                    new DialogInterface.OnClickListener()
-                    {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which)
-                        {
+                    (dialog1, which) -> {
 
-                        }
                     });
         }else {
             View dialogView = View.inflate(this, R.layout.dialog_choose_files, null);
@@ -229,80 +217,63 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
 
             final String[] finalFiles = files;
             dialog.setPositiveButton(R.string.Standard_dialog_positive_button,
-                    new DialogInterface.OnClickListener()
-                    {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            boolean[] chose = adapter.getCheckBoxStatus();
-                            //Обновить список выбранных файлов для иммпорта
-                            int isTrue = 0;
-                            for (int index = 0; index < chose.length; index++) {
-                                if (chose[index]) {
-                                    chose[isTrue] = chose[index];
-                                    finalFiles[isTrue] = finalFiles[index];
-                                    isTrue++;
-                                }
+                    (dialog12, which) -> {
+                        boolean[] chose = adapter.getCheckBoxStatus();
+                        //Обновить список выбранных файлов для иммпорта
+                        int isTrue = 0;
+                        for (int index = 0; index < chose.length; index++) {
+                            if (chose[index]) {
+                                chose[isTrue] = chose[index];
+                                finalFiles[isTrue] = finalFiles[index];
+                                isTrue++;
                             }
-
-                            boolean[] complete = new boolean[finalFiles.length];
-
-                            for (int index = 0; index < isTrue; index++) {
-                                if (chose[index]) {
-                                    //Получаем ошибки и результаты импортирования
-                                    if (DataContract.MyFileManager.importFiles(getApplicationContext(),
-                                            new File(
-                                                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                                                    ,finalFiles[index]))) {
-                                        //Сообщить об успешном импортировании
-                                        complete[index] = true;
-                                    }else {
-                                        complete[index] = false;
-                                        DataContract.MyFileManager.deleteDate(getApplicationContext(), finalFiles[index]);
-                                    }
-                                }
-                            }
-
-                            //Демонстрируем отчет об ипорте
-                            AlertDialog.Builder messageDialog = new AlertDialog.Builder(context);
-                            messageDialog.setTitle(R.string.Standard_Dialog_Report);
-                            StringBuilder report = new StringBuilder();
-                            for (int index = 0; index < isTrue; index++) {
-                                report
-                                        .append(finalFiles[index])
-                                        .append(": ");
-
-                                if (complete[index]) {
-                                    report.append(DataContract.MyFileManager.REPORT_NO_PROBLEM);
-                                    updateList();
-                                }else {
-                                    report.append(DataContract.MyFileManager.REPORT_ERROR);
-                                }
-
-                                report.append("\n");
-                            }
-                            messageDialog.setMessage(report.toString());
-
-                            messageDialog.setPositiveButton(R.string.Standard_dialog_positive_button,
-                                    new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-
-                                        }
-                                    });
-
-                            messageDialog.show();
                         }
+
+                        boolean[] complete = new boolean[finalFiles.length];
+
+                        for (int index = 0; index < isTrue; index++) {
+                            if (chose[index]) {
+                                //Получаем ошибки и результаты импортирования
+                                if (DataContract.MyFileManager.importFiles(getApplicationContext(),
+                                        new File(
+                                                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                                                ,finalFiles[index]))) {
+                                    //Сообщить об успешном импортировании
+                                    complete[index] = true;
+                                }else {
+                                    complete[index] = false;
+                                    DataContract.MyFileManager.deleteDate(getApplicationContext(), finalFiles[index]);
+                                }
+                            }
+                        }
+
+                        //Демонстрируем отчет об ипорте
+                        AlertDialog.Builder messageDialog = new AlertDialog.Builder(context);
+                        messageDialog.setTitle(R.string.Standard_Dialog_Report);
+                        StringBuilder report = new StringBuilder();
+                        for (int index = 0; index < isTrue; index++) {
+                            report
+                                    .append(finalFiles[index])
+                                    .append(": ");
+
+                            if (complete[index]) {
+                                report.append(DataContract.MyFileManager.REPORT_NO_PROBLEM);
+                                updateList();
+                            }else {
+                                report.append(DataContract.MyFileManager.REPORT_ERROR);
+                            }
+
+                            report.append("\n");
+                        }
+                        messageDialog.setMessage(report.toString());
+
+                        messageDialog.setPositiveButton(R.string.Standard_dialog_positive_button,
+                                (dialog121, which1) -> { });
+
+                        messageDialog.show();
                     });
 
-            dialog.setNegativeButton(R.string.Standard_dialog_negative_button, new DialogInterface.OnClickListener()
-            {
-                @Override
-                public void onClick(DialogInterface dialog, int which)
-                {
-
-                }
-            });
-
+            dialog.setNegativeButton(R.string.Standard_dialog_negative_button, (dialog13, which) -> { });
         }
         dialog.show();
     }

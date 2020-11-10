@@ -1,6 +1,7 @@
 package com.zalj.schedule.Objects;
 
 import android.content.Context;
+import android.os.Environment;
 import android.util.Log;
 
 import com.zalj.schedule.Data.DataContract;
@@ -14,7 +15,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class ScheduleBuilder implements Serializable {
+    private final static long serialVersionUID = 0;
+
     private String nameOfFileSchedule;  /*Фаил в котором хранятся пареметры Расписаня, в качестве имени указывается дата создания*/
+    private String pathToScheduleParams;/*Путь к файлу хранящий основные параметры расписани. Путь может обращаться ко внутренней памяти или к внешней*/
     private String nameOfSchedule;      /*Наименование расписания*/
     private byte type;                  /*Тип расписания (двойное/одинарное)*/
     private byte parity;                /*Четность расписания, для отображения одного вида расписания в зависимости от недели*/
@@ -25,8 +29,58 @@ public class ScheduleBuilder implements Serializable {
 
     public ScheduleBuilder(){};
 
-    public ScheduleBuilder(String nameOfFileSchedule){
+    public static ScheduleBuilder getInternalSchedule(Context context, String nameOfFileSchedule){
+        StringBuilder path = new StringBuilder();
+        path
+                .append(context.getFilesDir())
+                .append(File.separator)
+                .append(DataContract.MyFileManager.FILE_OF_SCHEDULE_DIRECTORY)
+                .append(File.separator)
+                .append(nameOfFileSchedule);
+
+        ScheduleBuilder scheduleBuilder = new ScheduleBuilder(nameOfFileSchedule, path.toString());
+        scheduleBuilder.read();
+
+        return scheduleBuilder;
+    }
+
+    public static ScheduleBuilder getExternalSchedule(Context context, String nameOfFileSchedule){
+        StringBuilder path = new StringBuilder();
+        path
+                .append(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS))
+                .append(File.separator)
+                .append("mSch" + nameOfFileSchedule)
+                .append(File.separator)
+                .append(DataContract.MyFileManager.MIGRATE_OPTIONS_DIRECTORY)
+                .append(File.separator)
+                .append(nameOfFileSchedule);
+
+        ScheduleBuilder scheduleBuilder = new ScheduleBuilder(nameOfFileSchedule, path.toString());
+        scheduleBuilder.read();
+
+        return scheduleBuilder;
+    }
+
+    private ScheduleBuilder(String nameOfFileSchedule,String pathToScheduleParams){
         this.nameOfFileSchedule = nameOfFileSchedule;
+        this.pathToScheduleParams = pathToScheduleParams;
+    }
+
+    public ScheduleBuilder(Context context, Schedule schedule){
+        this.nameOfFileSchedule = schedule.getNameOfFileSchedule();
+        this.nameOfSchedule = schedule.getNameOfSchedule();
+        this.parity = (byte) schedule.getParity();
+        this.type = (byte) schedule.getType();
+
+        StringBuilder path = new StringBuilder();
+        path
+                .append(context.getFilesDir())
+                .append(File.separator)
+                .append(DataContract.MyFileManager.FILE_OF_SCHEDULE_DIRECTORY)
+                .append(File.separator)
+                .append(nameOfFileSchedule);
+
+        this.pathToScheduleParams = path.toString();
     }
 
     public ScheduleBuilder(String nameOfFileSchedule, String nameOfSchedule, byte type, byte parity){
@@ -82,13 +136,11 @@ public class ScheduleBuilder implements Serializable {
         return schedule;
     }
 
-    public boolean read(Context context){
-        if (nameOfFileSchedule != null){
-            String path = getOptionsFilePath(context);
-
+    public boolean read(){
+        if (nameOfFileSchedule != null && pathToScheduleParams != null){
             try {
                 ObjectInputStream deserialize = new ObjectInputStream(
-                        new FileInputStream(path)
+                        new FileInputStream(pathToScheduleParams)
                 );
 
                 ScheduleBuilder object = (ScheduleBuilder) deserialize.readObject();
@@ -110,11 +162,9 @@ public class ScheduleBuilder implements Serializable {
         return false;
     }
 
-    public boolean save(Context context){
+    public boolean save(){
         if (nameOfFileSchedule != null){
-            String path = getOptionsFilePath(context);
-
-            File file = new File(path);
+            File file = new File(pathToScheduleParams);
             if (!file.getParentFile().exists())
                 file.getParentFile().mkdirs();
 
@@ -142,16 +192,7 @@ public class ScheduleBuilder implements Serializable {
         return false;
     }
 
-    public boolean save(Schedule schedule, Context context){
-        this.nameOfFileSchedule = schedule.getNameOfFileSchedule();
-        this.nameOfSchedule = schedule.getNameOfSchedule();
-        this.type = (byte) schedule.getType();
-        this.parity = (byte) schedule.getParity();
-
-        return save(context);
-    }
-
-    private String getOptionsFilePath(Context context){
+    private String getOptionsFilePath(Context context) {
         return new File(
                 context.getFilesDir(),
                 DataContract.MyFileManager.FILE_OF_SCHEDULE_DIRECTORY

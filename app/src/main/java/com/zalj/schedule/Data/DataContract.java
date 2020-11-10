@@ -7,6 +7,7 @@ import android.provider.BaseColumns;
 import android.util.Log;
 
 import com.zalj.schedule.Objects.Schedule;
+import com.zalj.schedule.Objects.ScheduleBuilder;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -94,7 +95,7 @@ public class DataContract
         /*TODO Требуется дописать удаление файла настроек уведемолений расписания
         *  Так как мы планируем сериализововать классы Schedule и OptionsOfNotificationsDiscipline
         *  имеет смысл дописать методы удалиний именно у этих классов и просто обратиться к ним*/
-        public static void deleteDate(Context context, String name) {
+        public static void deleteDate(Context context, String nameOfFile) {
             String path;
             File file;
 
@@ -102,7 +103,7 @@ public class DataContract
                     File.separator +
                     FILE_OF_SCHEDULE_DIRECTORY +
                     File.separator +
-                    name + ".txt";
+                    nameOfFile;
             file = new File(path);
             if (file.exists()) {
                 file.delete();
@@ -110,14 +111,14 @@ public class DataContract
             }
 
             try {
-                context.deleteDatabase("time" + name);
+                context.deleteDatabase("time" + nameOfFile);
                 Log.i("Delete DATA", "Deleted: TimeDB");
             } catch (Exception e) {
                 Log.i("Delete DATA", "TimeDB not exist");
             }
 
             try {
-                context.deleteDatabase("top" + name);
+                context.deleteDatabase("top" + nameOfFile);
                 Log.i("Delete DATA", "Deleted: DB_1");
             } catch (Exception e) {
                 Log.i("Delete DATA", "DB_1 not exist");
@@ -125,7 +126,7 @@ public class DataContract
 
 
             try {
-                context.deleteDatabase("lower" + name);
+                context.deleteDatabase("lower" + nameOfFile);
                 Log.i("Delete DATA", "Deleted: DB_2");
             } catch (Exception e) {
                 Log.i("Delete DATA", "DB_2 not exist");
@@ -166,7 +167,7 @@ public class DataContract
                         packageName);
 
                 //Проверить на целостность
-                if (checkingForFiles(packageToImport)
+                if (checkingForFiles(context ,packageToImport, packageName)
                 ) {
                     if (moveScheduleToInternalMemory(context, packageToImport)) {
                         deleteDir(packageToImport);
@@ -179,7 +180,7 @@ public class DataContract
             return false;
         }
 
-        private static boolean checkingForFiles(File dir) {
+        private static boolean checkingForFiles(Context context, File dir, String nameOfFile) {
             boolean[] dbExist = new boolean[]
                     {
                             false,//Отвечает за DB1
@@ -192,13 +193,10 @@ public class DataContract
             if (optionsFile.equals("NULL"))
                 return false;
 
-            File scheduleOptionsFile = new File(optionsFile);
-            try (BufferedReader reader = new BufferedReader(new FileReader(scheduleOptionsFile))) {
-                typeOfSchedule = Integer.parseInt(reader.readLine());
-            } catch (Exception e) {
-                //Ошибка, чтение файла не удалось
-                return false;
-            }
+            ScheduleBuilder scheduleBuilder = ScheduleBuilder.getExternalSchedule(
+                    context,
+                    nameOfFile.substring((nameOfFile.length() - 1) - 12, (nameOfFile.length() - 1)));
+            typeOfSchedule = scheduleBuilder.getType();
 
             String[] databaseFilesNames = getExternalDatabaseList(dir);
             for (int index = 0; index < databaseFilesNames.length; index++) {
@@ -469,7 +467,6 @@ public class DataContract
 
                 while (entries.hasMoreElements()) {
                     ZipEntry entry = (ZipEntry) entries.nextElement();
-                    String entryName = entry.getName();
 
                     File exportFile = new File(entry.getName());
                     if (!exportFile.getParentFile().exists()) {

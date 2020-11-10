@@ -119,6 +119,11 @@ public class ScheduleBuilderActivity extends AppCompatActivity
     {
         getMenuInflater().inflate(R.menu.menu_create_schedule, menu);
 
+        if (parentIntent.getIntExtra(IntentHelper.COMMAND, 0) == IntentHelper.CREATE_NEW_SCHEDULE){
+            MenuItem item = menu.findItem(R.id.deleteSchedule);
+            item.setVisible(false);
+        }
+
         return super.onCreateOptionsMenu(menu);
     }
     @Override
@@ -188,7 +193,7 @@ public class ScheduleBuilderActivity extends AppCompatActivity
             result = false;
 
             message
-                    .append(getString(R.string.ScheduleBuilderActivity_Dialog_dataCheck_message_date))
+                    .append(getString(R.string.ScheduleBuilderActivity_Dialog_dataCheck_message_times))
                     .append("\n");
         }
 
@@ -214,8 +219,8 @@ public class ScheduleBuilderActivity extends AppCompatActivity
         }
 
         //Сохранение параметров расписания
-        ScheduleBuilder scheduleBuilder = new ScheduleBuilder();
-        scheduleBuilder.save(schedule, getApplicationContext());
+        ScheduleBuilder scheduleBuilder = new ScheduleBuilder(getApplicationContext() ,schedule);
+        scheduleBuilder.save();
 
         //Сохранение настроек уведомлений
         if (!options.save()){
@@ -259,22 +264,18 @@ public class ScheduleBuilderActivity extends AppCompatActivity
 
     //Удаление расписания
     private void deleteSchedule() {
-        if (parentIntent.getIntExtra(IntentHelper.COMMAND, 0) != IntentHelper.EDIT_SCHEDULE) {
-            setResult(IntentHelper.RESULT_ERROR);
-            finish();
-        }else {
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-            dialog.setTitle(this.getResources().getString(R.string.Standard_Delete));
-            dialog.setMessage(this.getResources().getString(R.string.Standard_QuestionOfDelete));
-            dialog.setPositiveButton(R.string.Standard_dialog_positive_button,
-                    (dialog1, which) -> {
-                        setResult(IntentHelper.RESULT_DELETED);
-                        finish();
-                    });
-            dialog.setNegativeButton(R.string.Standard_dialog_negative_button,
-                    (dialog12, which) -> {
-                    });
-            dialog.show();
-        }
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle(this.getResources().getString(R.string.Standard_Delete));
+        dialog.setMessage(this.getResources().getString(R.string.Standard_QuestionOfDelete));
+        dialog.setPositiveButton(R.string.Standard_dialog_positive_button,
+                (dialog1, which) -> {
+                    schedule.delete(getApplicationContext());
+
+                    setResult(IntentHelper.RESULT_DELETED);
+                    finish();
+        });
+        dialog.setNegativeButton(R.string.Standard_dialog_negative_button,
+                (dialog12, which) -> { });
+        dialog.show();
     }
 }
