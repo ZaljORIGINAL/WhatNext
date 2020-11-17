@@ -175,7 +175,7 @@ public class DataContract
 
             ScheduleBuilder scheduleBuilder = ScheduleBuilder.getExternalSchedule(
                     context,
-                    nameOfFile.substring((nameOfFile.length() - 1) - 12, (nameOfFile.length() - 1)));
+                    nameOfFile.substring((nameOfFile.length() - 1) - 12));
             typeOfSchedule = scheduleBuilder.getType();
 
             String[] databaseFilesNames = getExternalDatabaseList(dir);
@@ -268,6 +268,8 @@ public class DataContract
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 File[] files = dir.listFiles();
                 File databaseDir = new File(context.getDataDir(), "databases");
+                if (!databaseDir.exists())
+                    databaseDir.mkdirs();
 
                 for (int index = 0; index < files.length; index++) {
                     if (!copyFile(files[index], databaseDir))
