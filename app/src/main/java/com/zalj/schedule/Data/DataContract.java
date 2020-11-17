@@ -75,26 +75,6 @@ public class DataContract
         public final static String REPORT_NO_PROBLEM = "is complete";
         public final static String REPORT_ERROR = "ERROR";
 
-        //TODO Можно провести сериализацию класса Schedule. Что упростить получение параметров с расписания
-        public static void createFileOfOptions(String path, Schedule schedule) {
-            try {
-                File file = new File(path);
-                FileWriter writer = new FileWriter(file.getPath(), false);
-                writer.append(String.valueOf(schedule.getType())).append("\n")
-                        .append(schedule.getNameOfSchedule()).append("\n")
-                        .append(String.valueOf(schedule.getParity()));
-
-                writer.close();
-            } catch (FileNotFoundException e) {
-                Log.d("SAVE", "ERROR: MAIN FILE NOTE CREATED");
-            } catch (Exception e) {
-                Log.d("ERROR", "Что то явно пошло не по плану");
-            }
-        }
-
-        /*TODO Требуется дописать удаление файла настроек уведемолений расписания
-        *  Так как мы планируем сериализововать классы Schedule и OptionsOfNotificationsDiscipline
-        *  имеет смысл дописать методы удалиний именно у этих классов и просто обратиться к ним*/
         public static void deleteDate(Context context, String nameOfFile) {
             String path;
             File file;

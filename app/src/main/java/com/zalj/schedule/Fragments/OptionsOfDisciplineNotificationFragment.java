@@ -1,6 +1,8 @@
 package com.zalj.schedule.Fragments;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -22,6 +24,7 @@ public class OptionsOfDisciplineNotificationFragment extends Fragment {
     /**View elements*/
     private CheckBox[] checkBoxes; /**id: 0 - beforeStart, 1 - start, 2 - beforeFinish, 3 - finish, 4 - timeToGo*/
     private EditText[] minutes; /**id: 0 - beforeStart, 1 - beforeFinish, 2 - timeToGo*/
+    private Context context;
 
     public static OptionsOfDisciplineNotificationFragment newInstance(){
         OptionsOfDisciplineNotificationFragment fragment =
@@ -34,7 +37,7 @@ public class OptionsOfDisciplineNotificationFragment extends Fragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
 
-
+        this.context = context;
     }
 
     @Override
@@ -62,19 +65,24 @@ public class OptionsOfDisciplineNotificationFragment extends Fragment {
         checkBoxes[4] = view.findViewById(R.id.checkboxBeforeStartTimeToGo);
         checkBoxes[4].setChecked(ScheduleBuilderActivity.options.getTimeToGo());
         checkBoxes[4].setOnCheckedChangeListener(((buttonView, isChecked) -> {
-            if (isChecked){
-                String time;
-                if (ScheduleBuilderActivity.options.getTimeToGoMin() == -1)
-                    time = "10";
-                else
-                    time = String.valueOf(ScheduleBuilderActivity.options.getTimeToGoMin());
+            //TODO Решение на время.
+            if (checkToAccept()){
+                if (isChecked){
+                    String time;
+                    if (ScheduleBuilderActivity.options.getTimeToGoMin() == -1)
+                        time = "10";
+                    else
+                        time = String.valueOf(ScheduleBuilderActivity.options.getTimeToGoMin());
 
-                minutes[2].setText(time);
+                    minutes[2].setText(time);
+                }else {
+                    minutes[2].setText("");
+                }
+
+                minutes[2].setEnabled(isChecked);
             }else {
-                minutes[2].setText("");
+                checkBoxes[4].setChecked(false);
             }
-
-            minutes[2].setEnabled(isChecked);
         }));
 
         minutes[2] = view.findViewById(R.id.editTextTimeToGo);
@@ -109,19 +117,24 @@ public class OptionsOfDisciplineNotificationFragment extends Fragment {
         checkBoxes[0] = view.findViewById(R.id.checkBoxBeforeStart);
         checkBoxes[0].setChecked(ScheduleBuilderActivity.options.getBeforeStart());
         checkBoxes[0].setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked){
-                String time;
-                if (ScheduleBuilderActivity.options.getBeforeStartMin() == -1)
-                    time = "10";
-                else
-                    time = String.valueOf(ScheduleBuilderActivity.options.getBeforeStartMin());
+            //TODO Решение на время.
+            if (checkToAccept()){
+                if (isChecked){
+                    String time;
+                    if (ScheduleBuilderActivity.options.getBeforeStartMin() == -1)
+                        time = "10";
+                    else
+                        time = String.valueOf(ScheduleBuilderActivity.options.getBeforeStartMin());
 
-                minutes[0].setText(time);
+                    minutes[0].setText(time);
+                }else {
+                    minutes[0].setText("");
+                }
+
+                minutes[0].setEnabled(isChecked);
             }else {
-                minutes[0].setText("");
+                checkBoxes[0].setChecked(false);
             }
-
-            minutes[0].setEnabled(isChecked);
         });
 
         minutes[0] = view.findViewById(R.id.editTextBeforeStart);
@@ -156,25 +169,35 @@ public class OptionsOfDisciplineNotificationFragment extends Fragment {
         checkBoxes[1] = view.findViewById(R.id.checkBoxStart);
         checkBoxes[1].setChecked(ScheduleBuilderActivity.options.getStart());
         checkBoxes[1].setOnCheckedChangeListener((buttonView, isChecked) -> {
-            ScheduleBuilderActivity.options.setStart(isChecked);
+            //TODO Решение на время.
+            if (checkToAccept()){
+                ScheduleBuilderActivity.options.setStart(isChecked);
+            }else {
+                checkBoxes[1].setChecked(false);
+            }
         });
 
         /**Блок по beforeFinish*/
         checkBoxes[2] = view.findViewById(R.id.checkBoxBeforeFinish);
         checkBoxes[2].setChecked(ScheduleBuilderActivity.options.getBeforeFinish());
         checkBoxes[2].setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked){
-                String time;
-                if (ScheduleBuilderActivity.options.getBeforeFinishMin() == -1)
-                    time = "10";
-                else
-                    time = String.valueOf(ScheduleBuilderActivity.options.getBeforeFinishMin());
+            //TODO Решение на время.
+            if (checkToAccept()) {
+                if (isChecked){
+                    String time;
+                    if (ScheduleBuilderActivity.options.getBeforeFinishMin() == -1)
+                        time = "10";
+                    else
+                        time = String.valueOf(ScheduleBuilderActivity.options.getBeforeFinishMin());
 
-                minutes[1].setText(time);
-            } else
-                minutes[1].setText("");
+                    minutes[1].setText(time);
+                } else
+                    minutes[1].setText("");
 
-            minutes[1].setEnabled(isChecked);
+                minutes[1].setEnabled(isChecked);
+            }else {
+                checkBoxes[2].setChecked(false);
+            }
         });
 
         minutes[1] = view.findViewById(R.id.editTextBeforeFinish);
@@ -208,7 +231,12 @@ public class OptionsOfDisciplineNotificationFragment extends Fragment {
         checkBoxes[3] = view.findViewById(R.id.checkBoxFinish);
         checkBoxes[3].setChecked(ScheduleBuilderActivity.options.getFinish());
         checkBoxes[3].setOnCheckedChangeListener((buttonView, isChecked) -> {
-            ScheduleBuilderActivity.options.setFinish(isChecked);
+            //TODO Решение на время.
+            if (checkToAccept()){
+                ScheduleBuilderActivity.options.setFinish(isChecked);
+            }else {
+                checkBoxes[3].setChecked(false);
+            }
         });
 
         return view;
@@ -218,5 +246,26 @@ public class OptionsOfDisciplineNotificationFragment extends Fragment {
     public void onPause() {
         super.onPause();
 
+    }
+
+    //TODO Решение на время.
+    private boolean checkToAccept(){
+        if (!ScheduleBuilderActivity.options.getAccept()){
+            AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+            dialog.setTitle(R.string.Standard_QuestionOfAction);
+            dialog.setMessage(R.string.vremennoeReshenie_notification);
+
+            dialog.setPositiveButton(R.string.Standard_dialog_positive_button,
+                    (dialog1, which) -> {
+                              ScheduleBuilderActivity.options.setAccept(true);
+                    });
+
+            dialog.setNegativeButton(R.string.Standard_dialog_negative_button,
+                    ((dialog1, which) -> {
+                    }));
+            dialog.show();
+        }
+
+        return ScheduleBuilderActivity.options.getAccept();
     }
 }

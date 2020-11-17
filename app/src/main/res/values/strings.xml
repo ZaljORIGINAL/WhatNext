@@ -7,12 +7,15 @@
     <!--Standard strings-->
     <string name="Standard_Error">Error</string>
     <string name="Standard_Delete">Delete</string>
-    <string name="Standard_QuestionOfDelete">Are you sure about your decision?</string>
+    <string name="Standard_QuestionOfAction">Are you sure about your decision?</string>
     <string name="Standard_dialog_positive_button">OK</string>
     <string name="Standard_dialog_negative_button">CANCEL</string>
     <string name="Standard_element_of_list_NoInfo">The list is empty</string>
     <string name="Standard_Dialog_Report">The process is complete:</string>
     <string name="Standard_isComplete">Is complete</string>
+
+    <!--TODO Временное решение-->
+    <string name="vremennoeReshenie_notification">This function is unstable. Are you sure you want to use it?</string>
 
     <!--Dialog for creating new schedule-->
     <string name="message_title_of_dialog">New schedule</string>

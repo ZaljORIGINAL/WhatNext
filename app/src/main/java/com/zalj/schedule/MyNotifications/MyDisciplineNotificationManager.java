@@ -396,6 +396,10 @@ public class MyDisciplineNotificationManager {
 
     public static class Options implements Serializable {
 
+        //TODO Решение на время.
+        /**Предупреждение для пользователя о том, что данная особенность приложения не надежна.*/
+        private boolean accept;
+
         private int beforeStart;
         private int timeToGo;
         private boolean start;
@@ -444,6 +448,10 @@ public class MyDisciplineNotificationManager {
         }
 
         /**Get methods*/
+        public boolean getAccept(){
+            return accept;
+        }
+
         public boolean getBeforeStart(){
             return beforeStart != -1;
         }
@@ -478,6 +486,10 @@ public class MyDisciplineNotificationManager {
         }
 
         /**Set methods*/
+        public void setAccept(boolean accept){
+            this.accept = accept;
+        }
+
         public void setBeforeStart(int beforeStart){
             this.beforeStart = beforeStart;
         }
@@ -575,6 +587,7 @@ public class MyDisciplineNotificationManager {
         }
 
         private void setDefaultParams(){
+            this.accept = false;
             this.beforeStart = -1;
             this.timeToGo = -1;
             this.start = false;

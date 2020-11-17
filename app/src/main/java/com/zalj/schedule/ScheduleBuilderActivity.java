@@ -6,7 +6,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -24,7 +23,6 @@ import com.zalj.schedule.Objects.ScheduleBuilder;
 import com.zalj.schedule.Objects.TimeSchedule;
 import com.zalj.schedule.Objects.Week;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -266,7 +264,7 @@ public class ScheduleBuilderActivity extends AppCompatActivity
     private void deleteSchedule() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setTitle(this.getResources().getString(R.string.Standard_Delete));
-        dialog.setMessage(this.getResources().getString(R.string.Standard_QuestionOfDelete));
+        dialog.setMessage(this.getResources().getString(R.string.Standard_QuestionOfAction));
         dialog.setPositiveButton(R.string.Standard_dialog_positive_button,
                 (dialog1, which) -> {
                     schedule.delete(getApplicationContext());

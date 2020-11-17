@@ -5,12 +5,15 @@
     <!--Default strings-->
     <string name="Standard_Error">Ошибка</string>
     <string name="Standard_Delete">Удалить</string>
-    <string name="Standard_QuestionOfDelete">Вы уверены в действии?</string>
+    <string name="Standard_QuestionOfAction">Вы уверены в действии?</string>
     <string name="Standard_dialog_positive_button">Принять</string>
     <string name="Standard_dialog_negative_button">Отмена</string>
     <string name="Standard_element_of_list_NoInfo">Список пуст</string>
     <string name="Standard_Dialog_Report">Процесс завершен:</string>
     <string name="Standard_isComplete">Завершен</string>
+
+    <!--TODO Временное решение-->
+    <string name="vremennoeReshenie_notification">Данная функция работает нестабильно. Вы уверены что хотите ею воспользоваться?</string>
 
     <!--Dialog for creating new schedule-->
     <string name="message_title_of_dialog">Новое расписание</string>
