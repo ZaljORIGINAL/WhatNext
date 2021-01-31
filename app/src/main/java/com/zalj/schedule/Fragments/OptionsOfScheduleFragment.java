@@ -21,11 +21,11 @@ import androidx.fragment.app.Fragment;
 import com.zalj.schedule.Data.DataContract;
 import com.zalj.schedule.IntentHelper;
 import com.zalj.schedule.R;
-import com.zalj.schedule.ScheduleBuilderActivity;
+import com.zalj.schedule.Activity.ScheduleBuilderActivity;
 
 import java.util.Calendar;
 
-import static com.zalj.schedule.ScheduleBuilderActivity.schedule;
+import static com.zalj.schedule.Activity.ScheduleBuilderActivity.schedule;
 
 public class OptionsOfScheduleFragment extends Fragment
 {

@@ -1,4 +1,4 @@
-package com.zalj.schedule;
+package com.zalj.schedule.Activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -16,12 +16,14 @@ import com.zalj.schedule.Adapters.FragmentAdapter;
 import com.zalj.schedule.Data.DataContract;
 import com.zalj.schedule.Data.DisciplineDBHelper;
 import com.zalj.schedule.Data.TimeDBHelper;
+import com.zalj.schedule.IntentHelper;
 import com.zalj.schedule.MyNotifications.MyDisciplineNotificationManager;
 import com.zalj.schedule.Objects.DayOfWeek;
 import com.zalj.schedule.Objects.Schedule;
 import com.zalj.schedule.Objects.ScheduleBuilder;
 import com.zalj.schedule.Objects.TimeSchedule;
 import com.zalj.schedule.Objects.Week;
+import com.zalj.schedule.R;
 
 import java.util.ArrayList;
 import java.util.Calendar;

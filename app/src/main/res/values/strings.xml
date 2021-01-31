@@ -118,21 +118,23 @@
 
     <!--Уведомления-->
     <!--MyDisciplineNotificationManager.java-->
-    <string name="Notification_Discipline_BeforeStart">Before the start</string>
     <string name="Notification_Discipline_TimeToGo">Time to go</string>
-    <string name="Notification_Discipline_Started">Class started</string>
-    <string name="Notification_Discipline_BeforeFinish">Before the finish</string>
-    <string name="Notification_Discipline_Finish">Class finished</string>
+    <string name="Notification_Discipline_BeforeStartOfDiscipline">Before the start</string>
+    <string name="Notification_Discipline_StartedOfDiscipline">Class started</string>
+    <string name="Notification_Discipline_BeforeFinishOfDiscipline">Before the finish</string>
+    <string name="Notification_Discipline_FinishOfDiscipline">Class finished</string>
+    <string name="Notification_Discipline_FinishOfDay">The school day is finished.</string>
     <string name="Notification_Discipline_Minute">minute</string>
 
     <!--fragment_options_of_discipline_notification-->
     <string name="fragment_options_of_discipline_notification_TextView_Notification">Notification settings</string>
-        <!--Switch-->
-        <string name="fragment_options_of_discipline_notification_Switch_beforeStart">How long before the start</string>
-        <string name="fragment_options_of_discipline_notification_Switch_beforeStart_TimeToGo">Time to go</string>
-        <string name="fragment_options_of_discipline_notification_Switch_start">Notify about start</string>
-        <string name="fragment_options_of_discipline_notification_Switch_beforeFinish">How long until the end</string>
-        <string name="fragment_options_of_discipline_notification_Switch_finish">Notify about finish</string>
+        <!--CheckBox-->
+        <string name="fragment_options_of_discipline_notification_CheckBox_beforeStartOfDiscipline">How long before the start</string>
+        <string name="fragment_options_of_discipline_notification_CheckBox_beforeStart_TimeToGo">Time to go</string>
+        <string name="fragment_options_of_discipline_notification_CheckBox_startOfDiscipline">Notify about start discipline</string>
+        <string name="fragment_options_of_discipline_notification_CheckBox_beforeFinishDiscipline">How long until the end discipline</string>
+        <string name="fragment_options_of_discipline_notification_CheckBox_finishDiscipline">Notify about end of discipline</string>
+        <string name="fragment_options_of_discipline_notification_CheckBox_finishOfDay">Notify about end of school day</string>
     <string name="fragment_options_of_discipline_notification_EditText">min</string>
 
     <!--Notification chanel-->

@@ -1,4 +1,4 @@
-package com.zalj.schedule;
+package com.zalj.schedule.Activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -15,13 +15,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.Spinner;
 
 import com.zalj.schedule.Adapters.DisciplineAdapter;
 import com.zalj.schedule.Objects.DayOfWeek;
 import com.zalj.schedule.Objects.Discipline;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.zalj.schedule.R;
 
 import java.util.ArrayList;
 import java.util.Calendar;

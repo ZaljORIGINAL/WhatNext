@@ -40,7 +40,7 @@
                     android:id="@+id/checkboxBeforeStartTimeToGo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/fragment_options_of_discipline_notification_Switch_beforeStart_TimeToGo"
+                    android:text="@string/fragment_options_of_discipline_notification_CheckBox_beforeStart_TimeToGo"
                     android:textSize="18sp"/>
 
                 <EditText
@@ -67,7 +67,7 @@
                     android:id="@+id/checkBoxBeforeStart"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/fragment_options_of_discipline_notification_Switch_beforeStart"
+                    android:text="@string/fragment_options_of_discipline_notification_CheckBox_beforeStartOfDiscipline"
                     android:textSize="18sp" />
 
                 <EditText
@@ -93,7 +93,7 @@
                     android:layout_height="wrap_content"
                     android:paddingTop="7dp"
                     android:paddingBottom="7dp"
-                    android:text="@string/fragment_options_of_discipline_notification_Switch_start"
+                    android:text="@string/fragment_options_of_discipline_notification_CheckBox_startOfDiscipline"
                     android:background="@color/backgroundOfListElement"
                     android:textSize="18sp" />
 
@@ -112,7 +112,7 @@
                     android:id="@+id/checkBoxBeforeFinish"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/fragment_options_of_discipline_notification_Switch_beforeFinish"
+                    android:text="@string/fragment_options_of_discipline_notification_CheckBox_beforeFinishDiscipline"
                     android:textSize="18sp" />
 
                 <EditText
@@ -138,7 +138,25 @@
                     android:layout_height="wrap_content"
                     android:paddingTop="7dp"
                     android:paddingBottom="7dp"
-                    android:text="@string/fragment_options_of_discipline_notification_Switch_finish"
+                    android:text="@string/fragment_options_of_discipline_notification_CheckBox_finishDiscipline"
+                    android:background="@color/backgroundOfListElement"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical">
+
+                <CheckBox
+                    android:id="@+id/checkBoxFinishOfDay"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="7dp"
+                    android:paddingBottom="7dp"
+                    android:text="@string/fragment_options_of_discipline_notification_CheckBox_finishOfDay"
                     android:background="@color/backgroundOfListElement"
                     android:textSize="18sp" />
 

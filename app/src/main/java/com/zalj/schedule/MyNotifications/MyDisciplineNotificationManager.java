@@ -4,7 +4,6 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -26,25 +25,13 @@ import java.util.Calendar;
 
 import static android.content.Context.ALARM_SERVICE;
 
-/**Применяется паттерн Singleton по той причине, что должен существоать лишь один контроллер
- * уведомлений (касательно уведомлений по расписанию).
- * Работа класса:
- * 1. Инстанцирование, полчение объекта класса
- *      1.1 По той причне, что мы работаем с классом Singleton, перед его созданием мы должны
- *      проверить существует ли уже объект данного класса instance = null?
- *      (instanceMyDisciplineNotificationManager(Context context, ArrayList<TimeSchedule> times))
- *      1.2 Если не существует, то создаем объект через private конструктор и устанавливаем его
- *      в instance и возвращаем его. В случае существования объекта возвращаем instance;
- * 2.
- * */
 public class MyDisciplineNotificationManager {
-    //Для реализации патттерна Singleton
-    private static MyDisciplineNotificationManager instance;
-    private static final int BEFORE_START = 0;
-    private static final int TIME_TO_GO = 4;
-    private static final int START = 1;
-    private static final int BEFORE_FINISH = 2;
-    private static final int FINISH = 3;
+    private static final int TIME_TO_GO = 0;
+    private static final int BEFORE_START_OF_DISCIPLINE = 1;
+    private static final int START_OF_DISCIPLINE = 2;
+    private static final int BEFORE_FINISH_OF_DISCIPLINE = 3;
+    private static final int FINISH_OF_DISCIPLINE = 4;
+    private static final int FINISH_OF_DAY = 5;
 
     public static final String CHANEL_ID_DISCIPLINE = "NOTIFICATION_CHANEL_ID_DISCIPLINE";
     public static final int NOTIFICATION_ID_DISCIPLINE = 10;
@@ -62,7 +49,7 @@ public class MyDisciplineNotificationManager {
             Discipline discipline = disciplines.get(0);
 
             if (options.getTimeToGo()){
-                setAlarm(context, alarmManager, TIME_TO_GO, discipline, options);
+                setAlarmToTimeToGo(context, discipline, options);
                 Log.i("Notification", "Уведомление: Время для выхода...");
             }
 
@@ -70,28 +57,33 @@ public class MyDisciplineNotificationManager {
             for (int index = 0; index < disciplines.size(); index++){
                 discipline = disciplines.get(index);
 
-                if (options.getBeforeStart()){
-                    setAlarm(context, alarmManager, BEFORE_START, discipline, options);
+                if (options.getBeforeStartOfDiscipline()){
+                    setAlarmToBeforeStartOfDiscipline(context, discipline, options);
                     Log.i("Notification", "Уведомление: До начала осталось...");
                 }
 
-                if (options.getStart()){
-                    setAlarm(context, alarmManager, START, discipline, options);
+                if (options.getStartOfDiscipline()){
+                    setAlarmToStartOfDiscipline(context, discipline, options);
                     Log.i("Notification", "Уведомление: Пара началась...");
                 }
 
-                if (options.getBeforeFinish()){
-                    setAlarm(context, alarmManager, BEFORE_FINISH, discipline, options);
+                if (options.getBeforeFinishOfDiscipline()){
+                    setAlarmBeforeFinishOfDiscipline(context, discipline, options);
                     Log.i("Notification", "Уведомление: До конца осталось...");
                 }
 
-                if (options.getFinish()){
-                    setAlarm(context, alarmManager, FINISH, discipline, options);
+                if (options.getFinishOfDiscipline()){
+                    setAlarmFinishOfDiscipline(context, discipline, options);
                     Log.i("Notification", "Уведомление: Пара закончилась...");
+                }
+
+                if (options.getFinishOfDay()){
+                    setAlarmFinishOfDay(context, discipline, options);
+                    Log.i("Notification", "Уведомление: Конец учебного дня...");
                 }
             }
 
-            //TODO оповестить что уччебый день окончен
+            //TODO оповестить что учебый день окончен
         }
 
         setAlarmToUpdateDisciplineOfNextDay(context, schedule, alarmManager);
@@ -104,132 +96,100 @@ public class MyDisciplineNotificationManager {
         options = new Options(context, schedule.getNameOfFileSchedule());
 
         ArrayList<Discipline> disciplines = schedule.getDisciplines();
-
-        for (int index = 0; index < disciplines.size(); index++){
-            Discipline discipline = disciplines.get(index);
-
-            if (options.getBeforeStart()){
-                deleteAlarm(context, alarmManager, BEFORE_START, discipline, options);
-                Log.i("Notification", "Уведомление: До начала осталось...");
+        if (disciplines.size() != 0){
+            Discipline discipline;
+            if (options.getTimeToGo()){
+                discipline = disciplines.get(0);
+                deleteAlarmToTimeToGo(context, discipline);
             }
 
-            if (options.getStart()){
-                deleteAlarm(context, alarmManager, START, discipline, options);
-                Log.i("Notification", "Уведомление: Пара началась...");
-            }
+            for (int index = 0; index < disciplines.size(); index++){
+                discipline = disciplines.get(index);
 
-            if (options.getBeforeFinish()){
-                deleteAlarm(context, alarmManager, BEFORE_FINISH, discipline, options);
-                Log.i("Notification", "Уведомление: До конца осталось...");
-            }
+                if (options.getBeforeStartOfDiscipline()){
+                    deleteAlarmToBeforeStartOfDiscipline(context, discipline);
+                    Log.i("Notification", "Будильник -До начала осталось- удален");
+                }
 
-            if (options.getFinish()){
-                deleteAlarm(context, alarmManager, FINISH, discipline, options);
-                Log.i("Notification", "Уведомление: Пара закончилась...");
+                if (options.getStartOfDiscipline()){
+                    deleteAlarmToStartOfDiscipline(context, discipline);
+                    Log.i("Notification", "Будильник -Пара началась- удален");
+                }
+
+                if (options.getBeforeFinishOfDiscipline()){
+                    deleteAlarmToBeforeFinishOfDiscipline(context, discipline);
+                    Log.i("Notification", "Будильник -До конца осталось- удален");
+                }
+
+                if (options.getFinishOfDiscipline()){
+                    deleteAlarmToFinishOfDiscipline(context, discipline);
+                    Log.i("Notification", "Будильник -Пара закончилась- удален");
+                }
+
+                if (options.getFinishOfDay()){
+                    deleteAlarmToFinishOfDay(context, discipline);
+                    Log.i("Notification", "Будильник -Конец учебного дня- удален");
+                }
             }
         }
 
-        deleteAlarmToUpdateDisciplineOfNextDay(context, alarmManager);
+        deleteAlarmToUpdateDisciplineOfNextDay(context);
     }
 
     public static void deleteOptionsFile(Context context, String name){
         Options.delete(context, name);
     }
 
-    //TODO При нажатии открыть расписание на день.
-    //TODO Если закончилась последняя пара, то сообщить дальше пар нет.
-    private static void setAlarm(Context context, AlarmManager alarmManager, int type, Discipline discipline, MyDisciplineNotificationManager.Options options){
-        String[] typeOfDiscipline = context.getResources().getStringArray(R.array.type_of_discipline);
+    private static void setAlarmToTimeToGo(Context context,Discipline discipline, Options options){
         StringBuilder message = new StringBuilder();
-
+        String[] typeOfDiscipline = context.getResources().getStringArray(R.array.type_of_discipline);
+        Calendar calendar = Calendar.getInstance();
         int id;
 
+
+        message
+                .append(context.getString(R.string.Notification_Discipline_TimeToGo))
+                .append(" ")
+                .append(options.getTimeToGoMin())
+                .append(" ")
+                .append(context.getString(R.string.Notification_Discipline_Minute))
+                .append("\n");
+
+        calendar.set(Calendar.HOUR_OF_DAY, discipline.getStartHour());
+        calendar.set(Calendar.MINUTE, discipline.getStartMinute());
+        calendar.add(Calendar.MINUTE, -options.getTimeToGoMin());
+        calendar.set(Calendar.SECOND, 0);
+
+        id = (discipline.getPosition() + 1) * 10 + TIME_TO_GO;
+
+        setAlarm(
+                context,
+                id,
+                "(" + typeOfDiscipline[discipline.getType()] + ") " + discipline.getDisciplineName(),
+                message.toString(),
+                calendar);
+    }
+
+    private static void setAlarmToBeforeStartOfDiscipline(Context context, Discipline discipline, Options options){
+        StringBuilder message = new StringBuilder();
+        String[] typeOfDiscipline = context.getResources().getStringArray(R.array.type_of_discipline);
         Calendar calendar = Calendar.getInstance();
+        int id;
 
-        switch (type){
-            case BEFORE_START:{
-                message
-                        .append(context.getString(R.string.Notification_Discipline_BeforeStart))
-                        .append(" ")
-                        .append(options.getBeforeStartMin())
-                        .append(" ")
-                        .append(context.getString(R.string.Notification_Discipline_Minute))
-                        .append("\n");
+        message
+                .append(context.getString(R.string.Notification_Discipline_BeforeStartOfDiscipline))
+                .append(" ")
+                .append(options.getBeforeStartMin())
+                .append(" ")
+                .append(context.getString(R.string.Notification_Discipline_Minute))
+                .append("\n");
 
-                calendar.set(Calendar.HOUR_OF_DAY, discipline.getStartHour());
-                calendar.set(Calendar.MINUTE, discipline.getStartMinute());
-                calendar.add(Calendar.MINUTE, -options.getBeforeStartMin());
-                calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.HOUR_OF_DAY, discipline.getStartHour());
+        calendar.set(Calendar.MINUTE, discipline.getStartMinute());
+        calendar.add(Calendar.MINUTE, -options.getBeforeStartMin());
+        calendar.set(Calendar.SECOND, 0);
 
-                id = (discipline.getPosition() + 1) * 10 + 1;
-            }break;
-
-            case TIME_TO_GO:{
-                message
-                        .append(context.getString(R.string.Notification_Discipline_TimeToGo))
-                        .append(" ")
-                        .append(options.getTimeToGoMin())
-                        .append(" ")
-                        .append(context.getString(R.string.Notification_Discipline_Minute))
-                        .append("\n");
-
-                calendar.set(Calendar.HOUR_OF_DAY, discipline.getStartHour());
-                calendar.set(Calendar.MINUTE, discipline.getStartMinute());
-                calendar.add(Calendar.MINUTE, -options.getTimeToGoMin());
-                calendar.set(Calendar.SECOND, 0);
-
-                id = (discipline.getPosition() + 1) * 10 + 5;
-            }break;
-
-            case START:{
-                message
-                        .append(context.getString(
-                                R.string.Notification_Discipline_Started))
-                        .append("\n");
-
-                calendar.set(Calendar.HOUR_OF_DAY, discipline.getStartHour());
-                calendar.set(Calendar.MINUTE, discipline.getStartMinute());
-                calendar.set(Calendar.SECOND, 0);
-
-
-                id = (discipline.getPosition() + 1) * 10 + 2;
-            }break;
-
-            case BEFORE_FINISH:{
-                message
-                        .append(context.getString(
-                                R.string.Notification_Discipline_BeforeFinish))
-                        .append(" ")
-                        .append(options.getBeforeFinishMin())
-                        .append(" ")
-                        .append(context.getString(R.string.Notification_Discipline_Minute))
-                        .append("\n");
-
-                calendar.set(Calendar.HOUR_OF_DAY, discipline.getFinishHour());
-                calendar.set(Calendar.MINUTE, discipline.getFinishMinute());
-                calendar.add(Calendar.MINUTE, -options.getBeforeFinishMin());
-                calendar.set(Calendar.SECOND, 0);
-
-                id = (discipline.getPosition() + 1) * 10 + 3;
-            }break;
-
-            case FINISH:{
-                message
-                        .append(context.getString(
-                                R.string.Notification_Discipline_Finish))
-                        .append("\n");
-
-                calendar.set(Calendar.HOUR_OF_DAY, discipline.getFinishHour());
-                calendar.set(Calendar.MINUTE, discipline.getFinishMinute());
-                calendar.set(Calendar.SECOND, 0);
-
-
-                id = (discipline.getPosition() + 1) * 10 + 4;
-            }break;
-
-            default:
-                id = 0;
-        }
+        id = (discipline.getPosition() + 1) * 10 + BEFORE_START_OF_DISCIPLINE;
 
         //Class room
         if (!(TextUtils.isEmpty(discipline.getAuditorium()) || discipline.getAuditorium().equals(""))){
@@ -248,7 +208,196 @@ public class MyDisciplineNotificationManager {
                     .append(discipline.getBuilding());
         }
 
-        Intent intent = new Intent(context, MyAlarm.class);
+        setAlarm(
+                context,
+                id,
+                "(" + typeOfDiscipline[discipline.getType()] + ") " + discipline.getDisciplineName(),
+                message.toString(),
+                calendar);
+    }
+
+    private static void setAlarmToStartOfDiscipline(Context context, Discipline discipline, Options options){
+        StringBuilder message = new StringBuilder();
+        String[] typeOfDiscipline = context.getResources().getStringArray(R.array.type_of_discipline);
+        Calendar calendar = Calendar.getInstance();
+        int id;
+
+        message
+                .append(context.getString(
+                        R.string.Notification_Discipline_StartedOfDiscipline))
+                .append("\n");
+
+        calendar.set(Calendar.HOUR_OF_DAY, discipline.getStartHour());
+        calendar.set(Calendar.MINUTE, discipline.getStartMinute());
+        calendar.set(Calendar.SECOND, 0);
+
+        id = (discipline.getPosition() + 1) * 10 + START_OF_DISCIPLINE;
+
+        //Class room
+        if (!(TextUtils.isEmpty(discipline.getAuditorium()) || discipline.getAuditorium().equals(""))){
+            message
+                    .append(context.getString(R.string.activity_ScheduleOfDay_dialog_auditory))
+                    .append(": ")
+                    .append(discipline.getAuditorium())
+                    .append("\n");
+        }
+
+        //Building
+        if (!(TextUtils.isEmpty(discipline.getBuilding()) || discipline.getBuilding().equals(""))){
+            message
+                    .append(context.getString(R.string.activity_ScheduleOfDay_dialog_building))
+                    .append(": ")
+                    .append(discipline.getBuilding());
+        }
+
+        setAlarm(
+                context,
+                id,
+                "(" + typeOfDiscipline[discipline.getType()] + ") " + discipline.getDisciplineName(),
+                message.toString(),
+                calendar);
+    }
+
+    private static void setAlarmBeforeFinishOfDiscipline(Context context, Discipline discipline, Options options){
+        StringBuilder message = new StringBuilder();
+        String[] typeOfDiscipline = context.getResources().getStringArray(R.array.type_of_discipline);
+        Calendar calendar = Calendar.getInstance();
+        int id;
+
+        message
+                .append(context.getString(
+                        R.string.Notification_Discipline_BeforeFinishOfDiscipline))
+                .append(" ")
+                .append(options.getBeforeFinishMin())
+                .append(" ")
+                .append(context.getString(R.string.Notification_Discipline_Minute))
+                .append("\n");
+
+        calendar.set(Calendar.HOUR_OF_DAY, discipline.getFinishHour());
+        calendar.set(Calendar.MINUTE, discipline.getFinishMinute());
+        calendar.add(Calendar.MINUTE, -options.getBeforeFinishMin());
+        calendar.set(Calendar.SECOND, 0);
+
+        id = (discipline.getPosition() + 1) * 10 + BEFORE_FINISH_OF_DISCIPLINE;
+
+        //Class room
+        if (!(TextUtils.isEmpty(discipline.getAuditorium()) || discipline.getAuditorium().equals(""))){
+            message
+                    .append(context.getString(R.string.activity_ScheduleOfDay_dialog_auditory))
+                    .append(": ")
+                    .append(discipline.getAuditorium())
+                    .append("\n");
+        }
+
+        //Building
+        if (!(TextUtils.isEmpty(discipline.getBuilding()) || discipline.getBuilding().equals(""))){
+            message
+                    .append(context.getString(R.string.activity_ScheduleOfDay_dialog_building))
+                    .append(": ")
+                    .append(discipline.getBuilding());
+        }
+
+        setAlarm(
+                context,
+                id,
+                "(" + typeOfDiscipline[discipline.getType()] + ") " + discipline.getDisciplineName(),
+                message.toString(),
+                calendar);
+    }
+
+    private static void setAlarmFinishOfDiscipline(Context context, Discipline discipline, Options options){
+        StringBuilder message = new StringBuilder();
+        String[] typeOfDiscipline = context.getResources().getStringArray(R.array.type_of_discipline);
+        Calendar calendar = Calendar.getInstance();
+        int id;
+
+        message
+                .append(context.getString(
+                        R.string.Notification_Discipline_FinishOfDiscipline))
+                .append("\n");
+
+        calendar.set(Calendar.HOUR_OF_DAY, discipline.getFinishHour());
+        calendar.set(Calendar.MINUTE, discipline.getFinishMinute());
+        calendar.set(Calendar.SECOND, 0);
+
+
+        id = (discipline.getPosition() + 1) * 10 + FINISH_OF_DISCIPLINE;
+
+        //Class room
+        if (!(TextUtils.isEmpty(discipline.getAuditorium()) || discipline.getAuditorium().equals(""))){
+            message
+                    .append(context.getString(R.string.activity_ScheduleOfDay_dialog_auditory))
+                    .append(": ")
+                    .append(discipline.getAuditorium())
+                    .append("\n");
+        }
+
+        //Building
+        if (!(TextUtils.isEmpty(discipline.getBuilding()) || discipline.getBuilding().equals(""))){
+            message
+                    .append(context.getString(R.string.activity_ScheduleOfDay_dialog_building))
+                    .append(": ")
+                    .append(discipline.getBuilding());
+        }
+
+        setAlarm(
+                context,
+                id,
+                "(" + typeOfDiscipline[discipline.getType()] + ") " + discipline.getDisciplineName(),
+                message.toString(),
+                calendar);
+    }
+
+    private static void setAlarmFinishOfDay(Context context, Discipline discipline, Options options){
+        StringBuilder message = new StringBuilder();
+        String[] typeOfDiscipline = context.getResources().getStringArray(R.array.type_of_discipline);
+        Calendar calendar = Calendar.getInstance();
+        int id;
+
+        message
+                .append(context.getString(
+                        R.string.Notification_Discipline_FinishOfDiscipline))
+                .append(context.getString(
+                        R.string.Notification_Discipline_FinishOfDay))
+                .append("\n");
+
+        calendar.set(Calendar.HOUR_OF_DAY, discipline.getFinishHour());
+        calendar.set(Calendar.MINUTE, discipline.getFinishMinute());
+        calendar.set(Calendar.SECOND, 0);
+
+
+        id = (discipline.getPosition() + 1) * 10 + FINISH_OF_DAY;
+
+        //Class room
+        if (!(TextUtils.isEmpty(discipline.getAuditorium()) || discipline.getAuditorium().equals(""))){
+            message
+                    .append(context.getString(R.string.activity_ScheduleOfDay_dialog_auditory))
+                    .append(": ")
+                    .append(discipline.getAuditorium())
+                    .append("\n");
+        }
+
+        //Building
+        if (!(TextUtils.isEmpty(discipline.getBuilding()) || discipline.getBuilding().equals(""))){
+            message
+                    .append(context.getString(R.string.activity_ScheduleOfDay_dialog_building))
+                    .append(": ")
+                    .append(discipline.getBuilding());
+        }
+
+        setAlarm(
+                context,
+                id,
+                "(" + typeOfDiscipline[discipline.getType()] + ") " + discipline.getDisciplineName(),
+                message.toString(),
+                calendar);
+    }
+
+    private static void setAlarm(Context context, int id, String title, String message, Calendar calendar){
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+
+        Intent intent = new Intent(context, AlarmReceiver.class);
+        intent.setAction(AlarmReceiver.SHOW_NOTIFICATION);
 
         //Устанавливаем команду
         intent.putExtra(
@@ -273,12 +422,12 @@ public class MyDisciplineNotificationManager {
         //Title
         intent.putExtra(
                 IntentHelper.NOTIFICATION_TITLE,
-                "(" + typeOfDiscipline[discipline.getType()] + ") " + discipline.getDisciplineName());
+                title);
 
         //Message
         intent.putExtra(
                 IntentHelper.NOTIFICATION_MESSAGE,
-                message.toString());
+                message);
 
         //Упаковываем посылку
         PendingIntent pIntent  =
@@ -289,66 +438,103 @@ public class MyDisciplineNotificationManager {
                         PendingIntent.FLAG_UPDATE_CURRENT);
 
         //Установка будильника
-        Log.i("Notification", "Уведомление произойдет в:" + DateUtils.formatDateTime(context, calendar.getTimeInMillis(), DateUtils.FORMAT_SHOW_DATE) + " ; "  + DateUtils.formatDateTime(context, calendar.getTimeInMillis(), DateUtils.FORMAT_SHOW_TIME));
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pIntent);
-        else
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pIntent);
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pIntent);
     }
 
-    private static void deleteAlarm(Context context, AlarmManager alarmManager, int type, Discipline discipline, MyDisciplineNotificationManager.Options options){
-        Calendar calendar = Calendar.getInstance();
-        int id = 0;
+    private static void deleteAlarmToTimeToGo(Context context, Discipline discipline){
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
 
-        switch (type) {
-            case BEFORE_START: {
-                calendar.set(Calendar.HOUR_OF_DAY, discipline.getStartHour());
-                calendar.set(Calendar.MINUTE, discipline.getStartMinute());
-                calendar.add(Calendar.MINUTE, -options.getBeforeStartMin());
-                calendar.set(Calendar.SECOND, 0);
+        int id;
+        id = (discipline.getPosition() + 1) * 10 + TIME_TO_GO;
 
-                id = (discipline.getPosition() + 1) * 10 + 1;
-            }
-            break;
+        PendingIntent pIntent  =
+                PendingIntent.getBroadcast(
+                        context,
+                        id,
+                        new Intent(),
+                        PendingIntent.FLAG_CANCEL_CURRENT);
 
-            case START: {
-                calendar.set(Calendar.HOUR_OF_DAY, discipline.getStartHour());
-                calendar.set(Calendar.MINUTE, discipline.getStartMinute());
-                calendar.set(Calendar.SECOND, 0);
+        alarmManager.cancel(pIntent);
+    }
 
+    private static void deleteAlarmToBeforeStartOfDiscipline(Context context, Discipline discipline){
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
 
-                id = (discipline.getPosition() + 1) * 10 + 2;
-            }
-            break;
+        int id;
+        id = (discipline.getPosition() + 1) * 10 + BEFORE_START_OF_DISCIPLINE;
 
-            case BEFORE_FINISH: {
-                calendar.set(Calendar.HOUR_OF_DAY, discipline.getFinishHour());
-                calendar.set(Calendar.MINUTE, discipline.getFinishMinute());
-                calendar.add(Calendar.MINUTE, -options.getBeforeFinishMin());
-                calendar.set(Calendar.SECOND, 0);
+        PendingIntent pIntent  =
+                PendingIntent.getBroadcast(
+                        context,
+                        id,
+                        new Intent(),
+                        PendingIntent.FLAG_CANCEL_CURRENT);
 
-                id = (discipline.getPosition() + 1) * 10 + 3;
-            }
+        alarmManager.cancel(pIntent);
+    }
 
-            case FINISH: {
-                calendar.set(Calendar.HOUR_OF_DAY, discipline.getFinishHour());
-                calendar.set(Calendar.MINUTE, discipline.getFinishMinute());
-                calendar.set(Calendar.SECOND, 0);
+    private static void deleteAlarmToStartOfDiscipline(Context context, Discipline discipline){
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
 
+        int id;
+        id = (discipline.getPosition() + 1) * 10 + START_OF_DISCIPLINE;
 
-                id = (discipline.getPosition() + 1) * 10 + 4;
-            }
-            break;
-        }
+        PendingIntent pIntent  =
+                PendingIntent.getBroadcast(
+                        context,
+                        id,
+                        new Intent(),
+                        PendingIntent.FLAG_CANCEL_CURRENT);
 
-            PendingIntent pIntent  =
-                    PendingIntent.getBroadcast(
-                            context,
-                            id,
-                            new Intent(),
-                            PendingIntent.FLAG_CANCEL_CURRENT);
+        alarmManager.cancel(pIntent);
+    }
 
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pIntent);
+    private static void deleteAlarmToBeforeFinishOfDiscipline(Context context, Discipline discipline){
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+
+        int id;
+        id = (discipline.getPosition() + 1) * 10 + BEFORE_FINISH_OF_DISCIPLINE;
+
+        PendingIntent pIntent  =
+                PendingIntent.getBroadcast(
+                        context,
+                        id,
+                        new Intent(),
+                        PendingIntent.FLAG_CANCEL_CURRENT);
+
+        alarmManager.cancel(pIntent);
+    }
+
+    private static void deleteAlarmToFinishOfDiscipline(Context context, Discipline discipline){
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+
+        int id;
+        id = (discipline.getPosition() + 1) * 10 + FINISH_OF_DISCIPLINE;
+
+        PendingIntent pIntent  =
+                PendingIntent.getBroadcast(
+                        context,
+                        id,
+                        new Intent(),
+                        PendingIntent.FLAG_CANCEL_CURRENT);
+
+        alarmManager.cancel(pIntent);
+    }
+    
+    private static void deleteAlarmToFinishOfDay(Context context, Discipline discipline){
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+
+        int id;
+        id = (discipline.getPosition() + 1) * 10 + FINISH_OF_DAY;
+
+        PendingIntent pIntent  =
+                PendingIntent.getBroadcast(
+                        context,
+                        id,
+                        new Intent(),
+                        PendingIntent.FLAG_CANCEL_CURRENT);
+
+        alarmManager.cancel(pIntent);
     }
 
     private static void setAlarmToUpdateDisciplineOfNextDay(Context context, Schedule schedule, AlarmManager alarmManager){
@@ -359,7 +545,9 @@ public class MyDisciplineNotificationManager {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
 
-        Intent intent = new Intent(context, MyAlarm.class);
+        Intent intent = new Intent(context, AlarmReceiver.class);
+        intent.setAction(AlarmReceiver.UPDATE_ALARM);
+        intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
         intent.putExtra(IntentHelper.COMMAND, IntentHelper.COMMAND_NOTIFICATION_UpdateAlarmToDay);
         intent.putExtra(IntentHelper.SCHEDULE_NAME, schedule.getNameOfFileSchedule());
 
@@ -371,14 +559,17 @@ public class MyDisciplineNotificationManager {
                         intent,
                         PendingIntent.FLAG_UPDATE_CURRENT);
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pIntent);
+        /*if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
             alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pIntent);
         else
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pIntent);
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pIntent);*/
         Log.i("Notification", "Будильник на обновление уведомлений установлен");
     }
 
-    private static void deleteAlarmToUpdateDisciplineOfNextDay(Context context, AlarmManager alarmManager){
+    private static void deleteAlarmToUpdateDisciplineOfNextDay(Context context){
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_YEAR, 1);
         calendar.set(Calendar.HOUR_OF_DAY, 4);
@@ -391,7 +582,7 @@ public class MyDisciplineNotificationManager {
                         new Intent(),
                         PendingIntent.FLAG_CANCEL_CURRENT);
 
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pIntent);
+        alarmManager.cancel(pIntent);
     }
 
     public static class Options implements Serializable {
@@ -400,11 +591,12 @@ public class MyDisciplineNotificationManager {
         /**Предупреждение для пользователя о том, что данная особенность приложения не надежна.*/
         private boolean accept;
 
-        private int beforeStart;
         private int timeToGo;
-        private boolean start;
-        private int beforeFinish;
-        private boolean finish;
+        private int beforeStartOfDiscipline;
+        private boolean startOfDiscipline;
+        private int beforeFinishOfDiscipline;
+        private boolean finishOfDiscipline;
+        private boolean finishOfDay;
         private String pathToFile;
 
         public Options(Context context, String name){
@@ -434,17 +626,19 @@ public class MyDisciplineNotificationManager {
         }
 
         private Options(
-                int beforeStart,
                 int timeToGo,
-                boolean start,
-                int beforeFinish,
-                boolean finish
+                int beforeStartOfDiscipline,
+                boolean startOfDiscipline,
+                int beforeFinishOfDiscipline,
+                boolean finishOfDiscipline,
+                boolean finishOfDay
         ){
-            this.beforeStart = beforeStart;
             this.timeToGo = timeToGo;
-            this.start = start;
-            this.beforeFinish = beforeFinish;
-            this.finish = finish;
+            this.beforeStartOfDiscipline = beforeStartOfDiscipline;
+            this.startOfDiscipline = startOfDiscipline;
+            this.beforeFinishOfDiscipline = beforeFinishOfDiscipline;
+            this.finishOfDiscipline = finishOfDiscipline;
+            this.finishOfDay = finishOfDay;
         }
 
         /**Get methods*/
@@ -452,11 +646,11 @@ public class MyDisciplineNotificationManager {
             return accept;
         }
 
-        public boolean getBeforeStart(){
-            return beforeStart != -1;
+        public boolean getBeforeStartOfDiscipline(){
+            return beforeStartOfDiscipline != -1;
         }
         public int getBeforeStartMin(){
-            return beforeStart;
+            return beforeStartOfDiscipline;
         }
 
         public boolean getTimeToGo(){
@@ -466,19 +660,23 @@ public class MyDisciplineNotificationManager {
             return timeToGo;
         }
 
-        public boolean getStart(){
-            return start;
+        public boolean getStartOfDiscipline(){
+            return startOfDiscipline;
         }
 
-        public boolean getBeforeFinish(){
-            return beforeFinish != -1;
+        public boolean getBeforeFinishOfDiscipline(){
+            return beforeFinishOfDiscipline != -1;
         }
         public int getBeforeFinishMin(){
-            return beforeFinish;
+            return beforeFinishOfDiscipline;
         }
 
-        public boolean getFinish(){
-            return finish;
+        public boolean getFinishOfDiscipline(){
+            return finishOfDiscipline;
+        }
+
+        public boolean getFinishOfDay(){
+            return finishOfDay;
         }
 
         public String getPathToFile(){
@@ -490,24 +688,28 @@ public class MyDisciplineNotificationManager {
             this.accept = accept;
         }
 
-        public void setBeforeStart(int beforeStart){
-            this.beforeStart = beforeStart;
+        public void setBeforeStartOfDiscipline(int beforeStartOfDiscipline){
+            this.beforeStartOfDiscipline = beforeStartOfDiscipline;
         }
 
         public void setTimeToGo(int timeToGo){
             this.timeToGo = timeToGo;
         }
 
-        public void setStart(boolean start) {
-            this.start = start;
+        public void setStartOfDiscipline(boolean startOfDiscipline) {
+            this.startOfDiscipline = startOfDiscipline;
         }
 
-        public void setBeforeFinish(int beforeFinish) {
-            this.beforeFinish = beforeFinish;
+        public void setBeforeFinishOfDiscipline(int beforeFinishOfDiscipline) {
+            this.beforeFinishOfDiscipline = beforeFinishOfDiscipline;
         }
 
-        public void setFinish(boolean finish) {
-            this.finish = finish;
+        public void setFinishOfDiscipline(boolean finishOfDiscipline) {
+            this.finishOfDiscipline = finishOfDiscipline;
+        }
+
+        public void setFinishOfDay(boolean finishOfDay){
+            this.finishOfDay = finishOfDay;
         }
 
         public void setPathToFile(Context context ,String name){
@@ -526,11 +728,12 @@ public class MyDisciplineNotificationManager {
 
                     deserialize.close();
 
-                    this.beforeStart = object.getBeforeStartMin();
                     this.timeToGo = object.getTimeToGoMin();
-                    this.start = object.getStart();
-                    this.beforeFinish = object.getBeforeFinishMin();
-                    this.finish = object.getFinish();
+                    this.beforeStartOfDiscipline = object.getBeforeStartMin();
+                    this.startOfDiscipline = object.getStartOfDiscipline();
+                    this.beforeFinishOfDiscipline = object.getBeforeFinishMin();
+                    this.finishOfDiscipline = object.getFinishOfDiscipline();
+                    this.finishOfDay = object.getFinishOfDay();
                 }catch (Exception e){
                     return false;
                 }
@@ -554,11 +757,12 @@ public class MyDisciplineNotificationManager {
 
                     serialize.writeObject(
                             new Options(
-                                    this.beforeStart,
                                     this.timeToGo,
-                                    this.start,
-                                    this.beforeFinish,
-                                    this.finish)
+                                    this.beforeStartOfDiscipline,
+                                    this.startOfDiscipline,
+                                    this.beforeFinishOfDiscipline,
+                                    this.finishOfDiscipline,
+                                    this.finishOfDay)
                     );
 
                     serialize.close();
@@ -588,11 +792,12 @@ public class MyDisciplineNotificationManager {
 
         private void setDefaultParams(){
             this.accept = false;
-            this.beforeStart = -1;
+            this.beforeStartOfDiscipline = -1;
             this.timeToGo = -1;
-            this.start = false;
-            this.beforeFinish = -1;
-            this.finish = false;
+            this.startOfDiscipline = false;
+            this.beforeFinishOfDiscipline = -1;
+            this.finishOfDiscipline = false;
+            this.finishOfDay = false;
         }
     }
 }

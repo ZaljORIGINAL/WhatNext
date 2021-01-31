@@ -1,16 +1,20 @@
 package com.zalj.schedule.MyNotifications;
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
+import android.app.Notification;
+import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Binder;
 import android.os.Build;
+import android.os.IBinder;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 
 import com.zalj.schedule.Data.DataContract;
 import com.zalj.schedule.IntentHelper;
@@ -20,7 +24,9 @@ import com.zalj.schedule.R;
 
 import java.util.Calendar;
 
-public class MyAlarm extends BroadcastReceiver {
+public class AlarmReceiver extends BroadcastReceiver {
+    public static final String SHOW_NOTIFICATION = "com.zalj.schedule.NOTIFICATION_DISCIPLINE";
+    public static final String UPDATE_ALARM = "com.zalj.schedule.UPDATE_ALARM";
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -41,8 +47,6 @@ public class MyAlarm extends BroadcastReceiver {
     }
 
     private void showNotification(Context context, Intent intent){
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-
         String title;
         String message;
         String chanelId;
@@ -55,29 +59,23 @@ public class MyAlarm extends BroadcastReceiver {
         chanelNameDiscipline = intent.getStringExtra(IntentHelper.CHANEL_NAME);
         notificationId = intent.getIntExtra(IntentHelper.NOTIFICATION_ID, 0);
 
-        NotificationCompat.Builder notification = new NotificationCompat.Builder(context, chanelId);
-        notification
+        Notification notification = new NotificationCompat.Builder(context, chanelId)
                 .setSmallIcon(R.drawable.discipline_notification)
                 .setContentTitle(title)
                 .setContentText(message)
                 .setStyle(new NotificationCompat.BigTextStyle())
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setCategory(NotificationCompat.CATEGORY_ALARM)
                 .setSound(NotificationHelper.getSound())
                 .setVibrate(NotificationHelper.getVibrate(NotificationHelper.LONG_VIBRATE))
-                .setAutoCancel(true);
+                .setAutoCancel(true)
+                .setContentIntent(NotificationHelper.getActivityToStart(context))
+                .build();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-        {
-            NotificationChannel nc =
-                    new NotificationChannel(
-                            chanelId,
-                            chanelNameDiscipline,
-                            NotificationManager.IMPORTANCE_DEFAULT);
+        NotificationHelper.createNotificationChanel(context, chanelId, chanelNameDiscipline);
 
-            notificationManager.createNotificationChannel(nc);
-        }
-
-        notificationManager.notify(notificationId, notification.build());
+        NotificationManagerCompat manager = NotificationManagerCompat.from(context);
+        manager.notify(notificationId, notification);
     }
 
     private void updateAlarmsToNextDay(Context context, Intent intent){

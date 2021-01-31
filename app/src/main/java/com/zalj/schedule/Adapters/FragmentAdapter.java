@@ -14,8 +14,8 @@ import com.zalj.schedule.Fragments.TimeFragment;
 import com.zalj.schedule.R;
 import com.zalj.schedule.Fragments.WeekFragment;
 
-import static com.zalj.schedule.ScheduleBuilderActivity.loverWeek;
-import static com.zalj.schedule.ScheduleBuilderActivity.topWeek;
+import static com.zalj.schedule.Activity.ScheduleBuilderActivity.loverWeek;
+import static com.zalj.schedule.Activity.ScheduleBuilderActivity.topWeek;
 
 public class FragmentAdapter extends FragmentPagerAdapter
 {

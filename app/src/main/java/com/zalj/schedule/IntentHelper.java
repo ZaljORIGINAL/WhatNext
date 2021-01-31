@@ -26,6 +26,7 @@ public class IntentHelper
     //(resultCode)SelectScheduleActivity -> ScheduleOptions
 
     //Intent. Notification
+    public static final String NOTIFICATION = "NOTIFICATION";
     public static final String OPTIONS_OF_DISCIPLINE_NOTIFICATION = "OPTIONS_OF_DISCIPLINE_NOTIFICATION";
     public static final String CHANEL_ID = "CHANEL_ID";
     public static final String CHANEL_NAME = "CHANEL_NAME";

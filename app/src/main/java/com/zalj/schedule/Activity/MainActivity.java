@@ -1,4 +1,4 @@
-package com.zalj.schedule;
+package com.zalj.schedule.Activity;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -28,11 +28,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.zalj.schedule.Adapters.DisciplineAdapter;
 import com.zalj.schedule.Data.DataContract;
+import com.zalj.schedule.IntentHelper;
 import com.zalj.schedule.MyNotifications.MyDisciplineNotificationManager;
 import com.zalj.schedule.Objects.Schedule;
 import com.zalj.schedule.Objects.ScheduleBuilder;
+import com.zalj.schedule.R;
 
-import java.io.File;
 import java.util.Calendar;
 
 import static com.zalj.schedule.Data.DataContract.MyAppSettings.PERMISSION_REQUEST_EXTERNAL_STORAGE;

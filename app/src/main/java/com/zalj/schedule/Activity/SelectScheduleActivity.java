@@ -4,7 +4,7 @@
  * Пользователь в праве выбрать предложенное расписание в элементе scheduleList или же создать новое кликнув fab.
  *
  * При клике на fab вызывается диологове окно в котором требуется задать наименование нового расписания*/
-package com.zalj.schedule;
+package com.zalj.schedule.Activity;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,10 +17,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -33,6 +31,8 @@ import com.zalj.schedule.Adapters.ChooseListAdapter;
 import com.zalj.schedule.Adapters.SchedulesAdapter;
 import com.zalj.schedule.Data.DataContract;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.zalj.schedule.IntentHelper;
+import com.zalj.schedule.R;
 
 import java.io.File;
 import java.util.Arrays;
@@ -83,11 +83,6 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_select_schedule, menu);
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N)
-        {
-            MenuItem importSchedule = menu.findItem(R.id.importSchedule);
-            importSchedule.setVisible(false);
-        }
         return super.onCreateOptionsMenu(menu);
     }
 

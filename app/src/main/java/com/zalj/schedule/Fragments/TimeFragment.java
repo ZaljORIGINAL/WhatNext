@@ -23,7 +23,7 @@ import com.zalj.schedule.Adapters.TimesAdapter;
 import com.zalj.schedule.Objects.TimeSchedule;
 import com.zalj.schedule.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.zalj.schedule.ScheduleBuilderActivity;
+import com.zalj.schedule.Activity.ScheduleBuilderActivity;
 
 import java.util.ArrayList;
 import java.util.Calendar;

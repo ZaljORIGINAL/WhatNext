@@ -116,21 +116,23 @@
 
     <!--Уведомления-->
     <!--MyDisciplineNotificationManager.java-->
-    <string name="Notification_Discipline_BeforeStart">До начала</string>
-    <string name="Notification_Discipline_TimeToGo">Время идти</string>
-    <string name="Notification_Discipline_Started">Пара началась</string>
-    <string name="Notification_Discipline_BeforeFinish">До конца пары</string>
-    <string name="Notification_Discipline_Finish">Пара закончилась</string>
+    <string name="Notification_Discipline_TimeToGo">Время идти.</string>
+    <string name="Notification_Discipline_BeforeStartOfDiscipline">До начала</string>
+    <string name="Notification_Discipline_StartedOfDiscipline">Пара началась.</string>
+    <string name="Notification_Discipline_BeforeFinishOfDiscipline">До конца пары</string>
+    <string name="Notification_Discipline_FinishOfDiscipline">Пара закончилась.</string>
+    <string name="Notification_Discipline_FinishOfDay">Учебный день окончен.</string>
     <string name="Notification_Discipline_Minute">мин.</string>
 
     <!--fragment_options_of_discipline_notification-->
     <string name="fragment_options_of_discipline_notification_TextView_Notification">Настройки уведомлений</string>
         <!--Switch-->
-        <string name="fragment_options_of_discipline_notification_Switch_beforeStart">Уведомлять до начала</string>
-        <string name="fragment_options_of_discipline_notification_Switch_beforeStart_TimeToGo">Уведомление для выдвижения</string>
-        <string name="fragment_options_of_discipline_notification_Switch_start">Уведомить о начале</string>
-        <string name="fragment_options_of_discipline_notification_Switch_beforeFinish">Уведомить до конца</string>
-        <string name="fragment_options_of_discipline_notification_Switch_finish">Уведомить об окончании</string>
+        <string name="fragment_options_of_discipline_notification_CheckBox_beforeStartOfDiscipline">Уведомлять до начала пары</string>
+        <string name="fragment_options_of_discipline_notification_CheckBox_beforeStart_TimeToGo">Уведомление для выдвижения</string>
+        <string name="fragment_options_of_discipline_notification_CheckBox_startOfDiscipline">Уведомить о начале пары</string>
+        <string name="fragment_options_of_discipline_notification_CheckBox_beforeFinishDiscipline">Уведомить до конца пары</string>
+        <string name="fragment_options_of_discipline_notification_CheckBox_finishDiscipline">Уведомить об окончании пары</string>
+        <string name="fragment_options_of_discipline_notification_CheckBox_finishOfDay">Уведомить об окончании учебного дня</string>
     <string name="fragment_options_of_discipline_notification_EditText">мин</string>
 
     <!--Notification chanel-->

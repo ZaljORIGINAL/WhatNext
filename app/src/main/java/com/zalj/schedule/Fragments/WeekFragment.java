@@ -18,8 +18,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.zalj.schedule.Adapters.DayOfWeekAdapter;
 import com.zalj.schedule.Objects.DayOfWeek;
 import com.zalj.schedule.R;
-import com.zalj.schedule.ScheduleBuilderActivity;
-import com.zalj.schedule.ScheduleOfDayActivity;
+import com.zalj.schedule.Activity.ScheduleBuilderActivity;
+import com.zalj.schedule.Activity.ScheduleOfDayActivity;
 
 import static android.app.Activity.RESULT_OK;
 
