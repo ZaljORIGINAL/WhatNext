@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Schedule</string>
+    <string name="app_name">Что дальше?</string>
 
     <!--Default strings-->
     <string name="Standard_Error">Ошибка</string>
@@ -115,14 +115,25 @@
     <string name="menu_select_schedule_menu_import">Импортировать</string>
 
     <!--Уведомления-->
-    <!--MyDisciplineNotificationManager.java-->
-    <string name="Notification_Discipline_TimeToGo">Время идти.</string>
-    <string name="Notification_Discipline_BeforeStartOfDiscipline">До начала</string>
-    <string name="Notification_Discipline_StartedOfDiscipline">Пара началась.</string>
-    <string name="Notification_Discipline_BeforeFinishOfDiscipline">До конца пары</string>
-    <string name="Notification_Discipline_FinishOfDiscipline">Пара закончилась.</string>
-    <string name="Notification_Discipline_FinishOfDay">Учебный день окончен.</string>
-    <string name="Notification_Discipline_Minute">мин.</string>
+        <!--Notification-->
+        <string name="Notification_Title">Уведомление!</string>
+        <string name="Notification_Message">У вас активное уедомление</string>
+
+        <!--Discipline notifications-->
+        <string name="Notification_Discipline_TimeToGo">Время идти.</string>
+        <string name="Notification_Discipline_BeforeStartOfDiscipline">До начала</string>
+        <string name="Notification_Discipline_StartedOfDiscipline">Пара началась.</string>
+        <string name="Notification_Discipline_BeforeFinishOfDiscipline">До конца пары</string>
+        <string name="Notification_Discipline_FinishOfDiscipline">Пара закончилась.</string>
+        <string name="Notification_Discipline_FinishOfDay">Учебный день окончен.</string>
+        <string name="Notification_Discipline_Minute">мин.</string>
+
+        <!--Update Notification-->
+        <string name="Notification_Update_Title">Доступно обновление</string>
+        <string name="Notification_Update_Params">Параметры:</string>
+        <string name="Notification_Update_Params_Version">Версия:</string>
+        <string name="Notification_Update_Params_DateOfPublication">Дата выхода:</string>
+        <string name="Notification_Update_Params_FileSize">Размер установика:</string>
 
     <!--fragment_options_of_discipline_notification-->
     <string name="fragment_options_of_discipline_notification_TextView_Notification">Настройки уведомлений</string>
@@ -136,5 +147,15 @@
     <string name="fragment_options_of_discipline_notification_EditText">мин</string>
 
     <!--Notification chanel-->
-    <string name="Notification_chanelName_Discipline">Уведомления о парах</string>
+    <string name="Notification_chanelName_Discipline">Уведомления об парах</string>
+    <string name="Notification_chanelName_Update">Уведомление об обновлениях</string>
+
+    <!--Settings activity-->
+    <string name="title_activity_settings">Настройки</string>
+        <!--App control-->
+        <string name="SettingsActivity_AppDescription_version">Версия</string>
+    <string name="SettingsActivity_AppControl_VersionCheck">Проверка версии</string>
+    <string name="SettingsActivity_AppControl_install">Установить новую версию</string>
+        <string name="SettingsActivity_AppControl_VKCommunity">Перейти в сообщество во ВК</string>
+        <string name="SettingsActivity_AppControl_developerBlog">Блог разработчика</string>
 </resources>

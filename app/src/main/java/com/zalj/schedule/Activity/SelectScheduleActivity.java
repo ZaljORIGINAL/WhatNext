@@ -113,6 +113,11 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
                     Log.i("Copy/Import/Export", "Внешняя память не доступна. " + Environment.getExternalStorageState());
                     Toast.makeText(this, R.string.SelectScheduleActivity_Toast_storageIsNotAvailable, Toast.LENGTH_LONG).show();
                 }
+            } break;
+
+            case R.id.settings:{
+                Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
+                startActivityForResult(intent, IntentHelper.OPEN_SETTINGS);
             }
         }
         return super.onOptionsItemSelected(item);
@@ -148,6 +153,11 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
                 if (resultCode == RESULT_OK || resultCode == IntentHelper.RESULT_DELETED) {
                     updateList();
                 }
+            }break;
+
+            case IntentHelper.OPEN_SETTINGS:{
+                Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
+                startActivityForResult(intent, IntentHelper.OPEN_SETTINGS);
             }
         }
     }

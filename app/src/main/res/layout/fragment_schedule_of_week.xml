@@ -13,7 +13,7 @@
             android:id="@+id/addQuestion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/MyTextStyle"
+            style="@style/TitleText"
             android:padding="7dp"
             tools:text="Верхняя неделя"
             />

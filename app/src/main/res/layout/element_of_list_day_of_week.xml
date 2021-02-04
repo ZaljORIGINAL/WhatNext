@@ -13,7 +13,7 @@
         android:id="@+id/dayOfWeek"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/MyTextStyle"
+        style="@style/TitleText"
         android:padding="15sp"
         tools:text="Понедельник"/>
 
@@ -21,7 +21,7 @@
         android:id="@+id/countOfDisciplines"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/title"
+        android:textColor="@color/StandardTextColor"
         android:textSize="18sp"
         android:padding="10sp"
         tools:text="Дисциплин: 5"

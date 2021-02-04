@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">Schedule</string>
+    <string name="app_name">What next?</string>
 
-<!--FIXME СТРОКИ ОТНОСЯЩИЕСЯ К АДАПТЕРАМ выделить как строки отдельного класса-->
+    <!--FIXME СТРОКИ ОТНОСЯЩИЕСЯ К АДАПТЕРАМ выделить как строки отдельного класса-->
     <!--TODO Требуется переименовать имена ресурсво по новому стандарту. В заголовье пиется фаил в котором применены данные строки. Имя значение строится по следующе конструкции: имя файла_имя элемента(id)-->
 
     <!--Standard strings-->
@@ -29,27 +29,32 @@
     <string name="toast_message_scheduleIsNotCreated">Schedule is not created</string>
     <string name="toast_message_scheduleIsDeleted">Schedule is deleted</string>
     <!-- menu_main_activity.xml -->
-        <string name="menu_main_activity_Schedules">Schedules</string>
-        <string name="menu_main_activity_Edit">Edit</string>
-        <string name="menu_main_activity_Export">Export</string>
+    <string name="menu_main_activity_Schedules">Schedules</string>
+    <string name="menu_main_activity_Edit">Edit</string>
+    <string name="menu_main_activity_Export">Export</string>
 
     <!--SelectScheduleActivity.java-->
     <string name="nameOfActivity_SelectSchedule">Schedules</string>
     <string name="activity_SelectScheduleActivity_text_ListHasNotInfo">You do not have a schedule yet.</string>
-        <!--Toast-->
-        <string name="SelectScheduleActivity_Toast_storageIsNotAvailable">External storage is not available</string>
-        <string name="SelectScheduleActivity_Toast_errorFileList">Error. Directory of Download</string>
-        <!--Dialog-->
-        <string name="SelectScheduleActivity_Dialog_ChooseFile">Choose File</string>
-        <string name="SelectScheduleActivity_Dialog_NotFound">No files found</string>
+    <!--Toast-->
+    <string name="SelectScheduleActivity_Toast_storageIsNotAvailable">External storage is not available</string>
+    <string name="SelectScheduleActivity_Toast_errorFileList">Error. Directory of Download</string>
+    <!--Dialog-->
+    <string name="SelectScheduleActivity_Dialog_ChooseFile">Choose File</string>
+    <string name="SelectScheduleActivity_Dialog_NotFound">No files found</string>
 
     <!--ScheduleBuilderActivity-->
     <string name="nameOfActivity_ScheduleCreating">Edit</string>
-    <string name="ScheduleBuilderActivity_Dialog_dataCheck_title">Data is incomplete</string>//Данные не полны
-    <string name="ScheduleBuilderActivity_Dialog_dataCheck_message_warning">Enter the following information:</string>//Enter the following information
-    <string name="ScheduleBuilderActivity_Dialog_dataCheck_message_name">Name of schedule</string>//Название расписания
-    <string name="ScheduleBuilderActivity_Dialog_dataCheck_message_date">Day of top week</string>//Дата не выбрана
-    <string name="ScheduleBuilderActivity_Dialog_dataCheck_message_times">Times schedule</string> //Расписание времени
+    <string name="ScheduleBuilderActivity_Dialog_dataCheck_title">Data is incomplete</string>
+    //Данные не полны
+    <string name="ScheduleBuilderActivity_Dialog_dataCheck_message_warning">Enter the following information:</string>
+    //Enter the following information
+    <string name="ScheduleBuilderActivity_Dialog_dataCheck_message_name">Name of schedule</string>
+    //Название расписания
+    <string name="ScheduleBuilderActivity_Dialog_dataCheck_message_date">Day of top week</string>
+    //Дата не выбрана
+    <string name="ScheduleBuilderActivity_Dialog_dataCheck_message_times">Times schedule</string>
+    //Расписание времени
     <string-array name="day_of_week_array">
         <item>Monday</item>
         <item>Tuesday</item>
@@ -105,19 +110,23 @@
     <string name="activity_ScheduleOfDay_dialog_newDiscipline">Add Discipline</string>
 
     <!--Errors list-->
-        <!--ScheduleCreatingActivity-->
-        <string name="ScheduleCreatingActivity_Error_fieldOfNameIsClear">Поле имены пустое, пожалуйста задайтк имя</string>
-        <string name="ScheduleCreatingActivity_Error_topWeekIsNotSelected">Не указана верхняя неделя</string>
-        <!--DataContract.FileManager-->
-        <string name="FileManager_Error_mainParamsOfScheduleNotExist">Error! File of schedule params not exist.</string>
-        <string name="FileManager_Error_mainParamsOfScheduleNotMoved">Error! File of schedule params not moved.</string>
+    <!--ScheduleCreatingActivity-->
+    <string name="ScheduleCreatingActivity_Error_fieldOfNameIsClear">Поле имены пустое, пожалуйста задайтк имя</string>
+    <string name="ScheduleCreatingActivity_Error_topWeekIsNotSelected">Не указана верхняя неделя</string>
+    <!--DataContract.FileManager-->
+    <string name="FileManager_Error_mainParamsOfScheduleNotExist">Error! File of schedule params not exist.</string>
+    <string name="FileManager_Error_mainParamsOfScheduleNotMoved">Error! File of schedule params not moved.</string>
 
 
     <!-- menu_select_schedule.xml -->
     <string name="menu_select_schedule_menu_import">Import</string>
 
     <!--Уведомления-->
-    <!--MyDisciplineNotificationManager.java-->
+    <!--Notification-->
+    <string name="Notification_Title">Notification!</string>
+    <string name="Notification_Message">You have notification</string>
+
+    <!--Discipline notifications-->
     <string name="Notification_Discipline_TimeToGo">Time to go</string>
     <string name="Notification_Discipline_BeforeStartOfDiscipline">Before the start</string>
     <string name="Notification_Discipline_StartedOfDiscipline">Class started</string>
@@ -126,17 +135,35 @@
     <string name="Notification_Discipline_FinishOfDay">The school day is finished.</string>
     <string name="Notification_Discipline_Minute">minute</string>
 
+    <!--Update Notification-->
+    <string name="Notification_Update_Title">Update available</string>
+    <string name="Notification_Update_Params">Params:</string>
+    <string name="Notification_Update_Params_Version">Version:</string>
+    <string name="Notification_Update_Params_DateOfPublication">Date of publication:</string>
+    <string name="Notification_Update_Params_FileSize">File size:</string>
+
     <!--fragment_options_of_discipline_notification-->
     <string name="fragment_options_of_discipline_notification_TextView_Notification">Notification settings</string>
-        <!--CheckBox-->
-        <string name="fragment_options_of_discipline_notification_CheckBox_beforeStartOfDiscipline">How long before the start</string>
-        <string name="fragment_options_of_discipline_notification_CheckBox_beforeStart_TimeToGo">Time to go</string>
-        <string name="fragment_options_of_discipline_notification_CheckBox_startOfDiscipline">Notify about start discipline</string>
-        <string name="fragment_options_of_discipline_notification_CheckBox_beforeFinishDiscipline">How long until the end discipline</string>
-        <string name="fragment_options_of_discipline_notification_CheckBox_finishDiscipline">Notify about end of discipline</string>
-        <string name="fragment_options_of_discipline_notification_CheckBox_finishOfDay">Notify about end of school day</string>
+    <!--CheckBox-->
+    <string name="fragment_options_of_discipline_notification_CheckBox_beforeStartOfDiscipline">How long before the start</string>
+    <string name="fragment_options_of_discipline_notification_CheckBox_beforeStart_TimeToGo">Time to go</string>
+    <string name="fragment_options_of_discipline_notification_CheckBox_startOfDiscipline">Notify about start discipline</string>
+    <string name="fragment_options_of_discipline_notification_CheckBox_beforeFinishDiscipline">How long until the end discipline</string>
+    <string name="fragment_options_of_discipline_notification_CheckBox_finishDiscipline">Notify about end of discipline</string>
+    <string name="fragment_options_of_discipline_notification_CheckBox_finishOfDay">Notify about end of school day</string>
     <string name="fragment_options_of_discipline_notification_EditText">min</string>
 
     <!--Notification chanel-->
     <string name="Notification_chanelName_Discipline">Notification of discipline</string>
+    <string name="Notification_chanelName_Update">Notification of update</string>
+
+    <!--Settings activity-->
+    <string name="title_activity_settings">SettingsActivity</string>
+
+    <!--App control-->
+    <string name="SettingsActivity_AppDescription_version">Version: </string>
+    <string name="SettingsActivity_AppControl_VersionCheck">Version check</string>
+    <string name="SettingsActivity_AppControl_install">Install the new version</string>
+    <string name="SettingsActivity_AppControl_VKCommunity">Go to community on VK</string>
+    <string name="SettingsActivity_AppControl_developerBlog">Developer Blog</string>
 </resources>

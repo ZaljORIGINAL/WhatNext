@@ -17,7 +17,7 @@ import com.zalj.schedule.Data.DataContract;
 import com.zalj.schedule.Data.DisciplineDBHelper;
 import com.zalj.schedule.Data.TimeDBHelper;
 import com.zalj.schedule.IntentHelper;
-import com.zalj.schedule.MyNotifications.MyDisciplineNotificationManager;
+import com.zalj.schedule.MyNotifications.DisciplineNotificationManager;
 import com.zalj.schedule.Objects.DayOfWeek;
 import com.zalj.schedule.Objects.Schedule;
 import com.zalj.schedule.Objects.ScheduleBuilder;
@@ -32,7 +32,7 @@ public class ScheduleBuilderActivity extends AppCompatActivity
 {
     //Данные
     public static Schedule schedule;
-    public static MyDisciplineNotificationManager.Options options;
+    public static DisciplineNotificationManager.Options options;
     public static Week
             topWeek,
             loverWeek;
@@ -49,7 +49,6 @@ public class ScheduleBuilderActivity extends AppCompatActivity
         setContentView(R.layout.activity_creating_new_schedule);
 
         ActionBar actionBar = getSupportActionBar();
-
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
@@ -61,7 +60,7 @@ public class ScheduleBuilderActivity extends AppCompatActivity
 
             schedule = parentIntent.getParcelableExtra(IntentHelper.SCHEDULE);
 
-            options = new MyDisciplineNotificationManager.Options(
+            options = new DisciplineNotificationManager.Options(
                             this,
                             schedule.getNameOfFileSchedule());
 
@@ -96,7 +95,7 @@ public class ScheduleBuilderActivity extends AppCompatActivity
             }
         }else {
             schedule = new Schedule(String.valueOf(calendar.getTimeInMillis()));
-            options = new MyDisciplineNotificationManager.Options(
+            options = new DisciplineNotificationManager.Options(
                     this,
                     DataContract.MyFileManager.NO_INFO);
             topWeek = new Week((byte) 0);

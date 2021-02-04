@@ -12,6 +12,21 @@ import android.os.Build;
 import com.zalj.schedule.Activity.MainActivity;
 
 public class NotificationHelper {
+    //Notification class
+    private static final int TIME_TO_GO = 0;
+    private static final int BEFORE_START_OF_DISCIPLINE = 1;
+    private static final int START_OF_DISCIPLINE = 2;
+    private static final int BEFORE_FINISH_OF_DISCIPLINE = 3;
+    private static final int FINISH_OF_DISCIPLINE = 4;
+    private static final int FINISH_OF_DAY = 5;
+
+    //Сhannels
+    public static final String CHANEL_ID_DISCIPLINE = "NOTIFICATION_CHANEL_ID_DISCIPLINE";
+    public static final String CHANEL_ID_UPDATE = "NOTIFICATION_CHANEL_ID_UPDATE";
+
+    //Notification id
+    public static final int NOTIFICATION_ID_DISCIPLINE = 10;
+    public static final int NOTIFICATION_ID_UPDATE = 11;
 
     //Vibration
     public static final int SHORT_VIBRATE = 0;
@@ -19,51 +34,11 @@ public class NotificationHelper {
     public static final int LONG_VIBRATE = 2;
     public static final int MAX_VIBRATE = 3;
 
-    public static void createNotificationChanel(
-            Context context,
-            String chanelId,
-            String chanelNameDiscipline){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            NotificationManager manager = context.getSystemService(NotificationManager.class);
-
-            NotificationChannel nc =
-                    new NotificationChannel(
-                            chanelId,
-                            chanelNameDiscipline,
-                            NotificationManager.IMPORTANCE_DEFAULT);
-
-            manager.createNotificationChannel(nc);
-        }
-    }
-
-    public static Uri getSound(){
-
-        return RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-    }
-
-    public static long[] getVibrate(int type){
-        switch (type){
-            case SHORT_VIBRATE:
-                return new long[]{0,400};
-
-            case MEDIUM_VIBRATE:
-                return new long[]{0,800};
-
-            case LONG_VIBRATE:
-                return new long[]{0,800, 400, 800};
-
-            case MAX_VIBRATE:
-                return new long[]{0,1200, 400, 1200};
-
-            default:
-                return new long[]{0,800, 400, 800};
-        }
-    }
-
-    public static PendingIntent getActivityToStart(Context context) {
-        Intent intent = new Intent(context, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
-
-        return pendingIntent;
-    }
+    //Activity to show
+    /**Использовать если не требуется открыть активити по нажатию на уведомление*/
+    public static final int DO_NOT_SHOW = 0;
+    /**Использовать если требуется открыть активити с расписание на день*/
+    public static final int SCHEDULE_TO_DAY = 1;
+    /**Использовать если требуется открыть активити для обновления*/
+    public static final int NEW_VERSION_DOWNLOAD = 2;
 }

@@ -13,6 +13,9 @@
     <item
         android:id="@+id/exportSchedule"
         android:title="@string/menu_main_activity_Export"
-        android:icon="@drawable/export_black"
-        />
+        android:icon="@drawable/export_black" />
+
+    <item
+        android:id="@+id/settings"
+        android:title="@string/title_activity_settings"/>
 </menu>

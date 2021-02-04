@@ -21,7 +21,7 @@
 
 
             <TextView
-                style="@style/DialogTextStyle"
+                style="@style/Text"
                 android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -29,7 +29,7 @@
 
             <Spinner
                 android:id="@+id/setPosition"
-                style="@style/MyTextStyle"
+                style="@style/TitleText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
@@ -46,7 +46,7 @@
 
         <AutoCompleteTextView
             android:id="@+id/setName"
-            style="@style/DialogTextStyle"
+            style="@style/Text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="left"
@@ -64,14 +64,14 @@
 
             <TextView
                 android:id="@+id/textView5"
-                style="@style/DialogTextStyle"
+                style="@style/Text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/activity_ScheduleOfDay_dialog_auditory" />
 
             <AutoCompleteTextView
                 android:id="@+id/setAuditory"
-                style="@style/DialogTextStyle"
+                style="@style/Text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="left"
@@ -85,14 +85,14 @@
 
             <TextView
                 android:id="@+id/textView4"
-                style="@style/DialogTextStyle"
+                style="@style/Text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/activity_ScheduleOfDay_dialog_building" />
 
             <AutoCompleteTextView
                 android:id="@+id/setBuilding"
-                style="@style/DialogTextStyle"
+                style="@style/Text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="left"
@@ -108,7 +108,7 @@
 
             <TextView
                 android:id="@+id/textView3"
-                style="@style/DialogTextStyle"
+                style="@style/Text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/activity_ScheduleOfDay_dialog_type" />
@@ -119,7 +119,7 @@
 
                 <Spinner
                     android:id="@+id/setType"
-                    style="@style/MyTextStyle"
+                    style="@style/TitleText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"

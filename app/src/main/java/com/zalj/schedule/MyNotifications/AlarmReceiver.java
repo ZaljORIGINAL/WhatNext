@@ -1,26 +1,24 @@
 package com.zalj.schedule.MyNotifications;
 
 import android.app.Notification;
-import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Binder;
-import android.os.Build;
-import android.os.IBinder;
 import android.util.Log;
 
-import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import androidx.core.content.ContextCompat;
 
 import com.zalj.schedule.Data.DataContract;
 import com.zalj.schedule.IntentHelper;
 import com.zalj.schedule.Objects.Schedule;
 import com.zalj.schedule.Objects.ScheduleBuilder;
 import com.zalj.schedule.R;
+import com.zalj.schedule.VersionControl.CallBack;
+import com.zalj.schedule.VersionControl.Version;
+import com.zalj.schedule.VersionControl.VersionManager;
+import com.zalj.schedule.VersionControl.Exceptions.VersionNotReceivedException;
 
 import java.util.Calendar;
 
@@ -32,50 +30,40 @@ public class AlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         int idCase = intent.getIntExtra(
                 IntentHelper.COMMAND,
-                IntentHelper.COMMAND_NOTIFICATION_UpdateAlarmToDay);
+                IntentHelper.COMMAND_NOTIFICATION_UpdateAppData);
 
         Log.i("Notification", "СРАБОТАЛ БУДИЛЬНИК. idCase = " + idCase);
         switch (idCase){
             case IntentHelper.COMMAND_NOTIFICATION_SetAlarm:{
-                showNotification(context ,intent);
+                MyNotification notification = intent.getParcelableExtra(IntentHelper.NOTIFICATION);
+                showNotification(context, notification);
             }break;
 
-            case IntentHelper.COMMAND_NOTIFICATION_UpdateAlarmToDay:{
+            case IntentHelper.COMMAND_NOTIFICATION_UpdateAppData:{
                 updateAlarmsToNextDay(context, intent);
+                checkNewVersionApp(context);
             }break;
         }
     }
 
-    private void showNotification(Context context, Intent intent){
-        String title;
-        String message;
-        String chanelId;
-        String chanelNameDiscipline;
-        int notificationId;
-
-        title = intent.getStringExtra(IntentHelper.NOTIFICATION_TITLE);
-        message = intent.getStringExtra(IntentHelper.NOTIFICATION_MESSAGE);
-        chanelId = intent.getStringExtra(IntentHelper.CHANEL_ID);
-        chanelNameDiscipline = intent.getStringExtra(IntentHelper.CHANEL_NAME);
-        notificationId = intent.getIntExtra(IntentHelper.NOTIFICATION_ID, 0);
-
-        Notification notification = new NotificationCompat.Builder(context, chanelId)
-                .setSmallIcon(R.drawable.discipline_notification)
-                .setContentTitle(title)
-                .setContentText(message)
+    private void showNotification(Context context, MyNotification notification){
+        Notification notificationBuilder = new NotificationCompat.Builder(context, notification.getChanelId())
+                .setSmallIcon(notification.getIcon())
+                .setContentTitle(notification.getTitle())
+                .setContentText(notification.getMessage())
                 .setStyle(new NotificationCompat.BigTextStyle())
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setCategory(NotificationCompat.CATEGORY_ALARM)
-                .setSound(NotificationHelper.getSound())
-                .setVibrate(NotificationHelper.getVibrate(NotificationHelper.LONG_VIBRATE))
+                .setSound(notification.getSound())
+                .setVibrate(notification.getVibrate(NotificationHelper.LONG_VIBRATE))
                 .setAutoCancel(true)
-                .setContentIntent(NotificationHelper.getActivityToStart(context))
+                .setContentIntent(notification.getActivityToShow())
                 .build();
 
-        NotificationHelper.createNotificationChanel(context, chanelId, chanelNameDiscipline);
+        notification.createNotificationChanel();
 
         NotificationManagerCompat manager = NotificationManagerCompat.from(context);
-        manager.notify(notificationId, notification);
+        manager.notify(notification.getNotificationId(), notificationBuilder);
     }
 
     private void updateAlarmsToNextDay(Context context, Intent intent){
@@ -99,7 +87,21 @@ public class AlarmReceiver extends BroadcastReceiver {
         schedule.updateTimes(context);
         schedule.updateDiscipline(context, Calendar.getInstance());
 
-        MyDisciplineNotificationManager.updateAllAlarm(context, schedule);
+        DisciplineNotificationManager.updateAllAlarm(context, schedule);
         Log.i("Notification", "Уведомления обнавлены!");
+    }
+
+    private void checkNewVersionApp(Context context){
+        VersionManager versionManager = VersionManager.getInstance();
+        versionManager.checkVersion((isActual, version) -> {
+            try {
+                version = versionManager.getVersion();
+                UpdateNotification notification = new UpdateNotification(context, version);
+
+                showNotification(context, notification);
+            } catch (VersionNotReceivedException exception){
+
+            }
+        });
     }
 }

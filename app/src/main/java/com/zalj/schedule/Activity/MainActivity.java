@@ -29,7 +29,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.zalj.schedule.Adapters.DisciplineAdapter;
 import com.zalj.schedule.Data.DataContract;
 import com.zalj.schedule.IntentHelper;
-import com.zalj.schedule.MyNotifications.MyDisciplineNotificationManager;
+import com.zalj.schedule.MyNotifications.DisciplineNotificationManager;
 import com.zalj.schedule.Objects.Schedule;
 import com.zalj.schedule.Objects.ScheduleBuilder;
 import com.zalj.schedule.R;
@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
                 DataContract.MyAppSettings.LAST_VIEWED_SCHEDULE,
                 Context.MODE_PRIVATE);
 
-        /**Проверка на последнее просматриваемое расписание.
+        /*Проверка на последнее просматриваемое расписание.
          * Если пользователь уже работал с каким то расписание и не вышел из него, то оно и запустится*/
         if (settings.getString(
                 DataContract.MyAppSettings.LAST_SCHEDULE,
@@ -94,11 +94,6 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main_activity, menu);
 
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.N)
-        {
-            MenuItem exportSchedule = menu.findItem(R.id.exportSchedule);
-            exportSchedule.setVisible(false);
-        }
         return super.onCreateOptionsMenu(menu);
     }
     @Override
@@ -108,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
                 Intent intent = new Intent(this, SelectScheduleActivity.class);
                 startActivityForResult(intent, IntentHelper.SELECT_SCHEDULE);
 
-                MyDisciplineNotificationManager.deleteAllAlarm(getApplicationContext(), schedule);
+                DisciplineNotificationManager.deleteAllAlarm(getApplicationContext(), schedule);
                 schedule = null;
 
                 SharedPreferences.Editor editor = settings.edit();
@@ -158,6 +153,11 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
                     Log.i("Copy/Import/Export", "Внешняя память не доступна. " + Environment.getExternalStorageState());
                     Toast.makeText(this, R.string.SelectScheduleActivity_Toast_storageIsNotAvailable, Toast.LENGTH_LONG).show();
                 }
+            }break;
+
+            case R.id.settings:{
+                Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
+                startActivityForResult(intent, IntentHelper.OPEN_SETTINGS);
             }
         }
         return super.onOptionsItemSelected(item);
@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
 
                 updateRecycleView();
                 updateDateButton();
-                MyDisciplineNotificationManager.updateAllAlarm(getApplicationContext(), schedule);
+                DisciplineNotificationManager.updateAllAlarm(getApplicationContext(), schedule);
 
                 //Сохраняем открывшуюся расписание
                 SharedPreferences.Editor editor = settings.edit();
@@ -194,14 +194,14 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
 
                         updateRecycleView();
                         updateDateButton();
-                        MyDisciplineNotificationManager.updateAllAlarm(getApplicationContext(), schedule);
+                        DisciplineNotificationManager.updateAllAlarm(getApplicationContext(), schedule);
                     }break;
 
                     case IntentHelper.RESULT_DELETED: {
 
                         DataContract.MyFileManager.deleteDate(this, schedule.getNameOfFileSchedule());
-                        MyDisciplineNotificationManager.deleteAllAlarm(getApplicationContext(), schedule);
-                        MyDisciplineNotificationManager.deleteOptionsFile(getApplicationContext(), schedule.getNameOfFileSchedule());
+                        DisciplineNotificationManager.deleteAllAlarm(getApplicationContext(), schedule);
+                        DisciplineNotificationManager.deleteOptionsFile(getApplicationContext(), schedule.getNameOfFileSchedule());
                         schedule = null;
 
                         Intent intent = new Intent(this, SelectScheduleActivity.class);
@@ -220,6 +220,13 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
                         Toast.makeText(this, this.getText(R.string.toast_message_scheduleIsNotCreated), Toast.LENGTH_LONG).show();
                     }break;
                 }
+            }break;
+
+            case IntentHelper.OPEN_SETTINGS:{
+                switch (resultCode){
+                    case RESULT_CANCELED:
+                        break;
+                }
             }
         }
     }
@@ -230,9 +237,6 @@ public class MainActivity extends AppCompatActivity implements DisciplineAdapter
 
     }
 
-    /**
-     * schedule update methods
-     * */
     private void updateSchedule(){
         schedule.updateTimes(this);
         schedule.updateDiscipline(this, calendar);

@@ -4,10 +4,10 @@
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.SET_ALARM" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -16,28 +16,27 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".Activity.SettingsActivity"></activity>
 
         <receiver
-            android:name="com.zalj.schedule.MyNotifications.AlarmReceiver"
+            android:name=".MyNotifications.AlarmReceiver"
             android:enabled="true"
             android:exported="true"
             android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
-
             <intent-filter>
-                <action android:name="com.zalj.schedule.NOTIFICATION_DISCIPLINE"/>
-                <action android:name="com.zalj.schedule.UPDATE_ALARM"/>
+                <action android:name="com.zalj.schedule.NOTIFICATION_DISCIPLINE" />
+                <action android:name="com.zalj.schedule.UPDATE_ALARM" />
             </intent-filter>
-
         </receiver>
 
-        <activity android:name="com.zalj.schedule.Activity.ScheduleOfDayActivity" />
+        <activity android:name=".Activity.ScheduleOfDayActivity" />
         <activity
-            android:name="com.zalj.schedule.Activity.ScheduleBuilderActivity"
+            android:name=".Activity.ScheduleBuilderActivity"
             android:label="@string/nameOfActivity_ScheduleCreating" />
         <activity
-            android:name="com.zalj.schedule.Activity.SelectScheduleActivity"
+            android:name=".Activity.SelectScheduleActivity"
             android:label="@string/nameOfActivity_SelectSchedule" />
-        <activity android:name="com.zalj.schedule.Activity.MainActivity">
+        <activity android:name=".Activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

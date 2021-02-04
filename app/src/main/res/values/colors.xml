@@ -15,7 +15,8 @@
     <color name="white">#FFFFFF</color>
 
     <!--Text Color-->
-    <color name="title">#181818</color>
+    <color name="StandardTextColor">#181818</color>
+    <color name="DescriptionTextColor">#303030</color>
 
     <!--Day of week list element-->
     <color name="noInfo">#A3A3A3</color>
