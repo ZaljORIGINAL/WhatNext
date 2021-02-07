@@ -493,5 +493,6 @@ public class DataContract
 
         //Permission
         public static final int PERMISSION_REQUEST_EXTERNAL_STORAGE = 1;
+        public static final int PERMISSION_REQUEST_INSTALL_PACKAGES = 2;
     }
 }

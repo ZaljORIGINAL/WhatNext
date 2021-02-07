@@ -7,6 +7,8 @@ import android.os.Environment;
 import android.os.StatFs;
 import android.util.Log;
 
+import androidx.core.content.FileProvider;
+
 import com.zalj.schedule.BuildConfig;
 import com.zalj.schedule.VersionControl.Exceptions.NoMemoryException;
 import com.zalj.schedule.VersionControl.Exceptions.VersionNotReceivedException;
@@ -24,22 +26,22 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class VersionManager {
     private static VersionManager manager;
 
+    private Context context;
     private Retrofit retrofit;
     private Version version;
     private VersionApi api;
 
-    public static VersionManager getInstance(){
+    public static VersionManager getInstance(Context context){
         if (manager == null){
-            return new VersionManager();
-        }else {
-            manager = new VersionManager();
-            return manager;
+            manager = new VersionManager(context);
         }
+        return manager;
     }
 
-    private VersionManager() {
+    private VersionManager(Context context) {
+        this.context = context;
         retrofit = new Retrofit.Builder()
-                .baseUrl("https://scheduleofstudent.000webhostapp.com/")
+                .baseUrl("https://scheduleofstudent.000webhostapp.com/VersionApp/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -66,13 +68,15 @@ public class VersionManager {
             @Override
             public void onResponse(Call<Version> call, Response<Version> response) {
                 if (response.isSuccessful()){
+                    Log.i("UpdateAap", "Соединение с сервером установлено исправно");
                     version = response.body();
 
                     if (version.getVersionCode() > BuildConfig.VERSION_CODE)
+                        Log.i("UpdateAap", "На сервере обнаружена новая версия приложения. Установлено на устройстве: " + BuildConfig.VERSION_CODE + ". Версия на сервере: " + version.getVersionCode());
                         callBack.run(true, version);
 
                 }else{
-                    System.out.println("Код ошибки: " + response.code());
+                    Log.i("UpdateAap", "Соединение с сервером провалено. Код ошибка: " + response.code());
                 }
             }
 
@@ -95,8 +99,9 @@ public class VersionManager {
         if (file.exists())
             file.delete();
 
-        Call<ResponseBody> apk = api.downloadAPKFile();
+        Call<ResponseBody> apk = api.downloadAPKFile(version.getNameOfPack());
 
+        Log.i("UpdateAap", "Скачивание apk файла");
         apk.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -105,6 +110,7 @@ public class VersionManager {
                     stream.write(response.body().bytes());
                     stream.close();
 
+                    Log.i("UpdateAap", "Скачивание apk файла завершено");
                     installAPK(context);
                 }catch (Exception e){
                 }
@@ -117,8 +123,10 @@ public class VersionManager {
     }
 
     private void checkFreeMemory() throws NoMemoryException{
+        Log.i("UpdateAap", "Проверка свободного мместа");
         StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
         long freeMemory = stat.getBlockSizeLong() * stat.getBlockCountLong();
+        Log.i("UpdateAap", "Всего свободного места: " + freeMemory);
 
         if (freeMemory < version.getMemory()){
             throw new NoMemoryException(
@@ -128,13 +136,20 @@ public class VersionManager {
     }
 
     private void installAPK(Context context){
+        Log.i("UpdateAap", "Установка обновления");
         File file = new File(
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
                 "update.apk");
+        if (file.exists()){
+            Log.i("UpdateAap", "APK готово к установке");
+            Uri uri = Uri.fromFile(file);
+            InstallHelper installHelper = new InstallHelper();
+            Log.i("UpdateAap", "Старт установки");
+            installHelper.update(context, uri);
+        }else{
+            Log.i("UpdateAap", "APK не обнаружено по следующему пути:" + file.toString());
+        }
 
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.fromFile(new File(file.getPath())), "application/vnd.android.package-archive");
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // without this flag android returned a intent error!
-        context.startActivity(intent);
+        Log.i("UpdateAap", "Конец обновления");
     }
 }

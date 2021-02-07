@@ -13,6 +13,7 @@
     <string name="Standard_element_of_list_NoInfo">The list is empty</string>
     <string name="Standard_Dialog_Report">The process is complete:</string>
     <string name="Standard_isComplete">Is complete</string>
+    <string name="Standard_NoPermissionGranted">No permission granted</string>
 
     <!--TODO Временное решение-->
     <string name="vremennoeReshenie_notification">This function is unstable. Are you sure you want to use it?</string>

@@ -11,6 +11,7 @@
     <string name="Standard_element_of_list_NoInfo">Список пуст</string>
     <string name="Standard_Dialog_Report">Процесс завершен:</string>
     <string name="Standard_isComplete">Завершен</string>
+    <string name="Standard_NoPermissionGranted">Разрешение не получено</string>
 
     <!--TODO Временное решение-->
     <string name="vremennoeReshenie_notification">Данная функция работает нестабильно. Вы уверены что хотите ею воспользоваться?</string>

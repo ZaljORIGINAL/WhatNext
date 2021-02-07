@@ -9,7 +9,7 @@ public class Version {
     public int versionCode;
     public long lastUpdate;
     public long memory;
-    public String description;
+    public String nameOfPack;
 
     public Version(){
         this.versionName = BuildConfig.VERSION_NAME;
@@ -30,5 +30,9 @@ public class Version {
 
     public long getMemory(){
         return memory;
+    }
+
+    public String getNameOfPack(){
+        return nameOfPack;
     }
 }

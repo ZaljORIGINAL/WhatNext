@@ -92,7 +92,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     }
 
     private void checkNewVersionApp(Context context){
-        VersionManager versionManager = VersionManager.getInstance();
+        VersionManager versionManager = VersionManager.getInstance(context);
         versionManager.checkVersion((isActual, version) -> {
             try {
                 version = versionManager.getVersion();

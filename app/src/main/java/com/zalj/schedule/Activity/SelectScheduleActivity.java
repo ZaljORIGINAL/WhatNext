@@ -156,8 +156,7 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
             }break;
 
             case IntentHelper.OPEN_SETTINGS:{
-                Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
-                startActivityForResult(intent, IntentHelper.OPEN_SETTINGS);
+
             }
         }
     }
@@ -169,16 +168,12 @@ public class SelectScheduleActivity extends AppCompatActivity implements Schedul
             @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        switch (requestCode)
-        {
-            case PERMISSION_REQUEST_EXTERNAL_STORAGE:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                {
-                    Log.i("Copy/Import/Export", "Разрешение на внешнее хранилище получено");
-
-                    //Получаем путь к папке Download во внешнейй памяти
-                    findScheduleFile(this);
+        switch (requestCode) {
+            case PERMISSION_REQUEST_EXTERNAL_STORAGE:{
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.i("UpdateUp", "Разрешение на установку получено");
                 }
+            }
         }
     }
 
