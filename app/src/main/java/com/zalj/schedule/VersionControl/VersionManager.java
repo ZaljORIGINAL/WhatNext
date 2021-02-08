@@ -15,6 +15,7 @@ import com.zalj.schedule.VersionControl.Exceptions.VersionNotReceivedException;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.net.URL;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -90,36 +91,11 @@ public class VersionManager {
     public void updateApp(Context context) throws NoMemoryException{
         checkFreeMemory();
 
-        final File file = new File(
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-                "update.apk");
+        final File distanceToSave = new File(context.getExternalFilesDir("Update").toString() + "/", "update.apk");
+        String linkToNewVersion = "https://vk.com/" + version.getNameOfPack();
 
-        //TODO Сейчас мы удаляем установщик прошлой версии, перед установкой новой.
-        // Надо сделать это после первого запука приложения
-        if (file.exists())
-            file.delete();
-
-        Call<ResponseBody> apk = api.downloadAPKFile(version.getNameOfPack());
-
-        Log.i("UpdateAap", "Скачивание apk файла");
-        apk.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                try {
-                    FileOutputStream stream = new FileOutputStream(file);
-                    stream.write(response.body().bytes());
-                    stream.close();
-
-                    Log.i("UpdateAap", "Скачивание apk файла завершено");
-                    installAPK(context);
-                }catch (Exception e){
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-            }
-        });
+        UpdateHelper helper = new UpdateHelper(context);
+        helper.update(linkToNewVersion, distanceToSave);
     }
 
     private void checkFreeMemory() throws NoMemoryException{
@@ -133,23 +109,5 @@ public class VersionManager {
                     "Недостаточно места для скачивания установщика",
                     version.getMemory() - freeMemory);
         }
-    }
-
-    private void installAPK(Context context){
-        Log.i("UpdateAap", "Установка обновления");
-        File file = new File(
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-                "update.apk");
-        if (file.exists()){
-            Log.i("UpdateAap", "APK готово к установке");
-            Uri uri = Uri.fromFile(file);
-            InstallHelper installHelper = new InstallHelper();
-            Log.i("UpdateAap", "Старт установки");
-            installHelper.update(context, uri);
-        }else{
-            Log.i("UpdateAap", "APK не обнаружено по следующему пути:" + file.toString());
-        }
-
-        Log.i("UpdateAap", "Конец обновления");
     }
 }

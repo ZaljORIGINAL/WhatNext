@@ -17,8 +17,6 @@ public abstract class MyNotification {
     protected Context context;
     protected int notificationId;
 
-    public MyNotification(){}
-
     public MyNotification(
             Context context){
         this.context = context;
@@ -32,28 +30,6 @@ public abstract class MyNotification {
     public abstract String getChanelId();
 
     public abstract String getChanelName();
-
-    public void createNotificationChanel(){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            NotificationManager manager = context.getSystemService(NotificationManager.class);
-
-            NotificationChannel nc =
-                    new NotificationChannel(
-                            getChanelId(),
-                            getChanelName(),
-                            NotificationManager.IMPORTANCE_DEFAULT);
-
-            manager.createNotificationChannel(nc);
-        }
-    }
-
-    public void setContext(Context context) {
-        this.context = context;
-    }
-
-    public void setNotificationId() {
-        this.notificationId = -5;
-    }
 
     public Context getContext() {
         return context;
@@ -98,4 +74,27 @@ public abstract class MyNotification {
         Intent intent = new Intent(context, MainActivity.class);
         return PendingIntent.getActivity(context, 0, intent, 0);
     }
+
+    public void setContext(Context context) {
+        this.context = context;
+    }
+
+    public void setNotificationId() {
+        this.notificationId = -5;
+    }
+
+    public void createNotificationChanel(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            NotificationManager manager = context.getSystemService(NotificationManager.class);
+
+            NotificationChannel nc =
+                    new NotificationChannel(
+                            getChanelId(),
+                            getChanelName(),
+                            NotificationManager.IMPORTANCE_DEFAULT);
+
+            manager.createNotificationChannel(nc);
+        }
+    }
+
 }

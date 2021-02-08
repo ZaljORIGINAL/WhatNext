@@ -13,21 +13,6 @@ public class BeforeStartNotification extends DisciplineNotification{
         super(context, discipline, options);
     }
 
-    /**
-     * Формула установки ID для уведомлений:
-     * (discipline.getPosition() + 1) * 10 + TYPE_OF_NOTIFICATION
-     * Под значение TYPE_OF_NOTIFICATION подставляется идентификатор типа уведомления.
-     * Идентификаторы:
-     *      TIME_TO_GO = 0,
-     *      BEFORE_START_OF_DISCIPLINE = 1,
-     *      START_OF_DISCIPLINE = 2,
-     *      BEFORE_FINISH_OF_DISCIPLINE = 3,
-     *      FINISH_OF_DISCIPLINE/FINISH_OF_DAY = 4*/
-    @Override
-    public void setNotificationId() {
-        this.notificationId = (discipline.getPosition() + 1) * 10 + 1;
-    }
-
     @Override
     public String getMessage() {
         StringBuilder message = new StringBuilder();
@@ -52,5 +37,21 @@ public class BeforeStartNotification extends DisciplineNotification{
         triggerTime.set(Calendar.SECOND, 0);
 
         return triggerTime.getTimeInMillis();
+    }
+
+    /**
+     * Формула установки ID для уведомлений:
+     * (discipline.getPosition() + 1) * 10 + TYPE_OF_NOTIFICATION
+     * Под значение TYPE_OF_NOTIFICATION подставляется идентификатор типа уведомления.
+     * Идентификаторы:
+     *      TIME_TO_GO = 0,
+     *      BEFORE_START_OF_DISCIPLINE = 1,
+     *      START_OF_DISCIPLINE = 2,
+     *      BEFORE_FINISH_OF_DISCIPLINE = 3,
+     *      FINISH_OF_DISCIPLINE = 4
+     *      FINISH_OF_DAY = 4*/
+    @Override
+    public void setNotificationId() {
+        this.notificationId = (discipline.getPosition() + 1) * 10 + NotificationHelper.BEFORE_START_OF_DISCIPLINE;
     }
 }

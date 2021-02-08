@@ -73,19 +73,7 @@ public abstract class DisciplineNotification extends MyNotification implements A
         return string.toString();
     }
 
-    @Override
-    public void createNotificationChanel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            NotificationManager manager = context.getSystemService(NotificationManager.class);
-
-            NotificationChannel nc = new NotificationChannel(
-                    getChanelId(),
-                    getChanelName(),
-                    NotificationManager.IMPORTANCE_DEFAULT);
-
-                  manager.createNotificationChannel(nc);
-      }
-    }
+    protected abstract long getTriggerTime();
 
     @Override
     public void setAlarm() {
@@ -124,12 +112,7 @@ public abstract class DisciplineNotification extends MyNotification implements A
         alarmManager.cancel(pIntent);
     }
 
-    @Override
-    public void refreshAlarm() {}
-
     public void setNotificationId(){
         this.notificationId = -10;
     }
-
-    protected abstract long getTriggerTime();
 }

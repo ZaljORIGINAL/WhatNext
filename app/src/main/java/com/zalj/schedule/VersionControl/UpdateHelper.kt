@@ -1,6 +1,5 @@
 package com.zalj.schedule.VersionControl
 
-import android.app.AlertDialog
 import android.app.DownloadManager
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -10,39 +9,23 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.widget.Toast
 import androidx.core.content.FileProvider
-import androidx.fragment.app.FragmentManager
 import com.zalj.schedule.BuildConfig
 import java.io.File
 
-class UpdateHelper(private val context: Context, private val fragmentManager: FragmentManager) {
+class UpdateHelper(private val context: Context) {
 
-    private fun openUpdateDialog(newVersion: String, newVersionUrl: String) {
-        AlertDialog.Builder(context)
-                .setMessage("Текущая версия: " + BuildConfig.VERSION_NAME + "\n" + "Новая версия: " + newVersion)
-                .setPositiveButton("Обновить") { _, _ ->
-                    update(context, newVersionUrl)
-                    Toast.makeText(context, "Скачивание обновления", Toast.LENGTH_LONG).show()
-                }
-                .setNegativeButton("Отмена", null)
-                .show()
-    }
-
-    private fun update(context: Context, url: String) { // Set path for file
-
-        val destination = context.getExternalFilesDir("update").toString() + "/"
-        val fileName = "ScheduleUpdate.apk"
-        val filePath = destination + fileName
-
+    public fun update(url: String, distanceToSave: File) { // Set path for file
         // Check if file already exists
-        val file = File(filePath)
-        if (file.exists()) file.delete()
+        if (distanceToSave.exists())
+            distanceToSave.delete()
 
         // Set Download Manager request
         val request = DownloadManager.Request(Uri.parse(url))
-        request.setTitle("ScheduleUpdate.apk")
+        request.setTitle("Скачиваем обновление")
+        //TODO Можно дописать какая версия скачивается
         request.setDescription("Скачивание обновления")
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-        request.setDestinationUri(Uri.fromFile(file))
+        request.setDestinationUri(Uri.fromFile(distanceToSave))
 
         // Get download service and enqueue file
         val manager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager?
@@ -56,7 +39,7 @@ class UpdateHelper(private val context: Context, private val fragmentManager: Fr
         val onComplete = object: BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent?) {
                 val intentInstall = Intent(Intent.ACTION_VIEW)
-                val uri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", file)
+                val uri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", distanceToSave)
                 intentInstall.setDataAndType(uri, "application/vnd.android.package-archive")
                 intentInstall.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION
 

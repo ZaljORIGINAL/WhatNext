@@ -13,12 +13,12 @@ import com.zalj.schedule.Activity.MainActivity;
 
 public class NotificationHelper {
     //Notification class
-    private static final int TIME_TO_GO = 0;
-    private static final int BEFORE_START_OF_DISCIPLINE = 1;
-    private static final int START_OF_DISCIPLINE = 2;
-    private static final int BEFORE_FINISH_OF_DISCIPLINE = 3;
-    private static final int FINISH_OF_DISCIPLINE = 4;
-    private static final int FINISH_OF_DAY = 5;
+    public static final int TIME_TO_GO = 0;
+    public static final int BEFORE_START_OF_DISCIPLINE = 1;
+    public static final int START_OF_DISCIPLINE = 2;
+    public static final int BEFORE_FINISH_OF_DISCIPLINE = 3;
+    public static final int FINISH_OF_DISCIPLINE = 4;
+    public static final int FINISH_OF_DAY = 4;
 
     //Сhannels
     public static final String CHANEL_ID_DISCIPLINE = "NOTIFICATION_CHANEL_ID_DISCIPLINE";
