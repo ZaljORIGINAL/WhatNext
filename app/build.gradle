@@ -8,8 +8,9 @@ android {
         applicationId "com.zalj.schedule"
         minSdkVersion 24
         targetSdkVersion 29
-        versionCode 14002
-        versionName '1.4.002 BETA'
+        //X = 1, Y = 4, KKK = 005, T = 1 (1 - BETA, 2 - RELEASE)
+        versionCode 140051
+        versionName '1.4.005 BETA'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }

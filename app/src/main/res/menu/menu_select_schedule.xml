@@ -6,7 +6,7 @@
         android:id="@+id/importSchedule"
         android:title="@string/menu_select_schedule_menu_import"
         app:showAsAction="always"
-        android:icon="@drawable/import_black"/>
+        android:icon="@drawable/import_white"/>
 
     <item
         android:id="@+id/settings"
