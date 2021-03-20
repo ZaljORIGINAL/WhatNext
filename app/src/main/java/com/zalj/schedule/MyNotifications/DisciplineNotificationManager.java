@@ -4,15 +4,19 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
 
 import com.zalj.schedule.Data.DataContract;
 import com.zalj.schedule.IntentHelper;
+import com.zalj.schedule.MyNotifications.NotificationTypes.BeforeFinishNotification;
+import com.zalj.schedule.MyNotifications.NotificationTypes.BeforeStartNotification;
+import com.zalj.schedule.MyNotifications.NotificationTypes.FinishNotification;
+import com.zalj.schedule.MyNotifications.NotificationTypes.FinishOfDayNotification;
+import com.zalj.schedule.MyNotifications.NotificationTypes.StartNotification;
+import com.zalj.schedule.MyNotifications.NotificationTypes.TimeToGoNotification;
 import com.zalj.schedule.Objects.Discipline;
 import com.zalj.schedule.Objects.Schedule;
-import com.zalj.schedule.R;
 
 import java.io.File;
 import java.io.FileInputStream;

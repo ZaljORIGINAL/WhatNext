@@ -1,15 +1,24 @@
-package com.zalj.schedule.MyNotifications;
+package com.zalj.schedule.MyNotifications.NotificationTypes;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
 
+import com.zalj.schedule.Activity.MainActivity;
+import com.zalj.schedule.MyNotifications.DisciplineNotification;
+import com.zalj.schedule.MyNotifications.DisciplineNotificationManager;
+import com.zalj.schedule.MyNotifications.NotificationHelper;
 import com.zalj.schedule.Objects.Discipline;
 import com.zalj.schedule.R;
 
 import java.util.Calendar;
 
-public class TimeToGoNotification extends DisciplineNotification {
+public class FinishOfDayNotification extends DisciplineNotification {
 
-    public TimeToGoNotification(Context context, Discipline discipline, DisciplineNotificationManager.Options options) {
+    public FinishOfDayNotification(Context context, Discipline discipline, DisciplineNotificationManager.Options options) {
         super(context, discipline, options);
     }
 
@@ -17,13 +26,7 @@ public class TimeToGoNotification extends DisciplineNotification {
     public String getMessage() {
         StringBuilder message = new StringBuilder();
         message
-                .append(context.getString(R.string.Notification_Discipline_TimeToGo))
-                .append(" ")
-                .append(options.getTimeToGoMin())
-                .append(" ")
-                .append(context.getString(R.string.Notification_Discipline_Minute))
-                .append("\n");
-        message.append(getOtherDescription());
+                .append(R.string.Notification_Discipline_FinishOfDay);
 
         return message.toString();
     }
@@ -31,9 +34,8 @@ public class TimeToGoNotification extends DisciplineNotification {
     @Override
     protected long getTriggerTime() {
         Calendar triggerTime = Calendar.getInstance();
-        triggerTime.set(Calendar.HOUR_OF_DAY, discipline.getStartHour());
-        triggerTime.set(Calendar.MINUTE, discipline.getStartMinute());
-        triggerTime.add(Calendar.MINUTE, -options.getTimeToGoMin());
+        triggerTime.set(Calendar.HOUR_OF_DAY, discipline.getFinishHour());
+        triggerTime.set(Calendar.MINUTE, discipline.getFinishMinute());
         triggerTime.set(Calendar.SECOND, 0);
 
         return triggerTime.getTimeInMillis();
@@ -48,10 +50,9 @@ public class TimeToGoNotification extends DisciplineNotification {
      *      BEFORE_START_OF_DISCIPLINE = 1,
      *      START_OF_DISCIPLINE = 2,
      *      BEFORE_FINISH_OF_DISCIPLINE = 3,
-     *      FINISH_OF_DISCIPLINE = 4,
-     *      FINISH_OF_DAY = 4*/
+     *      FINISH_OF_DISCIPLINE/FINISH_OF_DAY = 4,*/
     @Override
     public void setNotificationId() {
-        this.notificationId = (discipline.getPosition() + 1) * 10 + NotificationHelper.TIME_TO_GO;
+        this.notificationId = (discipline.getPosition() + 1) * 10 + NotificationHelper.FINISH_OF_DAY;
     }
 }

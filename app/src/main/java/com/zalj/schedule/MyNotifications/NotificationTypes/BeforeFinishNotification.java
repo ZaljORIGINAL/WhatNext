@@ -1,14 +1,17 @@
-package com.zalj.schedule.MyNotifications;
+package com.zalj.schedule.MyNotifications.NotificationTypes;
 
 import android.content.Context;
 
+import com.zalj.schedule.MyNotifications.DisciplineNotification;
+import com.zalj.schedule.MyNotifications.DisciplineNotificationManager;
+import com.zalj.schedule.MyNotifications.NotificationHelper;
 import com.zalj.schedule.Objects.Discipline;
 import com.zalj.schedule.R;
 
 import java.util.Calendar;
 
-public class FinishNotification extends DisciplineNotification{
-    public FinishNotification(Context context, Discipline discipline, DisciplineNotificationManager.Options options) {
+public class BeforeFinishNotification extends DisciplineNotification {
+    public BeforeFinishNotification(Context context, Discipline discipline, DisciplineNotificationManager.Options options) {
         super(context, discipline, options);
     }
 
@@ -16,7 +19,12 @@ public class FinishNotification extends DisciplineNotification{
     public String getMessage() {
         StringBuilder message = new StringBuilder();
         message
-                .append(context.getString(R.string.Notification_Discipline_FinishOfDiscipline))
+                .append(context.getString(
+                        R.string.Notification_Discipline_BeforeFinishOfDiscipline))
+                .append(" ")
+                .append(options.getBeforeFinishMin())
+                .append(" ")
+                .append(context.getString(R.string.Notification_Discipline_Minute))
                 .append("\n");
         message.append(getOtherDescription());
 
@@ -28,6 +36,7 @@ public class FinishNotification extends DisciplineNotification{
         Calendar triggerTime = Calendar.getInstance();
         triggerTime.set(Calendar.HOUR_OF_DAY, discipline.getFinishHour());
         triggerTime.set(Calendar.MINUTE, discipline.getFinishMinute());
+        triggerTime.add(Calendar.MINUTE, -options.getBeforeFinishMin());
         triggerTime.set(Calendar.SECOND, 0);
 
         return triggerTime.getTimeInMillis();
@@ -42,10 +51,10 @@ public class FinishNotification extends DisciplineNotification{
      *      BEFORE_START_OF_DISCIPLINE = 1,
      *      START_OF_DISCIPLINE = 2,
      *      BEFORE_FINISH_OF_DISCIPLINE = 3,
-     *      FINISH_OF_DISCIPLINE = 4,
-     *      FINISH_OF_DAY = 4*/
+     *      FINISH_OF_DISCIPLINE = 4
+     *      FINISH_OF_DAY = 4,*/
     @Override
     public void setNotificationId() {
-        this.notificationId = (discipline.getPosition() + 1) * 10 + NotificationHelper.FINISH_OF_DISCIPLINE;
+        this.notificationId = (discipline.getPosition() + 1) * 10 + NotificationHelper.BEFORE_FINISH_OF_DISCIPLINE;
     }
 }
